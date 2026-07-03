@@ -1,0 +1,12 @@
+import { cp, mkdir, readFile, writeFile, rm } from 'node:fs/promises';
+const base = process.env.VITE_BASE || '/jinke/';
+await rm('dist', { recursive: true, force: true });
+await mkdir('dist', { recursive: true });
+await mkdir('dist/web/src', { recursive: true });
+await mkdir('dist/data', { recursive: true });
+let html = await readFile('index.html', 'utf8');
+html = html.replaceAll('%BASE%', base);
+await writeFile('dist/index.html', html);
+await cp('web/src', 'dist/web/src', { recursive: true });
+await cp('web/public/data', 'dist/data', { recursive: true });
+console.log(`Built static site to dist with base ${base}`);
