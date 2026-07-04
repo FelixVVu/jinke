@@ -1,0 +1,8 @@
+__pycache__/
+*.py[cod]
+node_modules/
+dist/
+.env
+.pytest_cache/
+audit_outputs/*.zip
+audit_outputs/web-data.zip
