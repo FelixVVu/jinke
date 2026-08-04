@@ -4,8 +4,9 @@ This repository uses one architecture: `pipeline/generate.py` for data generatio
 
 ## Directory structure
 
-- `pipeline/generate.py` — Colab-safe, one-range fallback ORS generator.
-- `jinke_colab_generation.ipynb` — guided Colab runner.
+- `pipeline/generate.py` — strict cache validation, rate-limited ORS generation, and Shapely production export.
+- `jinke_colab_generation.ipynb` — fresh-runtime Colab runner with five separately runnable stages.
+- `archive/jinke_50min_google_sheet_colab.ipynb` — restored historical 50-minute notebook from commit `1f8a0726af83c81f681f2664088c9d4ccaed4f7a`.
 - `web/src/main.js` and `web/src/style.css` — MapLibre app.
 - `web/public/data/` — static frontend data.
 - `audit_outputs/` — sample/audit outputs and optional ZIP.
@@ -18,7 +19,7 @@ The frontend reads only static files and never calls ORS:
 - `web/public/data/reach-areas.geojson` — one reach feature for each 10/20/30/40/50 minute limit.
 - `web/public/data/stations.geojson` — stations with Apple time and coordinates.
 - `web/public/data/manifest.json` — data version, limits, source, and `production_data` flag.
-- `audit_outputs/reach-areas-full.geojson` and `audit_outputs/web-data.zip` — audit/manual download artifacts outside the optimized web data directory.
+- `MyDrive/Jinke50min/audit_outputs/web-data.zip` — final audited export containing exactly the three frontend data files.
 
 Committed GeoJSON is development sample data. When `manifest.production_data` is false, the frontend shows a non-dismissible warning and the polygons must not be treated as final coverage.
 
@@ -37,27 +38,25 @@ npm run build
 
 ## Colab ORS-key setup and runner
 
-Open `jinke_colab_generation.ipynb` in Colab. It provides cells to:
+Open `jinke_colab_generation.ipynb` directly in Colab and run its labelled stages in order:
 
-1. mount Google Drive;
-2. install `requirements.txt`;
-3. import `ORS_API_KEY` from Colab Secrets;
-4. read the production Google Sheet;
-5. use `MyDrive/Jinke50min` for persistent cache/output;
-6. run dry-run validation with `RUN_ORS=False`;
-7. run an optional five-request smoke test;
-8. run complete one-range fallback generation;
-9. generate `web-data.zip`.
+1. **setup** — clone/update this repository, install dependencies, mount Drive, load `ORS_API_KEY` from Colab Secrets, and create the new cache directory;
+2. **dry run** — validate the legacy 50-minute cache and estimate missing calls without contacting ORS;
+3. **five-call smoke test** — explicit `RUN_ORS=True` opt-in with an actual HTTP-call budget of five;
+4. **full lower-limit run** — explicit `RUN_ORS=True` opt-in with the default 200-call budget;
+5. **validation and export** — make no ORS calls, validate completeness, create the five Shapely unions, and write the ZIP.
+
+Do not use Colab's **Run all** command. The notebook states exactly which single line to change and which cell to run for each live stage.
 
 ## Dry-run request estimation
 
-Dry run is enabled by default and does not call ORS:
+Dry run is enabled by default and does not call ORS. In Colab it reads the completed legacy cache from `MyDrive/Jinke50min/ors_cache_50min/`, including readable names such as `金科路_3000s.json`:
 
 ```bash
 python -m pipeline.generate
 ```
 
-Expected production Sheet counts are approximately 4 stations below 10 minutes, 12 below 20, 42 below 30, 115 below 40, and 175 below 50. Counts may change when the Sheet changes. The current implementation environment could not fetch the Google Sheet because outbound HTTP was blocked with `403 Forbidden`, so production counts must be rechecked in Colab or an unrestricted environment.
+Expected production Sheet counts are approximately 4 stations below 10 minutes, 12 below 20, 42 below 30, 115 below 40, and 175 below 50. With the completed legacy cache, the expected dry-run result is approximately 175 accepted legacy files and 173 new lower-limit requests. Counts may change when the Sheet changes.
 
 ## Test-mode data generation
 
@@ -74,14 +73,16 @@ Do not report fixture estimates as production estimates.
 Only after reviewing the dry-run estimate, explicitly opt in from Colab by setting `RUN_ORS=True` in the notebook cell. Shell equivalent:
 
 ```bash
-RUN_ORS=true ORS_API_KEY="$ORS_API_KEY" MAX_ORS_CALLS=450 python -m pipeline.generate
+RUN_ORS=true ORS_API_KEY="$ORS_API_KEY" MAX_ORS_CALLS=200 python -m pipeline.generate
 ```
 
-The default cap is 450 calls, the request interval is at least 3.5 seconds, and 429/temporary server failures use retry with exponential backoff. Stop and resume by rerunning; completed requests remain cached.
+The default cap is 200 actual ORS HTTP calls, the request interval is at least 3.5 seconds, and 429/temporary server failures use retry with backoff. Stop and resume by rerunning; completed requests remain cached in `MyDrive/Jinke50min/ors_cache_multilimit_v1/`.
 
 ## Cache reuse and legacy 50-minute cache validation
 
-Cache validation includes station, longitude, latitude, walking seconds, and data version for modern cache keys. Legacy 50-minute cache filenames are also checked, and dry-run reports files found, accepted, rejected, rejection reasons, and estimated additional calls. With about 175 valid 50-minute legacy caches, one-range fallback should require about 173 additional requests for the 10/20/30/40-minute layers and should not silently regenerate 50-minute polygons.
+Cache validation includes station, longitude, latitude, walking seconds, selected limit, and data version for new cache keys. The generator reads 50-minute files only from `ors_cache_50min/`, never writes to that directory, and never schedules 50-minute ORS replacement calls. It stops before any ORS call if the legacy set is absent, close to zero, incomplete, or invalid.
+
+New ORS responses are written only to `ors_cache_multilimit_v1/`. Production export has no circle fallback and no bounding-box union: every cached feature and every final `Polygon`/`MultiPolygon` union is validated with Shapely. `production_data` is set to `true` only after all required caches and all five layers pass validation.
 
 ## Exporting the web-data ZIP
 
