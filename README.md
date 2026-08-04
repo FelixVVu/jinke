@@ -19,9 +19,23 @@ The frontend reads only static files and never calls ORS:
 - `web/public/data/reach-areas.geojson` — one reach feature for each 10/20/30/40/50 minute limit.
 - `web/public/data/stations.geojson` — stations with Apple time and coordinates.
 - `web/public/data/manifest.json` — data version, limits, source, and `production_data` flag.
+- `web/public/data/shanghai-boundary.geojson` — simplified Shanghai Municipality boundary used only for the inverse view.
+- `web/public/data/outside-reach-areas.geojson` — five precomputed Shanghai-minus-reach features for 10/20/30/40/50 minutes.
 - `MyDrive/Jinke50min/audit_outputs/web-data.zip` — final audited export containing exactly the three frontend data files.
 
-Committed GeoJSON is development sample data. When `manifest.production_data` is false, the frontend shows a non-dismissible warning and the polygons must not be treated as final coverage.
+When `manifest.production_data` is false, the frontend shows a non-dismissible warning and the polygons must not be treated as final coverage.
+
+## Shanghai boundary and inverse-area regeneration
+
+`shanghai-boundary.geojson` is the simplified **Shanghai Municipality** ADM1 feature from geoBoundaries gbOpen China ADM1, pinned to source revision `9469f09` (`boundaryID` `CHN-ADM1-43563684`, boundary year 2019). The geoBoundaries API identifies the source as geoBoundaries/Wikimedia Commons and the boundary license as **Public Domain**. Attribution is recorded in the GeoJSON as “geoBoundaries, William & Mary geoLab.” The complete source metadata is available at <https://www.geoboundaries.org/api/current/gbOpen/CHN/ADM1/>.
+
+The frontend never downloads the boundary from a remote service. After replacing production `reach-areas.geojson`, deterministically rebuild the five inverse features with Shapely:
+
+```bash
+python scripts/generate_outside_reach_areas.py
+```
+
+The script refuses missing, duplicate, invalid, empty, or non-polygon limits; verifies that each result stays inside Shanghai; and rejects any positive-area overlap with the matching reach geometry.
 
 ## Local frontend development
 
@@ -135,5 +149,5 @@ Rerun the dry-run estimate first. Boundary stations where `apple == limit` are k
 
 - No-key defaults for light/dark/monochrome use public OpenStreetMap/CARTO raster tiles subject to provider fair-use policies.
 - Satellite uses Esri World Imagery tiles; review Esri licensing, attribution, and domain restrictions before production use.
-- Pastel/Stamen Watercolor uses Stadia-hosted tiles and may require a Stadia key/domain configuration for production traffic.
+- Pastel uses the official keyless CARTO Voyager raster basemap with OpenStreetMap and CARTO attribution.
 - Apple-inspired labels describe UI/visual treatment only; no Apple Maps data or tiles are used.
