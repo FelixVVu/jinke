@@ -115,7 +115,7 @@ def test_warm_vector_basemaps_use_openfree_map_and_local_transit_data():
     assert "metro-lines" in UTILS
     assert "metro-interchanges" in UTILS
     assert "metro-station-labels" in UTILS
-    assert UTILS.index("warm-local-roads") < UTILS.index("metro-lines")
+    assert UTILS.index("warm-local-roads") < UTILS.index("id: 'metro-lines'")
     assert "restoreCustomLayers" in MAIN
 
 
