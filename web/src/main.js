@@ -11,11 +11,24 @@ import {
   selectedFeatureCollection,
   stationFeatureCollection,
 } from './map-utils.js';
+import {
+  LocationSearchError,
+  MapTilerLocationSearch,
+  SingleLocationSelection,
+  geoJsonBounds,
+  locationQueryLength,
+  normalizeLocationQuery,
+  pointInGeoJson,
+} from './location-search.js';
 
 const LIMITS = [10, 20, 30, 40, 50];
 const base = window.JINKE_BASE || '/';
 const assetUrl = path =>
   `${base}${path}`.replace(/\/+/g, '/').replace(':/', '://');
+const runtimeMapTilerKey = () =>
+  typeof window.JINKE_MAPTILER_KEY === 'string'
+    ? window.JINKE_MAPTILER_KEY.trim()
+    : '';
 
 const defaults = {
   limit: 50,
@@ -212,6 +225,45 @@ document.querySelector('#app').innerHTML = `
           </p>
         </div>
 
+        <div id="locationSearchField" class="field location-search-field">
+          <label for="locationSearch">Location search</label>
+          <div class="search-row">
+            <input
+              id="locationSearch"
+              class="location-search-input"
+              type="text"
+              placeholder="Search places in Shanghai"
+              autocomplete="off"
+              role="combobox"
+              aria-autocomplete="list"
+              aria-haspopup="listbox"
+              aria-controls="locationSuggestions"
+              aria-expanded="false"
+              aria-describedby="locationSearchStatus"
+              disabled
+            />
+            <button
+              id="clearLocationSearch"
+              class="clear-search"
+              type="button"
+              aria-label="Clear location search"
+              hidden
+            >
+              Clear
+            </button>
+          </div>
+          <ul
+            id="locationSuggestions"
+            class="location-suggestions"
+            role="listbox"
+            aria-label="Shanghai location suggestions"
+            hidden
+          ></ul>
+          <p id="locationSearchStatus" class="hint location-search-status" role="status" aria-live="polite">
+            Enter at least 2 Chinese or English characters.
+          </p>
+        </div>
+
         <label class="field" for="stationDisplay">Station display
           <select id="stationDisplay" disabled>
             <option value="relevant">Relevant only</option>
@@ -301,6 +353,15 @@ let controlsWired = false;
 let activePopup;
 let highlightedStation;
 let highlightTimer;
+let shanghaiBoundary;
+let shanghaiSearchBounds;
+let locationSearchService;
+let locationSearchTimer;
+let locationSearchResults = [];
+let activeLocationIndex = -1;
+let locationSearchComposing = false;
+let locationSelection;
+let selectedLocationResult;
 
 const mobileQuery = window.matchMedia('(max-width: 760px)');
 const byId = id => document.getElementById(id);
@@ -504,6 +565,289 @@ function escapeHtml(value) {
     .replaceAll("'", '&#039;');
 }
 
+function locationResultDetails(result) {
+  const values = [result.category, result.district, result.secondary]
+    .map(value => String(value || '').trim())
+    .filter(Boolean);
+  return values.filter(
+    (value, index) =>
+      values.findIndex(
+        candidate => candidate.toLocaleLowerCase() === value.toLocaleLowerCase(),
+      ) === index,
+  );
+}
+
+function setLocationSearchStatus(message, { error = false, loading = false } = {}) {
+  const status = byId('locationSearchStatus');
+  status.textContent = message;
+  status.classList.toggle('is-error', error);
+  status.classList.toggle('is-loading', loading);
+}
+
+function setActiveLocationIndex(index, { scroll = true } = {}) {
+  const input = byId('locationSearch');
+  const options = [...byId('locationSuggestions').querySelectorAll('[role="option"]')];
+  activeLocationIndex =
+    options.length && index >= 0
+      ? Math.min(options.length - 1, Math.max(0, index))
+      : -1;
+
+  options.forEach((option, optionIndex) => {
+    const active = optionIndex === activeLocationIndex;
+    option.classList.toggle('is-active', active);
+    option.setAttribute('aria-selected', String(active));
+  });
+  if (activeLocationIndex >= 0) {
+    const activeOption = options[activeLocationIndex];
+    input.setAttribute('aria-activedescendant', activeOption.id);
+    if (scroll) activeOption.scrollIntoView({ block: 'nearest' });
+  } else {
+    input.removeAttribute('aria-activedescendant');
+  }
+}
+
+function closeLocationSuggestions({ resetActive = true } = {}) {
+  const input = byId('locationSearch');
+  const list = byId('locationSuggestions');
+  list.hidden = true;
+  input.setAttribute('aria-expanded', 'false');
+  if (resetActive) setActiveLocationIndex(-1, { scroll: false });
+}
+
+function renderLocationSuggestions() {
+  const list = byId('locationSuggestions');
+  list.replaceChildren(
+    ...locationSearchResults.map((result, index) => {
+      const option = document.createElement('li');
+      option.id = `location-suggestion-${index}`;
+      option.dataset.index = String(index);
+      option.setAttribute('role', 'option');
+      option.setAttribute('aria-selected', 'false');
+
+      const name = document.createElement('strong');
+      name.className = 'location-suggestion-name';
+      name.textContent = result.name;
+      const details = document.createElement('span');
+      details.className = 'location-suggestion-details';
+      details.textContent = locationResultDetails(result).join(' · ');
+      option.append(name, details);
+      return option;
+    }),
+  );
+
+  const hasResults = locationSearchResults.length > 0;
+  list.hidden = !hasResults;
+  byId('locationSearch').setAttribute('aria-expanded', String(hasResults));
+  setActiveLocationIndex(hasResults ? 0 : -1, { scroll: false });
+}
+
+function locationSearchProximity() {
+  const fallback = [121.597836, 31.2064028];
+  const center = map?.getCenter?.();
+  const coordinates = center
+    ? [Number(center.lng), Number(center.lat)]
+    : fallback;
+  return pointInGeoJson(coordinates, shanghaiBoundary) ? coordinates : fallback;
+}
+
+function locationZoom(result) {
+  if (['poi', 'address'].includes(result.placeType)) return 16;
+  if (['street', 'neighbourhood', 'locality'].includes(result.placeType)) {
+    return 15;
+  }
+  return 13;
+}
+
+function createLocationVisual(result) {
+  if (!map) return {};
+
+  const markerElement = document.createElement('button');
+  markerElement.type = 'button';
+  markerElement.className = 'location-marker';
+  markerElement.setAttribute('aria-label', `Selected location: ${result.name}`);
+  markerElement.title = result.name;
+  const pin = document.createElement('span');
+  pin.className = 'location-marker-pin';
+  pin.setAttribute('aria-hidden', 'true');
+  markerElement.append(pin);
+
+  const details = locationResultDetails(result);
+  const popup = new maplibregl.Popup({ offset: 26 })
+    .setLngLat(result.coordinates)
+    .setHTML(
+      `<div class="location-popup">` +
+        `<strong>${escapeHtml(result.name)}</strong>` +
+        `<span>${escapeHtml(result.category)}</span>` +
+        (details.slice(1).length
+          ? `<p>${escapeHtml(details.slice(1).join(' · '))}</p>`
+          : '') +
+        `</div>`,
+    );
+  const marker = new maplibregl.Marker({
+    element: markerElement,
+    anchor: 'bottom',
+  })
+    .setLngLat(result.coordinates)
+    .setPopup(popup)
+    .addTo(map);
+  popup.addTo(map);
+  return { marker, popup };
+}
+
+function initializeLocationSelection() {
+  if (!map || locationSelection) return;
+  locationSelection = new SingleLocationSelection({
+    createVisual: createLocationVisual,
+    isPresent: marker => Boolean(marker.getElement?.()?.isConnected),
+  });
+  if (selectedLocationResult) locationSelection.select(selectedLocationResult);
+}
+
+function selectLocationResult(result) {
+  if (!result) return;
+  selectedLocationResult = result;
+  const input = byId('locationSearch');
+  input.value = result.name;
+  byId('clearLocationSearch').hidden = false;
+  locationSearchResults = [];
+  closeLocationSuggestions();
+  setLocationSearchStatus(`Showing ${result.name} in Shanghai.`);
+
+  if (map) {
+    initializeLocationSelection();
+    locationSelection.select(result);
+    map.flyTo({
+      center: result.coordinates,
+      zoom: locationZoom(result),
+      essential: true,
+    });
+  }
+}
+
+function clearLocationSearch({ focus = true } = {}) {
+  window.clearTimeout(locationSearchTimer);
+  locationSearchService?.cancel();
+  selectedLocationResult = null;
+  locationSelection?.clear();
+  locationSearchResults = [];
+  activeLocationIndex = -1;
+  const input = byId('locationSearch');
+  input.value = '';
+  byId('clearLocationSearch').hidden = true;
+  byId('locationSuggestions').replaceChildren();
+  closeLocationSuggestions();
+  setLocationSearchStatus('Enter at least 2 Chinese or English characters.');
+  if (focus && !input.disabled) input.focus();
+}
+
+function showLocationSearchError(error) {
+  locationSearchResults = [];
+  renderLocationSuggestions();
+  if (error instanceof LocationSearchError && error.code === 'missing-config') {
+    setLocationSearchStatus(
+      'Location search is unavailable because its configuration is missing.',
+      { error: true },
+    );
+  } else if (error instanceof LocationSearchError && error.code === 'rate-limit') {
+    setLocationSearchStatus(
+      'Location search is temporarily rate-limited. Please try again shortly.',
+      { error: true },
+    );
+  } else if (error instanceof LocationSearchError && error.code === 'invalid-response') {
+    setLocationSearchStatus(
+      'Location search returned an invalid response. Please try again.',
+      { error: true },
+    );
+  } else {
+    setLocationSearchStatus(
+      'Location search is unavailable right now. Check your connection and try again.',
+      { error: true },
+    );
+  }
+}
+
+async function runLocationSearch(query) {
+  if (!locationSearchService) return;
+  const normalizedQuery = normalizeLocationQuery(query);
+  setLocationSearchStatus('Searching Shanghai…', { loading: true });
+  try {
+    const response = await locationSearchService.search(normalizedQuery, {
+      bbox: shanghaiSearchBounds,
+      proximity: locationSearchProximity(),
+      limit: 8,
+    });
+    if (response.status === 'stale') return;
+    if (
+      normalizeLocationQuery(byId('locationSearch').value) !== normalizedQuery
+    ) {
+      return;
+    }
+    locationSearchResults = response.results;
+    renderLocationSuggestions();
+    if (!locationSearchResults.length) {
+      setLocationSearchStatus('No matching place found in Shanghai.');
+      return;
+    }
+    setLocationSearchStatus(
+      `${locationSearchResults.length} Shanghai suggestions. Use arrow keys and Enter to choose.`,
+    );
+  } catch (error) {
+    showLocationSearchError(error);
+  }
+}
+
+function scheduleLocationSearch(query) {
+  window.clearTimeout(locationSearchTimer);
+  const normalizedQuery = normalizeLocationQuery(query);
+  byId('clearLocationSearch').hidden = !normalizedQuery;
+  if (locationQueryLength(normalizedQuery) < 2) {
+    locationSearchService?.cancel();
+    if (!normalizedQuery) {
+      selectedLocationResult = null;
+      locationSelection?.clear();
+    }
+    locationSearchResults = [];
+    renderLocationSuggestions();
+    setLocationSearchStatus('Enter at least 2 Chinese or English characters.');
+    return;
+  }
+  setLocationSearchStatus('Waiting to search…', { loading: true });
+  locationSearchTimer = window.setTimeout(
+    () => runLocationSearch(normalizedQuery),
+    300,
+  );
+}
+
+async function initializeLocationSearch() {
+  const input = byId('locationSearch');
+  try {
+    const boundary = await fetchJson('shanghai-boundary.geojson');
+    const bounds = geoJsonBounds(boundary);
+    if (!bounds) throw new Error('Invalid Shanghai boundary');
+    shanghaiBoundary = boundary;
+    shanghaiSearchBounds = bounds;
+    locationSearchService = new MapTilerLocationSearch({
+      keyProvider: runtimeMapTilerKey,
+      boundary: shanghaiBoundary,
+    });
+    if (!runtimeMapTilerKey()) {
+      setLocationSearchStatus(
+        'Location search is unavailable because its configuration is missing.',
+        { error: true },
+      );
+      return;
+    }
+    input.disabled = false;
+    setLocationSearchStatus('Enter at least 2 Chinese or English characters.');
+  } catch {
+    input.disabled = true;
+    setLocationSearchStatus(
+      'Location search is unavailable because the Shanghai boundary could not be loaded.',
+      { error: true },
+    );
+  }
+}
+
 function openStationPopup(feature) {
   if (!map) return;
   const enriched = enrichStationFeature(feature, state.limit);
@@ -623,6 +967,8 @@ function restoreCustomLayers() {
 
   bindLayerHandlerOnce(map, 'click', 'station-circle', handleStationClick);
   applyMapState();
+  initializeLocationSelection();
+  locationSelection?.ensure();
   byId('fit').disabled = false;
   setMapMessage('', { hidden: true });
 }
@@ -826,6 +1172,65 @@ function wireControls() {
     }
   };
   byId('clearSearch').onclick = () => clearStationSearch();
+
+  const locationInput = byId('locationSearch');
+  const locationList = byId('locationSuggestions');
+  locationInput.oncompositionstart = () => {
+    locationSearchComposing = true;
+  };
+  locationInput.oncompositionend = event => {
+    locationSearchComposing = false;
+    scheduleLocationSearch(event.currentTarget.value);
+  };
+  locationInput.oninput = event => {
+    if (!locationSearchComposing) {
+      scheduleLocationSearch(event.currentTarget.value);
+    }
+  };
+  locationInput.onfocus = () => {
+    if (locationSearchResults.length) renderLocationSuggestions();
+  };
+  locationInput.onkeydown = event => {
+    if (event.key === 'Escape') {
+      event.preventDefault();
+      closeLocationSuggestions();
+      return;
+    }
+    if (event.key === 'ArrowDown' || event.key === 'ArrowUp') {
+      if (!locationSearchResults.length) return;
+      event.preventDefault();
+      if (byId('locationSuggestions').hidden) renderLocationSuggestions();
+      const direction = event.key === 'ArrowDown' ? 1 : -1;
+      const nextIndex =
+        activeLocationIndex < 0
+          ? direction > 0
+            ? 0
+            : locationSearchResults.length - 1
+          : (activeLocationIndex + direction + locationSearchResults.length) %
+            locationSearchResults.length;
+      setActiveLocationIndex(nextIndex);
+      return;
+    }
+    if (event.key === 'Enter' && activeLocationIndex >= 0) {
+      const result = locationSearchResults[activeLocationIndex];
+      if (result) {
+        event.preventDefault();
+        selectLocationResult(result);
+      }
+    }
+  };
+  locationList.onmousedown = event => event.preventDefault();
+  locationList.onclick = event => {
+    const option = event.target.closest('[role="option"]');
+    if (!option) return;
+    selectLocationResult(locationSearchResults[Number(option.dataset.index)]);
+  };
+  byId('clearLocationSearch').onclick = () => clearLocationSearch();
+  document.addEventListener('pointerdown', event => {
+    if (!byId('locationSearchField').contains(event.target)) {
+      closeLocationSuggestions();
+    }
+  });
 }
 
 async function fetchJson(filename) {
@@ -837,6 +1242,7 @@ async function fetchJson(filename) {
 }
 
 wireControls();
+initializeLocationSearch();
 
 Promise.all([
   fetchJson('reach-areas.geojson'),

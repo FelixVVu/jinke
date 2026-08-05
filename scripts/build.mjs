@@ -7,6 +7,7 @@ await mkdir('dist/data', { recursive: true });
 let html = await readFile('index.html', 'utf8');
 html = html.replaceAll('%BASE%', base);
 await writeFile('dist/index.html', html);
+await cp('runtime-config.js', 'dist/runtime-config.js');
 await cp('web/src', 'dist/web/src', { recursive: true });
 await cp('web/public/data', 'dist/data', { recursive: true });
 console.log(`Built static site to dist with base ${base}`);

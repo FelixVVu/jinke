@@ -15,6 +15,16 @@ import {
   selectedFeatureCollection,
   stationFeatureCollection,
 } from '../web/src/map-utils.js';
+import {
+  LocationSearchError,
+  MapTilerLocationSearch,
+  SingleLocationSelection,
+  buildMapTilerGeocodingUrl,
+  filterShanghaiResults,
+  geoJsonBounds,
+  locationQueryLength,
+  pointInGeoJson,
+} from '../web/src/location-search.js';
 
 
 test('raster styles use explicit source IDs and carry basemap identity', () => {
@@ -376,4 +386,241 @@ test('rapid warm-vector switching still restores only the newest request', () =>
   assert.deepEqual(jumps, [
     { center: [121.6, 31.2], zoom: 10, bearing: 8, pitch: 18 },
   ]);
+});
+
+
+const squareBoundary = {
+  type: 'FeatureCollection',
+  features: [
+    {
+      type: 'Feature',
+      properties: {},
+      geometry: {
+        type: 'Polygon',
+        coordinates: [
+          [
+            [120.8, 30.7],
+            [122.2, 30.7],
+            [122.2, 31.9],
+            [120.8, 31.9],
+            [120.8, 30.7],
+          ],
+        ],
+      },
+    },
+  ],
+};
+
+const locationFeature = (id, name, coordinates, placeType = 'poi') => ({
+  type: 'Feature',
+  id,
+  center: coordinates,
+  geometry: { type: 'Point', coordinates },
+  text: name,
+  text_zh: name,
+  place_name: `${name}, Shanghai, China`,
+  place_type: [placeType],
+  properties: { categories: ['landmark'] },
+  context: [
+    { id: 'municipal_district.1', text: 'Pudong', text_zh: '浦东新区' },
+  ],
+});
+
+
+test('MapTiler URL reuses one supplied runtime key and applies Shanghai filters', () => {
+  const url = buildMapTilerGeocodingUrl('上海博物馆', {
+    key: 'existing-browser-key',
+    bbox: geoJsonBounds(squareBoundary),
+    proximity: [121.48, 31.23],
+    limit: 8,
+  });
+
+  assert.equal(url.origin, 'https://api.maptiler.com');
+  assert.equal(url.searchParams.get('key'), 'existing-browser-key');
+  assert.equal(url.searchParams.getAll('key').length, 1);
+  assert.equal(url.searchParams.get('country'), 'cn');
+  assert.equal(url.searchParams.get('bbox'), '120.8,30.7,122.2,31.9');
+  assert.equal(url.searchParams.get('proximity'), '121.48,31.23');
+  assert.equal(url.searchParams.get('language'), 'zh,en');
+  assert.match(url.searchParams.get('types'), /poi/);
+  assert.equal(url.searchParams.get('limit'), '8');
+  assert.equal(locationQueryLength('中文'), 2);
+  assert.equal(locationQueryLength('EN'), 2);
+});
+
+
+test('Shanghai filtering removes all nearby non-Shanghai results without reordering', () => {
+  const features = [
+    locationFeature('inside-1', 'First', [121.47, 31.23]),
+    locationFeature('outside-jiangsu', 'Suzhou', [120.58, 31.3]),
+    locationFeature('inside-2', 'Second', [121.6, 31.1]),
+    locationFeature('outside-zhejiang', 'Jiaxing', [120.75, 30.75]),
+    locationFeature('inside-3', 'Third', [121.8, 31.4]),
+  ];
+
+  const results = filterShanghaiResults(features, squareBoundary, 8);
+  assert.deepEqual(
+    results.map(result => result.id),
+    ['inside-1', 'inside-2', 'inside-3'],
+  );
+  assert.ok(results.every(result => pointInGeoJson(result.coordinates, squareBoundary)));
+  assert.equal(results[0].category, 'Landmark');
+  assert.equal(results[0].district, '浦东新区');
+});
+
+
+test('stale MapTiler responses cannot overwrite a newer Chinese or English query', async () => {
+  const pending = [];
+  const fetchFn = url =>
+    new Promise(resolve => pending.push({ url, resolve }));
+  const search = new MapTilerLocationSearch({
+    keyProvider: () => 'existing-browser-key',
+    boundary: squareBoundary,
+    fetchFn,
+  });
+
+  const older = search.search('中文', {
+    bbox: geoJsonBounds(squareBoundary),
+    proximity: [121.5, 31.2],
+  });
+  const newer = search.search('English', {
+    bbox: geoJsonBounds(squareBoundary),
+    proximity: [121.5, 31.2],
+  });
+  assert.equal(pending.length, 2);
+
+  pending[1].resolve({
+    ok: true,
+    status: 200,
+    json: async () => ({
+      type: 'FeatureCollection',
+      features: [locationFeature('newer', 'Newer', [121.5, 31.2])],
+    }),
+  });
+  assert.deepEqual((await newer).results.map(result => result.id), ['newer']);
+
+  pending[0].resolve({
+    ok: true,
+    status: 200,
+    json: async () => ({
+      type: 'FeatureCollection',
+      features: [locationFeature('older', 'Older', [121.5, 31.2])],
+    }),
+  });
+  assert.equal((await older).status, 'stale');
+});
+
+
+test('single location selection replaces markers and clearing removes only its visuals', () => {
+  const created = [];
+  const removed = [];
+  const selection = new SingleLocationSelection({
+    createVisual(result) {
+      created.push(result.id);
+      return {
+        marker: { remove: () => removed.push(`marker:${result.id}`) },
+        popup: { remove: () => removed.push(`popup:${result.id}`) },
+      };
+    },
+  });
+
+  selection.select({ id: 'first' });
+  assert.equal(selection.activeResult.id, 'first');
+  selection.select({ id: 'second' });
+  assert.equal(selection.activeResult.id, 'second');
+  assert.deepEqual(created, ['first', 'second']);
+  assert.deepEqual(removed, ['marker:first', 'popup:first']);
+
+  const unrelatedMapState = { limit: 30, inverse: true, labels: false };
+  selection.clear();
+  assert.equal(selection.activeResult, null);
+  assert.deepEqual(removed.slice(-2), ['marker:second', 'popup:second']);
+  assert.deepEqual(unrelatedMapState, { limit: 30, inverse: true, labels: false });
+});
+
+
+test('location selection survives overlay updates and restores only when absent', () => {
+  let present = true;
+  let creates = 0;
+  const selection = new SingleLocationSelection({
+    createVisual() {
+      creates += 1;
+      return { marker: { remove() {} }, popup: { remove() {} } };
+    },
+    isPresent: () => present,
+  });
+  selection.select({ id: 'selected' });
+
+  polygonPaintForState({
+    showPoly: true,
+    invertFill: true,
+    opacity: 0.4,
+    width: 2,
+  });
+  stationFeatureCollection(
+    { type: 'FeatureCollection', features: [station('A', 20)] },
+    30,
+    'relevant',
+  );
+  selection.ensure();
+  assert.equal(creates, 1);
+
+  present = false;
+  selection.ensure();
+  assert.equal(creates, 2);
+  assert.equal(selection.activeResult.id, 'selected');
+});
+
+
+test('missing, failed, rate-limited, and invalid search configuration degrade safely', async () => {
+  assert.throws(
+    () => buildMapTilerGeocodingUrl('上海', { key: '' }),
+    error => error instanceof LocationSearchError && error.code === 'missing-config',
+  );
+
+  for (const [status, code] of [
+    [429, 'rate-limit'],
+    [503, 'request-failed'],
+  ]) {
+    const search = new MapTilerLocationSearch({
+      keyProvider: () => 'existing-browser-key',
+      boundary: squareBoundary,
+      fetchFn: async () => ({ ok: false, status }),
+    });
+    await assert.rejects(
+      search.search('上海', { bbox: geoJsonBounds(squareBoundary) }),
+      error => error instanceof LocationSearchError && error.code === code,
+    );
+  }
+
+  const invalid = new MapTilerLocationSearch({
+    keyProvider: () => 'existing-browser-key',
+    boundary: squareBoundary,
+    fetchFn: async () => ({
+      ok: true,
+      status: 200,
+      json: async () => ({ features: 'not-an-array' }),
+    }),
+  });
+  await assert.rejects(
+    invalid.search('上海', { bbox: geoJsonBounds(squareBoundary) }),
+    error =>
+      error instanceof LocationSearchError && error.code === 'invalid-response',
+  );
+});
+
+
+test('runtime config has one empty assignment and the browser key is not duplicated', () => {
+  const runtimeConfig = readFileSync(
+    new URL('../runtime-config.js', import.meta.url),
+    'utf8',
+  );
+  const mainSource = readFileSync(
+    new URL('../web/src/main.js', import.meta.url),
+    'utf8',
+  );
+  assert.equal(runtimeConfig.trim(), "window.JINKE_MAPTILER_KEY ??= '';");
+  assert.equal((runtimeConfig.match(/JINKE_MAPTILER_KEY/g) || []).length, 1);
+  assert.match(mainSource, /window\.JINKE_MAPTILER_KEY/);
+  assert.equal(runtimeConfig.includes('existing-browser-key'), false);
 });
