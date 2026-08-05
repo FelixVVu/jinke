@@ -8,6 +8,11 @@ ROOT = Path(__file__).resolve().parents[1]
 MAIN = (ROOT / "web" / "src" / "main.js").read_text(encoding="utf-8")
 UTILS = (ROOT / "web" / "src" / "map-utils.js").read_text(encoding="utf-8")
 STYLE = (ROOT / "web" / "src" / "style.css").read_text(encoding="utf-8")
+LOCATION = (ROOT / "web" / "src" / "location-search.js").read_text(
+    encoding="utf-8"
+)
+RUNTIME_CONFIG = (ROOT / "runtime-config.js").read_text(encoding="utf-8")
+INDEX = (ROOT / "index.html").read_text(encoding="utf-8")
 
 
 def test_basemap_switching_uses_style_load_and_no_source_r_assumption():
@@ -173,3 +178,81 @@ def test_static_shanghai_metro_geojson_source_license_and_geometry():
         feature["properties"]["interchange"]
         for feature in stations["features"]
     )
+
+
+def test_location_search_is_separate_and_uses_one_runtime_maptiler_key():
+    assert '<label for="search">Station search</label>' in MAIN
+    assert '<label for="locationSearch">Location search</label>' in MAIN
+    assert MAIN.index("Station search") < MAIN.index("Location search")
+    assert "window.JINKE_MAPTILER_KEY" in MAIN
+    assert RUNTIME_CONFIG.strip() == "window.JINKE_MAPTILER_KEY ??= '';"
+    assert "%BASE%runtime-config.js" in INDEX
+    assert "api.maptiler.com/geocoding/" in LOCATION
+    assert "api.maptiler.com" not in UTILS
+    assert "JINKE_MAPTILER_KEY" not in UTILS
+    assert "JINKE_MAPTILER_KEY = '" not in MAIN + LOCATION + RUNTIME_CONFIG
+
+
+def test_location_search_has_shanghai_filters_and_no_query_persistence():
+    for value in [
+        "country', 'cn'",
+        "bbox",
+        "proximity",
+        "language', 'zh,en'",
+        "poi,address,street,place,locality,neighbourhood,municipality",
+        "shanghai-boundary.geojson",
+        "pointInGeoJson",
+        "No matching place found in Shanghai.",
+    ]:
+        assert value in MAIN + LOCATION
+    assert "locationSearch" not in MAIN[MAIN.index("function save()") : MAIN.index("const selectedAreas")]
+    assert "localStorage" not in LOCATION
+
+
+def test_location_search_combobox_keyboard_touch_and_mobile_ui_are_present():
+    for value in [
+        'role="combobox"',
+        'aria-autocomplete="list"',
+        'aria-controls="locationSuggestions"',
+        'role="listbox"',
+        'role="status"',
+        "ArrowDown",
+        "ArrowUp",
+        "Enter",
+        "Escape",
+        "onmousedown",
+        "onclick",
+        "pointerdown",
+    ]:
+        assert value in MAIN
+    assert ".location-suggestions" in STYLE
+    assert "max-height: min(30dvh, 260px)" in STYLE
+    assert "overflow-wrap: anywhere" in STYLE
+    assert ".is-active" in STYLE
+
+
+def test_location_marker_is_standalone_and_search_does_not_mutate_map_layers():
+    assert "new maplibregl.Marker" in MAIN
+    assert "SingleLocationSelection" in MAIN
+    assert "locationSelection?.ensure()" in MAIN
+    assert "locationSelection?.clear()" in MAIN
+    assert "map.flyTo" in MAIN
+    for forbidden in [
+        "setStyle",
+        "addSource",
+        "addLayer",
+        "setPaintProperty",
+        "setLayoutProperty",
+        "localStorage",
+    ]:
+        assert forbidden not in LOCATION
+
+
+def test_location_failure_is_isolated_from_core_map_data_loading():
+    assert "initializeLocationSearch();\n\nPromise.all([" in MAIN
+    assert "fetchJson('shanghai-boundary.geojson')" in MAIN
+    core_load = MAIN[MAIN.index("Promise.all([") :]
+    assert "shanghai-boundary.geojson" not in core_load
+    assert "rate-limited" in MAIN
+    assert "invalid response" in MAIN
+    assert "boundary could not be loaded" in MAIN

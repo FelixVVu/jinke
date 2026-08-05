@@ -167,3 +167,9 @@ Rerun the dry-run estimate first. Boundary stations where `apple == limit` are k
 - Pastel uses the official keyless CARTO Voyager raster basemap with OpenStreetMap and CARTO attribution.
 - The two warm vector styles use OpenFreeMap/OpenMapTiles/OpenStreetMap with source attribution embedded in each MapLibre style.
 - The transit-focused style reads only the two locally committed MIT-licensed metro GeoJSON files.
+
+## Shanghai location search configuration
+
+General place search is separate from station search and uses MapTiler Search/Geocoding only. The browser reads one runtime value, `window.JINKE_MAPTILER_KEY`, from `runtime-config.js`; the committed default is empty so deployments can supply their existing browser key without copying it into application or basemap code. The key is never written to localStorage or logs and is not used by any basemap.
+
+Requests use the China country filter, the locally computed Shanghai boundary bounding box, Chinese/English language preferences, and proximity to the current map center. Returned coordinates are then checked against the committed `shanghai-boundary.geojson`; results outside Shanghai Municipality are discarded even if the provider returned them.

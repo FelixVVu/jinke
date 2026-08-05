@@ -308,6 +308,67 @@ output {
   gap: 7px;
 }
 
+.location-search-input {
+  padding: 9px 11px;
+}
+
+.location-suggestions {
+  max-height: 280px;
+  overflow: auto;
+  margin: -2px 0 7px;
+  padding: 5px;
+  border: 1px solid #cfd8de;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.98);
+  box-shadow: 0 12px 30px rgba(30, 50, 62, 0.14);
+  list-style: none;
+  overscroll-behavior: contain;
+}
+
+.location-suggestions [role="option"] {
+  display: grid;
+  gap: 3px;
+  min-height: 48px;
+  padding: 8px 9px;
+  border-radius: 9px;
+  color: #26343e;
+  cursor: pointer;
+  line-height: 1.35;
+}
+
+.location-suggestions [role="option"]:hover,
+.location-suggestions [role="option"].is-active {
+  background: #e8f4f2;
+}
+
+.location-suggestion-name,
+.location-suggestion-details {
+  overflow-wrap: anywhere;
+}
+
+.location-suggestion-name {
+  font-size: 12px;
+  font-weight: 780;
+}
+
+.location-suggestion-details {
+  display: -webkit-box;
+  overflow: hidden;
+  color: var(--muted);
+  font-size: 10.5px;
+  font-weight: 550;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+}
+
+.location-search-status.is-error {
+  color: #9b2c2c;
+}
+
+.location-search-status.is-loading {
+  color: #315e5a;
+}
+
 .clear-search {
   min-width: 64px;
   padding: 0 13px;
@@ -542,6 +603,72 @@ output {
   font-weight: 700;
 }
 
+.location-marker {
+  display: grid;
+  width: 38px;
+  height: 44px;
+  place-items: start center;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  filter: drop-shadow(0 4px 5px rgba(49, 28, 92, 0.28));
+}
+
+.location-marker-pin {
+  position: relative;
+  display: block;
+  width: 27px;
+  height: 27px;
+  border: 3px solid #fff;
+  border-radius: 50% 50% 50% 0;
+  background: #6d28d9;
+  transform: rotate(-45deg);
+}
+
+.location-marker-pin::after {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #fff;
+  content: "";
+  transform: translate(-50%, -50%);
+}
+
+.location-marker:focus-visible {
+  border-radius: 10px;
+  outline: 3px solid rgba(109, 40, 217, 0.35);
+  outline-offset: 2px;
+}
+
+.location-popup {
+  display: grid;
+  max-width: 250px;
+  gap: 4px;
+  color: #26343e;
+}
+
+.location-popup strong {
+  overflow-wrap: anywhere;
+  font-size: 13px;
+}
+
+.location-popup span {
+  color: #5b21b6;
+  font-size: 11px;
+  font-weight: 750;
+}
+
+.location-popup p {
+  margin: 1px 0 0;
+  color: var(--muted);
+  font-size: 11px;
+  line-height: 1.4;
+  overflow-wrap: anywhere;
+}
+
 @media (max-width: 760px) {
   main {
     display: block;
@@ -625,6 +752,10 @@ output {
 
   .journey-note {
     margin-bottom: 12px;
+  }
+
+  .location-suggestions {
+    max-height: min(30dvh, 260px);
   }
 
   .legend-list {
