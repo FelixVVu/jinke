@@ -1,0 +1,8694 @@
+{
+  "type": "FeatureCollection",
+  "metadata": {
+    "source": {
+      "title": "MetroMapOpenMiniProgram — Shanghai network data",
+      "url": "https://github.com/metromancn/MetroMapOpenMiniProgram/blob/087310aa159d44583cc5fef240466439570dbd62/src/data/sh.js",
+      "commit": "087310aa159d44583cc5fef240466439570dbd62",
+      "retrieved_date": "2026-08-05",
+      "license": "MIT",
+      "license_url": "https://github.com/metromancn/MetroMapOpenMiniProgram/blob/087310aa159d44583cc5fef240466439570dbd62/LICENSE"
+    },
+    "derivation": "Urban metro lines 1–18 and Pujiang Line only. Coordinates were converted from the source's China-map coordinates to WGS84. Polylines connect stations in service order and are schematic display geometry, not surveyed track centerlines."
+  },
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "station": "爱国路",
+        "name_zh": "爱国路",
+        "name_latin": "aiguolu",
+        "lines": [
+          "12"
+        ],
+        "line_count": 1,
+        "interchange": false,
+        "source": "MetroMapOpenMiniProgram"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.548376,
+          31.281914
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "station": "安亭",
+        "name_zh": "安亭",
+        "name_latin": "anting",
+        "lines": [
+          "11"
+        ],
+        "line_count": 1,
+        "interchange": false,
+        "source": "MetroMapOpenMiniProgram"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.157427,
+          31.290366
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "station": "鞍山新村",
+        "name_zh": "鞍山新村",
+        "name_latin": "anshanxincun",
+        "lines": [
+          "8"
+        ],
+        "line_count": 1,
+        "interchange": false,
+        "source": "MetroMapOpenMiniProgram"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.505265,
+          31.275256
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "station": "白银路",
+        "name_zh": "白银路",
+        "name_latin": "baiyinlu",
+        "lines": [
+          "11"
+        ],
+        "line_count": 1,
+        "interchange": false,
+        "source": "MetroMapOpenMiniProgram"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.240913,
+          31.347333
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "station": "宝安公路",
+        "name_zh": "宝安公路",
+        "name_latin": "baoangonglu",
+        "lines": [
+          "1"
+        ],
+        "line_count": 1,
+        "interchange": false,
+        "source": "MetroMapOpenMiniProgram"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.42627,
+          31.371348
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "station": "宝山路",
+        "name_zh": "宝山路",
+        "name_latin": "baoshanlu",
+        "lines": [
+          "3",
+          "4"
+        ],
+        "line_count": 2,
+        "interchange": true,
+        "source": "MetroMapOpenMiniProgram"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.471752,
+          31.253445
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "station": "宝杨路",
+        "name_zh": "宝杨路",
+        "name_latin": "baoyanglu",
+        "lines": [
+          "3"
+        ],
+        "line_count": 1,
+        "interchange": false,
+        "source": "MetroMapOpenMiniProgram"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.475038,
+          31.397194
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "station": "北蔡",
+        "name_zh": "北蔡",
+        "name_latin": "beicai",
+        "lines": [
+          "13"
+        ],
+        "line_count": 1,
+        "interchange": false,
+        "source": "MetroMapOpenMiniProgram"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.547742,
+          31.182302
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "station": "北桥",
+        "name_zh": "北桥",
+        "name_latin": "beiqiao",
+        "lines": [
+          "5"
+        ],
+        "line_count": 1,
+        "interchange": false,
+        "source": "MetroMapOpenMiniProgram"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.405419,
+          31.047042
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "station": "北新泾",
+        "name_zh": "北新泾",
+        "name_latin": "beixinjing",
+        "lines": [
+          "2"
+        ],
+        "line_count": 1,
+        "interchange": false,
+        "source": "MetroMapOpenMiniProgram"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.369361,
+          31.218258
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "station": "北洋泾路",
+        "name_zh": "北洋泾路",
+        "name_latin": "beiyangjinglu",
+        "lines": [
+          "6"
+        ],
+        "line_count": 1,
+        "interchange": false,
+        "source": "MetroMapOpenMiniProgram"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.548038,
+          31.241286
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "station": "北中路",
+        "name_zh": "北中路",
+        "name_latin": "beizhonglu",
+        "lines": [
+          "18"
+        ],
+        "line_count": 1,
+        "interchange": false,
+        "source": "MetroMapOpenMiniProgram"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.557107,
+          31.18495
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "station": "博兴路",
+        "name_zh": "博兴路",
+        "name_latin": "boxinglu",
+        "lines": [
+          "6"
+        ],
+        "line_count": 1,
+        "interchange": false,
+        "source": "MetroMapOpenMiniProgram"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.582476,
+          31.265701
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "station": "曹路",
+        "name_zh": "曹路",
+        "name_latin": "caolu",
+        "lines": [
+          "9"
+        ],
+        "line_count": 1,
+        "interchange": false,
+        "source": "MetroMapOpenMiniProgram"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.678848,
+          31.273374
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "station": "曹杨路",
+        "name_zh": "曹杨路",
+        "name_latin": "caoyanglu",
+        "lines": [
+          "3",
+          "4",
+          "11",
+          "14"
+        ],
+        "line_count": 4,
+        "interchange": true,
+        "source": "MetroMapOpenMiniProgram"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.411954,
+          31.240266
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "station": "漕宝路",
+        "name_zh": "漕宝路",
+        "name_latin": "caobaolu",
+        "lines": [
+          "1",
+          "12"
+        ],
+        "line_count": 2,
+        "interchange": true,
+        "source": "MetroMapOpenMiniProgram"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.430097,
+          31.170223
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "station": "漕河泾开发区",
+        "name_zh": "漕河泾开发区",
+        "name_latin": "caohejingkaifaqu",
+        "lines": [
+          "9"
+        ],
+        "line_count": 1,
+        "interchange": false,
+        "source": "MetroMapOpenMiniProgram"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.39312,
+          31.172504
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "station": "漕溪路",
+        "name_zh": "漕溪路",
+        "name_latin": "caoxilu",
+        "lines": [
+          "3"
+        ],
+        "line_count": 1,
+        "interchange": false,
+        "source": "MetroMapOpenMiniProgram"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.433789,
+          31.178634
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "station": "漕盈路",
+        "name_zh": "漕盈路",
+        "name_latin": "caoyinglu",
+        "lines": [
+          "17"
+        ],
+        "line_count": 1,
+        "interchange": false,
+        "source": "MetroMapOpenMiniProgram"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.092268,
+          31.162349
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "station": "昌吉东路",
+        "name_zh": "昌吉东路",
+        "name_latin": "changjidonglu",
+        "lines": [
+          "11"
+        ],
+        "line_count": 1,
+        "interchange": false,
+        "source": "MetroMapOpenMiniProgram"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.195894,
+          31.295565
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "station": "昌平路",
+        "name_zh": "昌平路",
+        "name_latin": "changpinglu",
+        "lines": [
+          "7"
+        ],
+        "line_count": 1,
+        "interchange": false,
+        "source": "MetroMapOpenMiniProgram"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.438001,
+          31.23561
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "station": "昌邑路",
+        "name_zh": "昌邑路",
+        "name_latin": "changyilu",
+        "lines": [
+          "14",
+          "18"
+        ],
+        "line_count": 2,
+        "interchange": true,
+        "source": "MetroMapOpenMiniProgram"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.535793,
+          31.246056
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "station": "常熟路",
+        "name_zh": "常熟路",
+        "name_latin": "changshulu",
+        "lines": [
+          "1",
+          "7"
+        ],
+        "line_count": 2,
+        "interchange": true,
+        "source": "MetroMapOpenMiniProgram"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.446449,
+          31.215265
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "station": "场中路",
+        "name_zh": "场中路",
+        "name_latin": "changzhonglu",
+        "lines": [
+          "7"
+        ],
+        "line_count": 1,
+        "interchange": false,
+        "source": "MetroMapOpenMiniProgram"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.408803,
+          31.305484
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "station": "陈春路",
+        "name_zh": "陈春路",
+        "name_latin": "chenchunlu",
+        "lines": [
+          "13"
+        ],
+        "line_count": 1,
+        "interchange": false,
+        "source": "MetroMapOpenMiniProgram"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.553937,
+          31.177283
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "station": "陈翔公路",
+        "name_zh": "陈翔公路",
+        "name_latin": "chenxianggonglu",
+        "lines": [
+          "11"
+        ],
+        "line_count": 1,
+        "interchange": false,
+        "source": "MetroMapOpenMiniProgram"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.302289,
+          31.308424
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "station": "成山路",
+        "name_zh": "成山路",
+        "name_latin": "chengshanlu",
+        "lines": [
+          "8",
+          "13"
+        ],
+        "line_count": 2,
+        "interchange": true,
+        "source": "MetroMapOpenMiniProgram"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.491617,
+          31.173378
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "station": "赤峰路",
+        "name_zh": "赤峰路",
+        "name_latin": "chifenglu",
+        "lines": [
+          "3"
+        ],
+        "line_count": 1,
+        "interchange": false,
+        "source": "MetroMapOpenMiniProgram"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.477915,
+          31.283178
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "station": "川沙",
+        "name_zh": "川沙",
+        "name_latin": "chuansha",
+        "lines": [
+          "2"
+        ],
+        "line_count": 1,
+        "interchange": false,
+        "source": "MetroMapOpenMiniProgram"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.693881,
+          31.188844
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "station": "创新中路",
+        "name_zh": "创新中路",
+        "name_latin": "chuangxinzhonglu",
+        "lines": [
+          "2"
+        ],
+        "line_count": 1,
+        "interchange": false,
+        "source": "MetroMapOpenMiniProgram"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.669434,
+          31.215999
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "station": "春申路",
+        "name_zh": "春申路",
+        "name_latin": "chunshenlu",
+        "lines": [
+          "5"
+        ],
+        "line_count": 1,
+        "interchange": false,
+        "source": "MetroMapOpenMiniProgram"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.381192,
+          31.100159
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "station": "打浦桥",
+        "name_zh": "打浦桥",
+        "name_latin": "dapuqiao",
+        "lines": [
+          "9"
+        ],
+        "line_count": 1,
+        "interchange": false,
+        "source": "MetroMapOpenMiniProgram"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.464127,
+          31.208239
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "station": "大柏树",
+        "name_zh": "大柏树",
+        "name_latin": "dabaishu",
+        "lines": [
+          "3"
+        ],
+        "line_count": 1,
+        "interchange": false,
+        "source": "MetroMapOpenMiniProgram"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.478707,
+          31.291359
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "station": "大场镇",
+        "name_zh": "大场镇",
+        "name_latin": "dachangzhen",
+        "lines": [
+          "7"
+        ],
+        "line_count": 1,
+        "interchange": false,
+        "source": "MetroMapOpenMiniProgram"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.411504,
+          31.295072
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "station": "大渡河路",
+        "name_zh": "大渡河路",
+        "name_latin": "daduhelu",
+        "lines": [
+          "13",
+          "15"
+        ],
+        "line_count": 2,
+        "interchange": true,
+        "source": "MetroMapOpenMiniProgram"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.391589,
+          31.233692
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "station": "大华三路",
+        "name_zh": "大华三路",
+        "name_latin": "dahuasanlu",
+        "lines": [
+          "7"
+        ],
+        "line_count": 1,
+        "interchange": false,
+        "source": "MetroMapOpenMiniProgram"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.418304,
+          31.275869
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "station": "大连路",
+        "name_zh": "大连路",
+        "name_latin": "dalianlu",
+        "lines": [
+          "4",
+          "12"
+        ],
+        "line_count": 2,
+        "interchange": true,
+        "source": "MetroMapOpenMiniProgram"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.508686,
+          31.259978
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "station": "大木桥路",
+        "name_zh": "大木桥路",
+        "name_latin": "damuqiaolu",
+        "lines": [
+          "4",
+          "12"
+        ],
+        "line_count": 2,
+        "interchange": true,
+        "source": "MetroMapOpenMiniProgram"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.459153,
+          31.19614
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "station": "大世界",
+        "name_zh": "大世界",
+        "name_latin": "dashijie",
+        "lines": [
+          "8",
+          "14"
+        ],
+        "line_count": 2,
+        "interchange": true,
+        "source": "MetroMapOpenMiniProgram"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.475207,
+          31.228557
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "station": "丹阳路",
+        "name_zh": "丹阳路",
+        "name_latin": "danyanglu",
+        "lines": [
+          "18"
+        ],
+        "line_count": 1,
+        "interchange": false,
+        "source": "MetroMapOpenMiniProgram"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.526823,
+          31.255904
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "station": "德平路",
+        "name_zh": "德平路",
+        "name_latin": "depinglu",
+        "lines": [
+          "6"
+        ],
+        "line_count": 1,
+        "interchange": false,
+        "source": "MetroMapOpenMiniProgram"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.559987,
+          31.247561
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "station": "滴水湖",
+        "name_zh": "滴水湖",
+        "name_latin": "dishuihu",
+        "lines": [
+          "16"
+        ],
+        "line_count": 1,
+        "interchange": false,
+        "source": "MetroMapOpenMiniProgram"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.925495,
+          30.909608
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "station": "迪士尼",
+        "name_zh": "迪士尼",
+        "name_latin": "dishini",
+        "lines": [
+          "11"
+        ],
+        "line_count": 1,
+        "interchange": false,
+        "source": "MetroMapOpenMiniProgram"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.663692,
+          31.143428
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "station": "淀山湖大道",
+        "name_zh": "淀山湖大道",
+        "name_latin": "dianshanhudadao",
+        "lines": [
+          "17"
+        ],
+        "line_count": 1,
+        "interchange": false,
+        "source": "MetroMapOpenMiniProgram"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.077531,
+          31.136358
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "station": "定边路",
+        "name_zh": "定边路",
+        "name_latin": "dingbianlu",
+        "lines": [
+          "14"
+        ],
+        "line_count": 1,
+        "interchange": false,
+        "source": "MetroMapOpenMiniProgram"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.357781,
+          31.258256
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "station": "东安路",
+        "name_zh": "东安路",
+        "name_latin": "donganlu",
+        "lines": [
+          "4",
+          "7"
+        ],
+        "line_count": 2,
+        "interchange": true,
+        "source": "MetroMapOpenMiniProgram"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.450308,
+          31.192722
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "station": "东宝兴路",
+        "name_zh": "东宝兴路",
+        "name_latin": "dongbaoxinglu",
+        "lines": [
+          "3"
+        ],
+        "line_count": 1,
+        "interchange": false,
+        "source": "MetroMapOpenMiniProgram"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.47568,
+          31.261821
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "station": "东城一路",
+        "name_zh": "东城一路",
+        "name_latin": "dongchengyilu",
+        "lines": [
+          "pujiang"
+        ],
+        "line_count": 1,
+        "interchange": false,
+        "source": "MetroMapOpenMiniProgram"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.52778,
+          31.032597
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "station": "东川路",
+        "name_zh": "东川路",
+        "name_latin": "dongchuanlu",
+        "lines": [
+          "5"
+        ],
+        "line_count": 1,
+        "interchange": false,
+        "source": "MetroMapOpenMiniProgram"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.415269,
+          31.02015
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "station": "东方绿舟",
+        "name_zh": "东方绿舟",
+        "name_latin": "dongfanglvzhou",
+        "lines": [
+          "17"
+        ],
+        "line_count": 1,
+        "interchange": false,
+        "source": "MetroMapOpenMiniProgram"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.0151,
+          31.1006
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "station": "东方体育中心",
+        "name_zh": "东方体育中心",
+        "name_latin": "dongfangtiyuzhongxin",
+        "lines": [
+          "6",
+          "8",
+          "11"
+        ],
+        "line_count": 3,
+        "interchange": true,
+        "source": "MetroMapOpenMiniProgram"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.475791,
+          31.155346
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "station": "东靖路",
+        "name_zh": "东靖路",
+        "name_latin": "dongjinglu",
+        "lines": [
+          "6"
+        ],
+        "line_count": 1,
+        "interchange": false,
+        "source": "MetroMapOpenMiniProgram"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.584518,
+          31.292854
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "station": "东兰路",
+        "name_zh": "东兰路",
+        "name_latin": "donglanlu",
+        "lines": [
+          "12"
+        ],
+        "line_count": 1,
+        "interchange": false,
+        "source": "MetroMapOpenMiniProgram"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.387284,
+          31.157702
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "station": "东陆路",
+        "name_zh": "东陆路",
+        "name_latin": "donglulu",
+        "lines": [
+          "12"
+        ],
+        "line_count": 1,
+        "interchange": false,
+        "source": "MetroMapOpenMiniProgram"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.574895,
+          31.284699
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "station": "东明路",
+        "name_zh": "东明路",
+        "name_latin": "dongminglu",
+        "lines": [
+          "6",
+          "13"
+        ],
+        "line_count": 2,
+        "interchange": true,
+        "source": "MetroMapOpenMiniProgram"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.506446,
+          31.174787
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "station": "洞泾",
+        "name_zh": "洞泾",
+        "name_latin": "dongjing",
+        "lines": [
+          "9"
+        ],
+        "line_count": 1,
+        "interchange": false,
+        "source": "MetroMapOpenMiniProgram"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.226048,
+          31.086576
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "station": "繁荣路",
+        "name_zh": "繁荣路",
+        "name_latin": "fanronglu",
+        "lines": [
+          "18"
+        ],
+        "line_count": 1,
+        "interchange": false,
+        "source": "MetroMapOpenMiniProgram"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.566326,
+          31.104799
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "station": "芳甸路",
+        "name_zh": "芳甸路",
+        "name_latin": "fangdianlu",
+        "lines": [
+          "9"
+        ],
+        "line_count": 1,
+        "interchange": false,
+        "source": "MetroMapOpenMiniProgram"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.554173,
+          31.234002
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "station": "芳华路",
+        "name_zh": "芳华路",
+        "name_latin": "fanghualu",
+        "lines": [
+          "7"
+        ],
+        "line_count": 1,
+        "interchange": false,
+        "source": "MetroMapOpenMiniProgram"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.545838,
+          31.19527
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "station": "芳芯路",
+        "name_zh": "芳芯路",
+        "name_latin": "fangxinlu",
+        "lines": [
+          "18"
+        ],
+        "line_count": 1,
+        "interchange": false,
+        "source": "MetroMapOpenMiniProgram"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.55497,
+          31.193334
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "station": "丰翔路",
+        "name_zh": "丰翔路",
+        "name_latin": "fengxianglu",
+        "lines": [
+          "15"
+        ],
+        "line_count": 1,
+        "interchange": false,
+        "source": "MetroMapOpenMiniProgram"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.37623,
+          31.310037
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "station": "丰庄",
+        "name_zh": "丰庄",
+        "name_latin": "fengzhuang",
+        "lines": [
+          "13"
+        ],
+        "line_count": 1,
+        "interchange": false,
+        "source": "MetroMapOpenMiniProgram"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.350545,
+          31.244431
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "station": "枫桥路",
+        "name_zh": "枫桥路",
+        "name_latin": "fengqiaolu",
+        "lines": [
+          "11"
+        ],
+        "line_count": 1,
+        "interchange": false,
+        "source": "MetroMapOpenMiniProgram"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.406753,
+          31.243683
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "station": "封浜",
+        "name_zh": "封浜",
+        "name_latin": "fengbang",
+        "lines": [
+          "14"
+        ],
+        "line_count": 1,
+        "interchange": false,
+        "source": "MetroMapOpenMiniProgram"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.292537,
+          31.269458
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "station": "奉浦大道",
+        "name_zh": "奉浦大道",
+        "name_latin": "fengpudadao",
+        "lines": [
+          "5"
+        ],
+        "line_count": 1,
+        "interchange": false,
+        "source": "MetroMapOpenMiniProgram"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.444405,
+          30.944085
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "station": "奉贤新城",
+        "name_zh": "奉贤新城",
+        "name_latin": "fengxianxincheng",
+        "lines": [
+          "5"
+        ],
+        "line_count": 1,
+        "interchange": false,
+        "source": "MetroMapOpenMiniProgram"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.491857,
+          30.916083
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "station": "抚顺路",
+        "name_zh": "抚顺路",
+        "name_latin": "fushunlu",
+        "lines": [
+          "18"
+        ],
+        "line_count": 1,
+        "interchange": false,
+        "source": "MetroMapOpenMiniProgram"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.511394,
+          31.285691
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "station": "复旦大学",
+        "name_zh": "复旦大学",
+        "name_latin": "fudandaxue",
+        "lines": [
+          "18"
+        ],
+        "line_count": 1,
+        "interchange": false,
+        "source": "MetroMapOpenMiniProgram"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.495073,
+          31.298324
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "station": "复兴岛",
+        "name_zh": "复兴岛",
+        "name_latin": "fuxingdao",
+        "lines": [
+          "12"
+        ],
+        "line_count": 1,
+        "interchange": false,
+        "source": "MetroMapOpenMiniProgram"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.557061,
+          31.282923
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "station": "富锦路",
+        "name_zh": "富锦路",
+        "name_latin": "fujinlu",
+        "lines": [
+          "1"
+        ],
+        "line_count": 1,
+        "interchange": false,
+        "source": "MetroMapOpenMiniProgram"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.42,
+          31.394039
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "station": "港城路",
+        "name_zh": "港城路",
+        "name_latin": "gangchenglu",
+        "lines": [
+          "6",
+          "10"
+        ],
+        "line_count": 2,
+        "interchange": true,
+        "source": "MetroMapOpenMiniProgram"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.570777,
+          31.355223
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "station": "高科西路",
+        "name_zh": "高科西路",
+        "name_latin": "gaokexilu",
+        "lines": [
+          "6",
+          "7"
+        ],
+        "line_count": 2,
+        "interchange": true,
+        "source": "MetroMapOpenMiniProgram"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.505443,
+          31.187821
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "station": "高桥",
+        "name_zh": "高桥",
+        "name_latin": "gaoqiao",
+        "lines": [
+          "10"
+        ],
+        "line_count": 1,
+        "interchange": false,
+        "source": "MetroMapOpenMiniProgram"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.55871,
+          31.354739
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "station": "高桥西",
+        "name_zh": "高桥西",
+        "name_latin": "gaoqiaoxi",
+        "lines": [
+          "10"
+        ],
+        "line_count": 1,
+        "interchange": false,
+        "source": "MetroMapOpenMiniProgram"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.544986,
+          31.353585
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "station": "高青路",
+        "name_zh": "高青路",
+        "name_latin": "gaoqinglu",
+        "lines": [
+          "6"
+        ],
+        "line_count": 1,
+        "interchange": false,
+        "source": "MetroMapOpenMiniProgram"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.511404,
+          31.161995
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "station": "共富新村",
+        "name_zh": "共富新村",
+        "name_latin": "gongfuxincun",
+        "lines": [
+          "1"
+        ],
+        "line_count": 1,
+        "interchange": false,
+        "source": "MetroMapOpenMiniProgram"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.42942,
+          31.356883
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "station": "共康路",
+        "name_zh": "共康路",
+        "name_latin": "gongkanglu",
+        "lines": [
+          "1"
+        ],
+        "line_count": 1,
+        "interchange": false,
+        "source": "MetroMapOpenMiniProgram"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.442445,
+          31.32077
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "station": "古浪路",
+        "name_zh": "古浪路",
+        "name_latin": "gulanglu",
+        "lines": [
+          "15"
+        ],
+        "line_count": 1,
+        "interchange": false,
+        "source": "MetroMapOpenMiniProgram"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.387563,
+          31.286327
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "station": "顾村公园",
+        "name_zh": "顾村公园",
+        "name_latin": "gucungongyuan",
+        "lines": [
+          "7",
+          "15"
+        ],
+        "line_count": 2,
+        "interchange": true,
+        "source": "MetroMapOpenMiniProgram"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.368376,
+          31.346406
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "station": "顾戴路",
+        "name_zh": "顾戴路",
+        "name_latin": "gudailu",
+        "lines": [
+          "12"
+        ],
+        "line_count": 1,
+        "interchange": false,
+        "source": "MetroMapOpenMiniProgram"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.387214,
+          31.142773
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "station": "顾唐路",
+        "name_zh": "顾唐路",
+        "name_latin": "gutanglu",
+        "lines": [
+          "9"
+        ],
+        "line_count": 1,
+        "interchange": false,
+        "source": "MetroMapOpenMiniProgram"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.652202,
+          31.268208
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "station": "光明路",
+        "name_zh": "光明路",
+        "name_latin": "guangminglu",
+        "lines": [
+          "11"
+        ],
+        "line_count": 1,
+        "interchange": false,
+        "source": "MetroMapOpenMiniProgram"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.112565,
+          31.298024
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "station": "广兰路",
+        "name_zh": "广兰路",
+        "name_latin": "guanglanlu",
+        "lines": [
+          "2"
+        ],
+        "line_count": 1,
+        "interchange": false,
+        "source": "MetroMapOpenMiniProgram"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.616868,
+          31.213251
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "station": "桂林公园",
+        "name_zh": "桂林公园",
+        "name_latin": "guilingongyuan",
+        "lines": [
+          "12",
+          "15"
+        ],
+        "line_count": 2,
+        "interchange": true,
+        "source": "MetroMapOpenMiniProgram"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.414029,
+          31.168721
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "station": "桂林路",
+        "name_zh": "桂林路",
+        "name_latin": "guilinlu",
+        "lines": [
+          "9",
+          "15"
+        ],
+        "line_count": 2,
+        "interchange": true,
+        "source": "MetroMapOpenMiniProgram"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.413417,
+          31.176656
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "station": "桂桥路",
+        "name_zh": "桂桥路",
+        "name_latin": "guiqiaolu",
+        "lines": [
+          "14"
+        ],
+        "line_count": 1,
+        "interchange": false,
+        "source": "MetroMapOpenMiniProgram"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.630868,
+          31.251591
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "station": "国帆路",
+        "name_zh": "国帆路",
+        "name_latin": "guofanlu",
+        "lines": [
+          "10"
+        ],
+        "line_count": 1,
+        "interchange": false,
+        "source": "MetroMapOpenMiniProgram"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.508758,
+          31.341546
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "station": "国际客运中心",
+        "name_zh": "国际客运中心",
+        "name_latin": "guojikeyunzhongxin",
+        "lines": [
+          "12"
+        ],
+        "line_count": 1,
+        "interchange": false,
+        "source": "MetroMapOpenMiniProgram"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.4937,
+          31.252153
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "station": "国家会展中心",
+        "name_zh": "国家会展中心",
+        "name_latin": "guojiahuizhanzhongxin2",
+        "lines": [
+          "2",
+          "17"
+        ],
+        "line_count": 2,
+        "interchange": true,
+        "source": "MetroMapOpenMiniProgram"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.291652,
+          31.192031
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "station": "国权路",
+        "name_zh": "国权路",
+        "name_latin": "guoquanlu",
+        "lines": [
+          "10",
+          "18"
+        ],
+        "line_count": 2,
+        "interchange": true,
+        "source": "MetroMapOpenMiniProgram"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.505793,
+          31.291636
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "station": "海伦路",
+        "name_zh": "海伦路",
+        "name_latin": "hailunlu",
+        "lines": [
+          "4",
+          "10"
+        ],
+        "line_count": 2,
+        "interchange": true,
+        "source": "MetroMapOpenMiniProgram"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.484024,
+          31.260788
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "station": "海天三路",
+        "name_zh": "海天三路",
+        "name_latin": "haitiansanlu",
+        "lines": [
+          "2"
+        ],
+        "line_count": 1,
+        "interchange": false,
+        "source": "MetroMapOpenMiniProgram"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.792547,
+          31.170536
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "station": "汉中路",
+        "name_zh": "汉中路",
+        "name_latin": "hanzhonglu",
+        "lines": [
+          "1",
+          "12",
+          "13"
+        ],
+        "line_count": 3,
+        "interchange": true,
+        "source": "MetroMapOpenMiniProgram"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.454119,
+          31.243773
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "station": "航津路",
+        "name_zh": "航津路",
+        "name_latin": "hangjinlu",
+        "lines": [
+          "6"
+        ],
+        "line_count": 1,
+        "interchange": false,
+        "source": "MetroMapOpenMiniProgram"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.589758,
+          31.337528
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "station": "航头",
+        "name_zh": "航头",
+        "name_latin": "hangtou",
+        "lines": [
+          "18"
+        ],
+        "line_count": 1,
+        "interchange": false,
+        "source": "MetroMapOpenMiniProgram"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.591896,
+          31.039606
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "station": "航头东",
+        "name_zh": "航头东",
+        "name_latin": "hangtoudong",
+        "lines": [
+          "16"
+        ],
+        "line_count": 1,
+        "interchange": false,
+        "source": "MetroMapOpenMiniProgram"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.613297,
+          31.057202
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "station": "航中路",
+        "name_zh": "航中路",
+        "name_latin": "hangzhonglu",
+        "lines": [
+          "10"
+        ],
+        "line_count": 1,
+        "interchange": false,
+        "source": "MetroMapOpenMiniProgram"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.350759,
+          31.167337
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "station": "合川路",
+        "name_zh": "合川路",
+        "name_latin": "hechuanlu",
+        "lines": [
+          "9"
+        ],
+        "line_count": 1,
+        "interchange": false,
+        "source": "MetroMapOpenMiniProgram"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.380139,
+          31.168418
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "station": "鹤沙航城",
+        "name_zh": "鹤沙航城",
+        "name_latin": "heshahangcheng",
+        "lines": [
+          "16"
+        ],
+        "line_count": 1,
+        "interchange": false,
+        "source": "MetroMapOpenMiniProgram"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.607048,
+          31.080072
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "station": "鹤涛路",
+        "name_zh": "鹤涛路",
+        "name_latin": "hetaolu",
+        "lines": [
+          "18"
+        ],
+        "line_count": 1,
+        "interchange": false,
+        "source": "MetroMapOpenMiniProgram"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.581761,
+          31.074139
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "station": "衡山路",
+        "name_zh": "衡山路",
+        "name_latin": "hengshanlu",
+        "lines": [
+          "1"
+        ],
+        "line_count": 1,
+        "interchange": false,
+        "source": "MetroMapOpenMiniProgram"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.441813,
+          31.206404
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "station": "红宝石路",
+        "name_zh": "红宝石路",
+        "name_latin": "hongbaoshilu",
+        "lines": [
+          "15"
+        ],
+        "line_count": 1,
+        "interchange": false,
+        "source": "MetroMapOpenMiniProgram"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.393727,
+          31.200717
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "station": "虹漕路",
+        "name_zh": "虹漕路",
+        "name_latin": "hongcaolu",
+        "lines": [
+          "12"
+        ],
+        "line_count": 1,
+        "interchange": false,
+        "source": "MetroMapOpenMiniProgram"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.405905,
+          31.165897
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "station": "虹口足球场",
+        "name_zh": "虹口足球场",
+        "name_latin": "hongkouzuqiuchang",
+        "lines": [
+          "3",
+          "8"
+        ],
+        "line_count": 2,
+        "interchange": true,
+        "source": "MetroMapOpenMiniProgram"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.474764,
+          31.271824
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "station": "虹梅路",
+        "name_zh": "虹梅路",
+        "name_latin": "hongmeilu",
+        "lines": [
+          "12"
+        ],
+        "line_count": 1,
+        "interchange": false,
+        "source": "MetroMapOpenMiniProgram"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.392609,
+          31.162218
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "station": "虹梅南路",
+        "name_zh": "虹梅南路",
+        "name_latin": "hongmeinanlu",
+        "lines": [
+          "15"
+        ],
+        "line_count": 1,
+        "interchange": false,
+        "source": "MetroMapOpenMiniProgram"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.428436,
+          31.105755
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "station": "虹桥1号航站楼",
+        "name_zh": "虹桥1号航站楼",
+        "name_latin": "hongqiaoyihaohangzhanlou",
+        "lines": [
+          "10"
+        ],
+        "line_count": 1,
+        "interchange": false,
+        "source": "MetroMapOpenMiniProgram"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.342799,
+          31.193281
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "station": "虹桥2号航站楼",
+        "name_zh": "虹桥2号航站楼",
+        "name_latin": "hongqiaoerhaohangzhanlou",
+        "lines": [
+          "2",
+          "10"
+        ],
+        "line_count": 2,
+        "interchange": true,
+        "source": "MetroMapOpenMiniProgram"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.321773,
+          31.19617
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "station": "虹桥火车站",
+        "name_zh": "虹桥火车站",
+        "name_latin": "hongqiaohuochezhan",
+        "lines": [
+          "2",
+          "10",
+          "17"
+        ],
+        "line_count": 3,
+        "interchange": true,
+        "source": "MetroMapOpenMiniProgram"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.314428,
+          31.195985
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "station": "虹桥路",
+        "name_zh": "虹桥路",
+        "name_latin": "hongqiaolu",
+        "lines": [
+          "3",
+          "4",
+          "10"
+        ],
+        "line_count": 3,
+        "interchange": true,
+        "source": "MetroMapOpenMiniProgram"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.416573,
+          31.198152
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "station": "虹莘路",
+        "name_zh": "虹莘路",
+        "name_latin": "hongxinlu",
+        "lines": [
+          "12"
+        ],
+        "line_count": 1,
+        "interchange": false,
+        "source": "MetroMapOpenMiniProgram"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.375721,
+          31.139342
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "station": "后滩",
+        "name_zh": "后滩",
+        "name_latin": "houtan",
+        "lines": [
+          "7"
+        ],
+        "line_count": 1,
+        "interchange": false,
+        "source": "MetroMapOpenMiniProgram"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.46922,
+          31.173878
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "station": "呼兰路",
+        "name_zh": "呼兰路",
+        "name_latin": "hulanlu",
+        "lines": [
+          "1"
+        ],
+        "line_count": 1,
+        "interchange": false,
+        "source": "MetroMapOpenMiniProgram"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.433074,
+          31.341515
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "station": "花木路",
+        "name_zh": "花木路",
+        "name_latin": "huamulu",
+        "lines": [
+          "7"
+        ],
+        "line_count": 1,
+        "interchange": false,
+        "source": "MetroMapOpenMiniProgram"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.558507,
+          31.213389
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "station": "花桥",
+        "name_zh": "花桥",
+        "name_latin": "huaqiao",
+        "lines": [
+          "11"
+        ],
+        "line_count": 1,
+        "interchange": false,
+        "source": "MetroMapOpenMiniProgram"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.099785,
+          31.300598
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "station": "华东理工大学",
+        "name_zh": "华东理工大学",
+        "name_latin": "huadongligongdaxue",
+        "lines": [
+          "15"
+        ],
+        "line_count": 1,
+        "interchange": false,
+        "source": "MetroMapOpenMiniProgram"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.424362,
+          31.146144
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "station": "华宁路",
+        "name_zh": "华宁路",
+        "name_latin": "huaninglu",
+        "lines": [
+          "5"
+        ],
+        "line_count": 1,
+        "interchange": false,
+        "source": "MetroMapOpenMiniProgram"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.390628,
+          31.009421
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "station": "华鹏路",
+        "name_zh": "华鹏路",
+        "name_latin": "huapenglu",
+        "lines": [
+          "13"
+        ],
+        "line_count": 1,
+        "interchange": false,
+        "source": "MetroMapOpenMiniProgram"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.522217,
+          31.178385
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "station": "华夏东路",
+        "name_zh": "华夏东路",
+        "name_latin": "huaxiadonglu",
+        "lines": [
+          "2"
+        ],
+        "line_count": 1,
+        "interchange": false,
+        "source": "MetroMapOpenMiniProgram"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.67667,
+          31.1987
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "station": "华夏西路",
+        "name_zh": "华夏西路",
+        "name_latin": "huaxiaxilu",
+        "lines": [
+          "6"
+        ],
+        "line_count": 1,
+        "interchange": false,
+        "source": "MetroMapOpenMiniProgram"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.510147,
+          31.151966
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "station": "华夏中路",
+        "name_zh": "华夏中路",
+        "name_latin": "huaxiazhonglu",
+        "lines": [
+          "13",
+          "16"
+        ],
+        "line_count": 2,
+        "interchange": true,
+        "source": "MetroMapOpenMiniProgram"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.579144,
+          31.177205
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "station": "淮海中路",
+        "name_zh": "淮海中路",
+        "name_latin": "huaihaizhonglu",
+        "lines": [
+          "13"
+        ],
+        "line_count": 1,
+        "interchange": false,
+        "source": "MetroMapOpenMiniProgram"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.459791,
+          31.221967
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "station": "环城东路",
+        "name_zh": "环城东路",
+        "name_latin": "huanchengdonglu",
+        "lines": [
+          "5"
+        ],
+        "line_count": 1,
+        "interchange": false,
+        "source": "MetroMapOpenMiniProgram"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.458656,
+          30.93324
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "station": "黄兴公园",
+        "name_zh": "黄兴公园",
+        "name_latin": "huangxinggongyuan",
+        "lines": [
+          "8"
+        ],
+        "line_count": 1,
+        "interchange": false,
+        "source": "MetroMapOpenMiniProgram"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.529049,
+          31.29746
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "station": "黄兴路",
+        "name_zh": "黄兴路",
+        "name_latin": "huangxinglu",
+        "lines": [
+          "8"
+        ],
+        "line_count": 1,
+        "interchange": false,
+        "source": "MetroMapOpenMiniProgram"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.524052,
+          31.280884
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "station": "黄杨路",
+        "name_zh": "黄杨路",
+        "name_latin": "huangyanglu",
+        "lines": [
+          "14"
+        ],
+        "line_count": 1,
+        "interchange": false,
+        "source": "MetroMapOpenMiniProgram"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.586808,
+          31.236194
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "station": "汇金路",
+        "name_zh": "汇金路",
+        "name_latin": "huijinlu",
+        "lines": [
+          "17"
+        ],
+        "line_count": 1,
+        "interchange": false,
+        "source": "MetroMapOpenMiniProgram"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.147119,
+          31.163133
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "station": "汇臻路",
+        "name_zh": "汇臻路",
+        "name_latin": "huizhenlu",
+        "lines": [
+          "pujiang"
+        ],
+        "line_count": 1,
+        "interchange": false,
+        "source": "MetroMapOpenMiniProgram"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.52022,
+          31.027433
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "station": "惠南",
+        "name_zh": "惠南",
+        "name_latin": "huinan",
+        "lines": [
+          "16"
+        ],
+        "line_count": 1,
+        "interchange": false,
+        "source": "MetroMapOpenMiniProgram"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.757321,
+          31.055935
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "station": "惠南东",
+        "name_zh": "惠南东",
+        "name_latin": "huinandong",
+        "lines": [
+          "16"
+        ],
+        "line_count": 1,
+        "interchange": false,
+        "source": "MetroMapOpenMiniProgram"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.789488,
+          31.0286
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "station": "基隆路",
+        "name_zh": "基隆路",
+        "name_latin": "jilonglu",
+        "lines": [
+          "10"
+        ],
+        "line_count": 1,
+        "interchange": false,
+        "source": "MetroMapOpenMiniProgram"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.586189,
+          31.35346
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "station": "嘉定北",
+        "name_zh": "嘉定北",
+        "name_latin": "jiadingbei",
+        "lines": [
+          "11"
+        ],
+        "line_count": 1,
+        "interchange": false,
+        "source": "MetroMapOpenMiniProgram"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.2329,
+          31.393501
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "station": "嘉定西",
+        "name_zh": "嘉定西",
+        "name_latin": "jiadingxi",
+        "lines": [
+          "11"
+        ],
+        "line_count": 1,
+        "interchange": false,
+        "source": "MetroMapOpenMiniProgram"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.223406,
+          31.37906
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "station": "嘉定新城",
+        "name_zh": "嘉定新城",
+        "name_latin": "jiadingxincheng",
+        "lines": [
+          "11"
+        ],
+        "line_count": 1,
+        "interchange": false,
+        "source": "MetroMapOpenMiniProgram"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.249863,
+          31.332046
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "station": "嘉善路",
+        "name_zh": "嘉善路",
+        "name_latin": "jiashanlu",
+        "lines": [
+          "9",
+          "12"
+        ],
+        "line_count": 2,
+        "interchange": true,
+        "source": "MetroMapOpenMiniProgram"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.456316,
+          31.204771
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "station": "嘉松中路",
+        "name_zh": "嘉松中路",
+        "name_latin": "jiasongzhonglu",
+        "lines": [
+          "17"
+        ],
+        "line_count": 1,
+        "interchange": false,
+        "source": "MetroMapOpenMiniProgram"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.21946,
+          31.166139
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "station": "嘉怡路",
+        "name_zh": "嘉怡路",
+        "name_latin": "jiayilu",
+        "lines": [
+          "14"
+        ],
+        "line_count": 1,
+        "interchange": false,
+        "source": "MetroMapOpenMiniProgram"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.34112,
+          31.261084
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "station": "剑川路",
+        "name_zh": "剑川路",
+        "name_latin": "jianchuanlu",
+        "lines": [
+          "5"
+        ],
+        "line_count": 1,
+        "interchange": false,
+        "source": "MetroMapOpenMiniProgram"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.41195,
+          31.028429
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "station": "江川路",
+        "name_zh": "江川路",
+        "name_latin": "jiangchuanlu",
+        "lines": [
+          "5"
+        ],
+        "line_count": 1,
+        "interchange": false,
+        "source": "MetroMapOpenMiniProgram"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.41885,
+          31.007391
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "station": "江宁路",
+        "name_zh": "江宁路",
+        "name_latin": "jiangninglu",
+        "lines": [
+          "13"
+        ],
+        "line_count": 1,
+        "interchange": false,
+        "source": "MetroMapOpenMiniProgram"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.440212,
+          31.246142
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "station": "江浦公园",
+        "name_zh": "江浦公园",
+        "name_latin": "jiangpugongyuan",
+        "lines": [
+          "12",
+          "18"
+        ],
+        "line_count": 2,
+        "interchange": true,
+        "source": "MetroMapOpenMiniProgram"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.519326,
+          31.266627
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "station": "江浦路",
+        "name_zh": "江浦路",
+        "name_latin": "jiangpulu",
+        "lines": [
+          "8",
+          "18"
+        ],
+        "line_count": 2,
+        "interchange": true,
+        "source": "MetroMapOpenMiniProgram"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.51416,
+          31.277022
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "station": "江苏路",
+        "name_zh": "江苏路",
+        "name_latin": "jiangsulu",
+        "lines": [
+          "2",
+          "11"
+        ],
+        "line_count": 2,
+        "interchange": true,
+        "source": "MetroMapOpenMiniProgram"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.426316,
+          31.221362
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "station": "江湾体育场",
+        "name_zh": "江湾体育场",
+        "name_latin": "jiangwantiyuchang",
+        "lines": [
+          "10"
+        ],
+        "line_count": 1,
+        "interchange": false,
+        "source": "MetroMapOpenMiniProgram"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.508907,
+          31.306304
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "station": "江湾镇",
+        "name_zh": "江湾镇",
+        "name_latin": "jiangwanzhen",
+        "lines": [
+          "3"
+        ],
+        "line_count": 1,
+        "interchange": false,
+        "source": "MetroMapOpenMiniProgram"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.480552,
+          31.307492
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "station": "江杨北路",
+        "name_zh": "江杨北路",
+        "name_latin": "jiangyangbeilu",
+        "lines": [
+          "3"
+        ],
+        "line_count": 1,
+        "interchange": false,
+        "source": "MetroMapOpenMiniProgram"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.435181,
+          31.409649
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "station": "江月路",
+        "name_zh": "江月路",
+        "name_latin": "jiangyuelu",
+        "lines": [
+          "8"
+        ],
+        "line_count": 1,
+        "interchange": false,
+        "source": "MetroMapOpenMiniProgram"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.504192,
+          31.086357
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "station": "交通大学",
+        "name_zh": "交通大学",
+        "name_latin": "jiaotongdaxue",
+        "lines": [
+          "10",
+          "11"
+        ],
+        "line_count": 2,
+        "interchange": true,
+        "source": "MetroMapOpenMiniProgram"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.430616,
+          31.20408
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "station": "金海湖",
+        "name_zh": "金海湖",
+        "name_latin": "jinhaihu",
+        "lines": [
+          "5"
+        ],
+        "line_count": 1,
+        "interchange": false,
+        "source": "MetroMapOpenMiniProgram"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.488049,
+          30.930964
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "station": "金海路",
+        "name_zh": "金海路",
+        "name_latin": "jinhailu",
+        "lines": [
+          "9",
+          "12"
+        ],
+        "line_count": 2,
+        "interchange": true,
+        "source": "MetroMapOpenMiniProgram"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.634543,
+          31.265973
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "station": "金吉路",
+        "name_zh": "金吉路",
+        "name_latin": "jinjilu",
+        "lines": [
+          "9"
+        ],
+        "line_count": 1,
+        "interchange": false,
+        "source": "MetroMapOpenMiniProgram"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.624524,
+          31.266481
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "station": "金京路",
+        "name_zh": "金京路",
+        "name_latin": "jinjinglu",
+        "lines": [
+          "12"
+        ],
+        "line_count": 1,
+        "interchange": false,
+        "source": "MetroMapOpenMiniProgram"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.611269,
+          31.282001
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "station": "金科路",
+        "name_zh": "金科路",
+        "name_latin": "jinkelu",
+        "lines": [
+          "2"
+        ],
+        "line_count": 1,
+        "interchange": false,
+        "source": "MetroMapOpenMiniProgram"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.597798,
+          31.206421
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "station": "金平路",
+        "name_zh": "金平路",
+        "name_latin": "jinpinglu",
+        "lines": [
+          "5"
+        ],
+        "line_count": 1,
+        "interchange": false,
+        "source": "MetroMapOpenMiniProgram"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.405551,
+          31.013231
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "station": "金桥",
+        "name_zh": "金桥",
+        "name_latin": "jinqiao",
+        "lines": [
+          "9"
+        ],
+        "line_count": 1,
+        "interchange": false,
+        "source": "MetroMapOpenMiniProgram"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.607132,
+          31.263034
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "station": "金桥路",
+        "name_zh": "金桥路",
+        "name_latin": "jinqiaolu",
+        "lines": [
+          "6"
+        ],
+        "line_count": 1,
+        "interchange": false,
+        "source": "MetroMapOpenMiniProgram"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.577597,
+          31.259265
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "station": "金沙江路",
+        "name_zh": "金沙江路",
+        "name_latin": "jinshajianglu",
+        "lines": [
+          "3",
+          "4",
+          "13"
+        ],
+        "line_count": 3,
+        "interchange": true,
+        "source": "MetroMapOpenMiniProgram"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.408187,
+          31.233003
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "station": "金沙江西路",
+        "name_zh": "金沙江西路",
+        "name_latin": "jinshajiangxilu",
+        "lines": [
+          "13"
+        ],
+        "line_count": 1,
+        "interchange": false,
+        "source": "MetroMapOpenMiniProgram"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.330604,
+          31.243069
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "station": "金粤路",
+        "name_zh": "金粤路",
+        "name_latin": "jinyuelu",
+        "lines": [
+          "14"
+        ],
+        "line_count": 1,
+        "interchange": false,
+        "source": "MetroMapOpenMiniProgram"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.6248,
+          31.24427
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "station": "金运路",
+        "name_zh": "金运路",
+        "name_latin": "jinyunlu",
+        "lines": [
+          "13"
+        ],
+        "line_count": 1,
+        "interchange": false,
+        "source": "MetroMapOpenMiniProgram"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.314792,
+          31.242934
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "station": "锦江乐园",
+        "name_zh": "锦江乐园",
+        "name_latin": "jinjiangleyuan",
+        "lines": [
+          "1"
+        ],
+        "line_count": 1,
+        "interchange": false,
+        "source": "MetroMapOpenMiniProgram"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.409464,
+          31.144093
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "station": "锦秋路",
+        "name_zh": "锦秋路",
+        "name_latin": "jinqiulu",
+        "lines": [
+          "15"
+        ],
+        "line_count": 1,
+        "interchange": false,
+        "source": "MetroMapOpenMiniProgram"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.377118,
+          31.321991
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "station": "锦绣路",
+        "name_zh": "锦绣路",
+        "name_latin": "jinxiulu",
+        "lines": [
+          "7"
+        ],
+        "line_count": 1,
+        "interchange": false,
+        "source": "MetroMapOpenMiniProgram"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.535736,
+          31.189738
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "station": "景洪路",
+        "name_zh": "景洪路",
+        "name_latin": "jinghonglu",
+        "lines": [
+          "15"
+        ],
+        "line_count": 1,
+        "interchange": false,
+        "source": "MetroMapOpenMiniProgram"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.435526,
+          31.115349
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "station": "景西路",
+        "name_zh": "景西路",
+        "name_latin": "jingxilu",
+        "lines": [
+          "15"
+        ],
+        "line_count": 1,
+        "interchange": false,
+        "source": "MetroMapOpenMiniProgram"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.41412,
+          31.10163
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "station": "静安寺",
+        "name_zh": "静安寺",
+        "name_latin": "jingansi",
+        "lines": [
+          "2",
+          "7",
+          "14"
+        ],
+        "line_count": 3,
+        "interchange": true,
+        "source": "MetroMapOpenMiniProgram"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.441918,
+          31.225097
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "station": "九亭",
+        "name_zh": "九亭",
+        "name_latin": "jiuting",
+        "lines": [
+          "9"
+        ],
+        "line_count": 1,
+        "interchange": false,
+        "source": "MetroMapOpenMiniProgram"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.314918,
+          31.139248
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "station": "巨峰路",
+        "name_zh": "巨峰路",
+        "name_latin": "jufenglu",
+        "lines": [
+          "6",
+          "12"
+        ],
+        "line_count": 2,
+        "interchange": true,
+        "source": "MetroMapOpenMiniProgram"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.584137,
+          31.282243
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "station": "康恒路",
+        "name_zh": "康恒路",
+        "name_latin": "kanghenglu",
+        "lines": [
+          "11"
+        ],
+        "line_count": 1,
+        "interchange": false,
+        "source": "MetroMapOpenMiniProgram"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.549432,
+          31.156419
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "station": "康桥",
+        "name_zh": "康桥",
+        "name_latin": "kangqiao",
+        "lines": [
+          "18"
+        ],
+        "line_count": 1,
+        "interchange": false,
+        "source": "MetroMapOpenMiniProgram"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.56308,
+          31.136464
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "station": "康新公路",
+        "name_zh": "康新公路",
+        "name_latin": "kangxingonglu",
+        "lines": [
+          "11"
+        ],
+        "line_count": 1,
+        "interchange": false,
+        "source": "MetroMapOpenMiniProgram"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.613005,
+          31.132688
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "station": "岚皋路",
+        "name_zh": "岚皋路",
+        "name_latin": "langaolu",
+        "lines": [
+          "7"
+        ],
+        "line_count": 1,
+        "interchange": false,
+        "source": "MetroMapOpenMiniProgram"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.41729,
+          31.258026
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "station": "蓝村路",
+        "name_zh": "蓝村路",
+        "name_latin": "lancunlu",
+        "lines": [
+          "4",
+          "6"
+        ],
+        "line_count": 2,
+        "interchange": true,
+        "source": "MetroMapOpenMiniProgram"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.523549,
+          31.213663
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "station": "蓝天路",
+        "name_zh": "蓝天路",
+        "name_latin": "lantianlu",
+        "lines": [
+          "9",
+          "14"
+        ],
+        "line_count": 2,
+        "interchange": true,
+        "source": "MetroMapOpenMiniProgram"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.573773,
+          31.243211
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "station": "老西门",
+        "name_zh": "老西门",
+        "name_latin": "laoximen",
+        "lines": [
+          "8",
+          "10"
+        ],
+        "line_count": 2,
+        "interchange": true,
+        "source": "MetroMapOpenMiniProgram"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.478402,
+          31.220864
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "station": "乐秀路",
+        "name_zh": "乐秀路",
+        "name_latin": "lexiulu",
+        "lines": [
+          "14"
+        ],
+        "line_count": 1,
+        "interchange": false,
+        "source": "MetroMapOpenMiniProgram"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.309598,
+          31.267308
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "station": "李子园",
+        "name_zh": "李子园",
+        "name_latin": "liziyuan",
+        "lines": [
+          "11"
+        ],
+        "line_count": 1,
+        "interchange": false,
+        "source": "MetroMapOpenMiniProgram"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.38532,
+          31.270847
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "station": "莲花路",
+        "name_zh": "莲花路",
+        "name_latin": "lianhualu",
+        "lines": [
+          "1"
+        ],
+        "line_count": 1,
+        "interchange": false,
+        "source": "MetroMapOpenMiniProgram"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.398263,
+          31.132791
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "station": "莲溪路",
+        "name_zh": "莲溪路",
+        "name_latin": "lianxilu",
+        "lines": [
+          "13",
+          "18"
+        ],
+        "line_count": 2,
+        "interchange": true,
+        "source": "MetroMapOpenMiniProgram"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.56184,
+          31.171171
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "station": "联航路",
+        "name_zh": "联航路",
+        "name_latin": "lianhanglu",
+        "lines": [
+          "8"
+        ],
+        "line_count": 1,
+        "interchange": false,
+        "source": "MetroMapOpenMiniProgram"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.506195,
+          31.075683
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "station": "临港大道",
+        "name_zh": "临港大道",
+        "name_latin": "lingangdadao",
+        "lines": [
+          "16"
+        ],
+        "line_count": 1,
+        "interchange": false,
+        "source": "MetroMapOpenMiniProgram"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.906769,
+          30.925887
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "station": "临平路",
+        "name_zh": "临平路",
+        "name_latin": "linpinglu",
+        "lines": [
+          "4"
+        ],
+        "line_count": 1,
+        "interchange": false,
+        "source": "MetroMapOpenMiniProgram"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.496246,
+          31.262863
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "station": "临洮路",
+        "name_zh": "临洮路",
+        "name_latin": "lintaolu",
+        "lines": [
+          "14"
+        ],
+        "line_count": 1,
+        "interchange": false,
+        "source": "MetroMapOpenMiniProgram"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.326319,
+          31.264974
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "station": "临沂新村",
+        "name_zh": "临沂新村",
+        "name_latin": "linyixincun",
+        "lines": [
+          "6"
+        ],
+        "line_count": 1,
+        "interchange": false,
+        "source": "MetroMapOpenMiniProgram"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.512309,
+          31.195273
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "station": "灵岩南路",
+        "name_zh": "灵岩南路",
+        "name_latin": "linyannanlu",
+        "lines": [
+          "6"
+        ],
+        "line_count": 1,
+        "interchange": false,
+        "source": "MetroMapOpenMiniProgram"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.490838,
+          31.150693
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "station": "凌空路",
+        "name_zh": "凌空路",
+        "name_latin": "lingkonglu",
+        "lines": [
+          "2"
+        ],
+        "line_count": 1,
+        "interchange": false,
+        "source": "MetroMapOpenMiniProgram"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.719723,
+          31.194911
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "station": "凌兆新村",
+        "name_zh": "凌兆新村",
+        "name_latin": "linzhaoxincun",
+        "lines": [
+          "8"
+        ],
+        "line_count": 1,
+        "interchange": false,
+        "source": "MetroMapOpenMiniProgram"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.485177,
+          31.14332
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "station": "刘行",
+        "name_zh": "刘行",
+        "name_latin": "liuhang",
+        "lines": [
+          "7"
+        ],
+        "line_count": 1,
+        "interchange": false,
+        "source": "MetroMapOpenMiniProgram"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.35776,
+          31.359411
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "station": "龙柏新村",
+        "name_zh": "龙柏新村",
+        "name_latin": "longbaixincun",
+        "lines": [
+          "10"
+        ],
+        "line_count": 1,
+        "interchange": false,
+        "source": "MetroMapOpenMiniProgram"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.365861,
+          31.178773
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "station": "龙漕路",
+        "name_zh": "龙漕路",
+        "name_latin": "longcaolu",
+        "lines": [
+          "3",
+          "12"
+        ],
+        "line_count": 2,
+        "interchange": true,
+        "source": "MetroMapOpenMiniProgram"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.43947,
+          31.172367
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "station": "龙华",
+        "name_zh": "龙华",
+        "name_latin": "longhua",
+        "lines": [
+          "11",
+          "12"
+        ],
+        "line_count": 2,
+        "interchange": true,
+        "source": "MetroMapOpenMiniProgram"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.447522,
+          31.174721
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "station": "龙华中路",
+        "name_zh": "龙华中路",
+        "name_latin": "longhuazhonglu",
+        "lines": [
+          "7",
+          "12"
+        ],
+        "line_count": 2,
+        "interchange": true,
+        "source": "MetroMapOpenMiniProgram"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.452302,
+          31.186671
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "station": "龙溪路",
+        "name_zh": "龙溪路",
+        "name_latin": "longxilu",
+        "lines": [
+          "10"
+        ],
+        "line_count": 1,
+        "interchange": false,
+        "source": "MetroMapOpenMiniProgram"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.375406,
+          31.196265
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "station": "龙阳路",
+        "name_zh": "龙阳路",
+        "name_latin": "longyanglu",
+        "lines": [
+          "2",
+          "7",
+          "16",
+          "18"
+        ],
+        "line_count": 4,
+        "interchange": true,
+        "source": "MetroMapOpenMiniProgram"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.553111,
+          31.205167
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "station": "龙耀路",
+        "name_zh": "龙耀路",
+        "name_latin": "longyaolu",
+        "lines": [
+          "11"
+        ],
+        "line_count": 1,
+        "interchange": false,
+        "source": "MetroMapOpenMiniProgram"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.455127,
+          31.161643
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "station": "隆昌路",
+        "name_zh": "隆昌路",
+        "name_latin": "longchanglu",
+        "lines": [
+          "12"
+        ],
+        "line_count": 1,
+        "interchange": false,
+        "source": "MetroMapOpenMiniProgram"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.540394,
+          31.277324
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "station": "隆德路",
+        "name_zh": "隆德路",
+        "name_latin": "longdelu",
+        "lines": [
+          "11",
+          "13"
+        ],
+        "line_count": 2,
+        "interchange": true,
+        "source": "MetroMapOpenMiniProgram"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.418927,
+          31.23235
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "station": "娄山关路",
+        "name_zh": "娄山关路",
+        "name_latin": "loushanguanlu",
+        "lines": [
+          "2",
+          "15"
+        ],
+        "line_count": 2,
+        "interchange": true,
+        "source": "MetroMapOpenMiniProgram"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.399411,
+          31.213004
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "station": "芦恒路",
+        "name_zh": "芦恒路",
+        "name_latin": "luhenglu",
+        "lines": [
+          "8"
+        ],
+        "line_count": 1,
+        "interchange": false,
+        "source": "MetroMapOpenMiniProgram"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.493778,
+          31.12112
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "station": "鲁班路",
+        "name_zh": "鲁班路",
+        "name_latin": "lubanlu",
+        "lines": [
+          "4"
+        ],
+        "line_count": 1,
+        "interchange": false,
+        "source": "MetroMapOpenMiniProgram"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.470617,
+          31.201169
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "station": "陆家浜路",
+        "name_zh": "陆家浜路",
+        "name_latin": "lujiangbanglu",
+        "lines": [
+          "8",
+          "9"
+        ],
+        "line_count": 2,
+        "interchange": true,
+        "source": "MetroMapOpenMiniProgram"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.481614,
+          31.213765
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "station": "陆家嘴",
+        "name_zh": "陆家嘴",
+        "name_latin": "lujiazui",
+        "lines": [
+          "2",
+          "14"
+        ],
+        "line_count": 2,
+        "interchange": true,
+        "source": "MetroMapOpenMiniProgram"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.497695,
+          31.240269
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "station": "罗南新村",
+        "name_zh": "罗南新村",
+        "name_latin": "luonanxincun",
+        "lines": [
+          "7"
+        ],
+        "line_count": 1,
+        "interchange": false,
+        "source": "MetroMapOpenMiniProgram"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.352857,
+          31.390651
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "station": "罗山路",
+        "name_zh": "罗山路",
+        "name_latin": "luoshanlu",
+        "lines": [
+          "11",
+          "16"
+        ],
+        "line_count": 2,
+        "interchange": true,
+        "source": "MetroMapOpenMiniProgram"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.588947,
+          31.155499
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "station": "罗秀路",
+        "name_zh": "罗秀路",
+        "name_latin": "luoxiulu",
+        "lines": [
+          "15"
+        ],
+        "line_count": 1,
+        "interchange": false,
+        "source": "MetroMapOpenMiniProgram"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.431186,
+          31.133454
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "station": "马当路",
+        "name_zh": "马当路",
+        "name_latin": "madanglu",
+        "lines": [
+          "9",
+          "13"
+        ],
+        "line_count": 2,
+        "interchange": true,
+        "source": "MetroMapOpenMiniProgram"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.471865,
+          31.211226
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "station": "马陆",
+        "name_zh": "马陆",
+        "name_latin": "malu",
+        "lines": [
+          "11"
+        ],
+        "line_count": 1,
+        "interchange": false,
+        "source": "MetroMapOpenMiniProgram"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.272456,
+          31.321653
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "station": "梅岭北路",
+        "name_zh": "梅岭北路",
+        "name_latin": "meilingbeilu",
+        "lines": [
+          "15"
+        ],
+        "line_count": 1,
+        "interchange": false,
+        "source": "MetroMapOpenMiniProgram"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.392346,
+          31.245127
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "station": "美兰湖",
+        "name_zh": "美兰湖",
+        "name_latin": "meilanhu",
+        "lines": [
+          "7"
+        ],
+        "line_count": 1,
+        "interchange": false,
+        "source": "MetroMapOpenMiniProgram"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.345299,
+          31.403714
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "station": "民雷路",
+        "name_zh": "民雷路",
+        "name_latin": "minleilu",
+        "lines": [
+          "9"
+        ],
+        "line_count": 1,
+        "interchange": false,
+        "source": "MetroMapOpenMiniProgram"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.663847,
+          31.27044
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "station": "民生路",
+        "name_zh": "民生路",
+        "name_latin": "minshenglu",
+        "lines": [
+          "6",
+          "18"
+        ],
+        "line_count": 2,
+        "interchange": true,
+        "source": "MetroMapOpenMiniProgram"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.539906,
+          31.238199
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "station": "闵瑞路",
+        "name_zh": "闵瑞路",
+        "name_latin": "minruilu",
+        "lines": [
+          "pujiang"
+        ],
+        "line_count": 1,
+        "interchange": false,
+        "source": "MetroMapOpenMiniProgram"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.526,
+          31.050142
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "station": "闵行开发区",
+        "name_zh": "闵行开发区",
+        "name_latin": "minhangkaifaqu",
+        "lines": [
+          "5"
+        ],
+        "line_count": 1,
+        "interchange": false,
+        "source": "MetroMapOpenMiniProgram"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.365105,
+          31.00261
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "station": "南陈路",
+        "name_zh": "南陈路",
+        "name_latin": "nanchenlu",
+        "lines": [
+          "7"
+        ],
+        "line_count": 1,
+        "interchange": false,
+        "source": "MetroMapOpenMiniProgram"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.393761,
+          31.323538
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "station": "南大路",
+        "name_zh": "南大路",
+        "name_latin": "nandalu",
+        "lines": [
+          "15"
+        ],
+        "line_count": 1,
+        "interchange": false,
+        "source": "MetroMapOpenMiniProgram"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.375699,
+          31.301085
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "station": "南京东路",
+        "name_zh": "南京东路",
+        "name_latin": "nanjingdonglu",
+        "lines": [
+          "2",
+          "10"
+        ],
+        "line_count": 2,
+        "interchange": true,
+        "source": "MetroMapOpenMiniProgram"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.480318,
+          31.239554
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "station": "南京西路",
+        "name_zh": "南京西路",
+        "name_latin": "nanjingxilu",
+        "lines": [
+          "2",
+          "12",
+          "13"
+        ],
+        "line_count": 3,
+        "interchange": true,
+        "source": "MetroMapOpenMiniProgram"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.455396,
+          31.23174
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "station": "南浦大桥",
+        "name_zh": "南浦大桥",
+        "name_latin": "nanpudaqiao",
+        "lines": [
+          "4"
+        ],
+        "line_count": 1,
+        "interchange": false,
+        "source": "MetroMapOpenMiniProgram"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.495275,
+          31.210518
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "station": "南翔",
+        "name_zh": "南翔",
+        "name_latin": "nanxiang",
+        "lines": [
+          "11"
+        ],
+        "line_count": 1,
+        "interchange": false,
+        "source": "MetroMapOpenMiniProgram"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.318615,
+          31.298868
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "station": "嫩江路",
+        "name_zh": "嫩江路",
+        "name_latin": "nenjianglu",
+        "lines": [
+          "8"
+        ],
+        "line_count": 1,
+        "interchange": false,
+        "source": "MetroMapOpenMiniProgram"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.527607,
+          31.316871
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "station": "宁国路",
+        "name_zh": "宁国路",
+        "name_latin": "ningguolu",
+        "lines": [
+          "12"
+        ],
+        "line_count": 1,
+        "interchange": false,
+        "source": "MetroMapOpenMiniProgram"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.528015,
+          31.270658
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "station": "潘广路",
+        "name_zh": "潘广路",
+        "name_latin": "panguanglu",
+        "lines": [
+          "7"
+        ],
+        "line_count": 1,
+        "interchange": false,
+        "source": "MetroMapOpenMiniProgram"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.35124,
+          31.366014
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "station": "蟠龙路",
+        "name_zh": "蟠龙路",
+        "name_latin": "panlonglu",
+        "lines": [
+          "17"
+        ],
+        "line_count": 1,
+        "interchange": false,
+        "source": "MetroMapOpenMiniProgram"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.274197,
+          31.188353
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "station": "彭浦新村",
+        "name_zh": "彭浦新村",
+        "name_latin": "pengpuxincun",
+        "lines": [
+          "1"
+        ],
+        "line_count": 1,
+        "interchange": false,
+        "source": "MetroMapOpenMiniProgram"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.444031,
+          31.308446
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "station": "平凉路",
+        "name_zh": "平凉路",
+        "name_latin": "pinglianglu",
+        "lines": [
+          "18"
+        ],
+        "line_count": 1,
+        "interchange": false,
+        "source": "MetroMapOpenMiniProgram"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.522343,
+          31.261109
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "station": "浦电路",
+        "name_zh": "浦电路",
+        "name_latin": "pudianlu",
+        "lines": [
+          "6"
+        ],
+        "line_count": 1,
+        "interchange": false,
+        "source": "MetroMapOpenMiniProgram"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.525008,
+          31.222248
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "station": "浦东1号2号航站楼",
+        "name_zh": "浦东1号2号航站楼",
+        "name_latin": "pudongyihaoerhaohangzhanlou",
+        "lines": [
+          "2"
+        ],
+        "line_count": 1,
+        "interchange": false,
+        "source": "MetroMapOpenMiniProgram"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.802202,
+          31.15212
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "station": "浦东大道",
+        "name_zh": "浦东大道",
+        "name_latin": "pudongdadao",
+        "lines": [
+          "4",
+          "14"
+        ],
+        "line_count": 2,
+        "interchange": true,
+        "source": "MetroMapOpenMiniProgram"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.514923,
+          31.24237
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "station": "浦东南路",
+        "name_zh": "浦东南路",
+        "name_latin": "pudongnanlu2",
+        "lines": [
+          "2",
+          "14"
+        ],
+        "line_count": 2,
+        "interchange": true,
+        "source": "MetroMapOpenMiniProgram"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.509581,
+          31.237947
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "station": "浦东足球场",
+        "name_zh": "浦东足球场",
+        "name_latin": "pudongzuqiuchang",
+        "lines": [
+          "14"
+        ],
+        "line_count": 1,
+        "interchange": false,
+        "source": "MetroMapOpenMiniProgram"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.611222,
+          31.24384
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "station": "浦航路",
+        "name_zh": "浦航路",
+        "name_latin": "puhanglu",
+        "lines": [
+          "pujiang"
+        ],
+        "line_count": 1,
+        "interchange": false,
+        "source": "MetroMapOpenMiniProgram"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.526267,
+          31.043189
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "station": "浦江镇",
+        "name_zh": "浦江镇",
+        "name_latin": "pujiangzhen",
+        "lines": [
+          "8"
+        ],
+        "line_count": 1,
+        "interchange": false,
+        "source": "MetroMapOpenMiniProgram"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.50186,
+          31.098684
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "station": "浦三路",
+        "name_zh": "浦三路",
+        "name_latin": "pusanlu",
+        "lines": [
+          "11"
+        ],
+        "line_count": 1,
+        "interchange": false,
+        "source": "MetroMapOpenMiniProgram"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.534694,
+          31.153021
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "station": "七宝",
+        "name_zh": "七宝",
+        "name_latin": "qibao",
+        "lines": [
+          "9"
+        ],
+        "line_count": 1,
+        "interchange": false,
+        "source": "MetroMapOpenMiniProgram"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.344644,
+          31.157217
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "station": "七莘路",
+        "name_zh": "七莘路",
+        "name_latin": "qixinlu",
+        "lines": [
+          "12"
+        ],
+        "line_count": 1,
+        "interchange": false,
+        "source": "MetroMapOpenMiniProgram"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.357863,
+          31.133557
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "station": "祁安路",
+        "name_zh": "祁安路",
+        "name_latin": "qianlu",
+        "lines": [
+          "15"
+        ],
+        "line_count": 1,
+        "interchange": false,
+        "source": "MetroMapOpenMiniProgram"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.380162,
+          31.293379
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "station": "祁华路",
+        "name_zh": "祁华路",
+        "name_latin": "qihualu",
+        "lines": [
+          "7"
+        ],
+        "line_count": 1,
+        "interchange": false,
+        "source": "MetroMapOpenMiniProgram"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.368896,
+          31.324205
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "station": "祁连山路",
+        "name_zh": "祁连山路",
+        "name_latin": "qilianshanlu",
+        "lines": [
+          "11"
+        ],
+        "line_count": 1,
+        "interchange": false,
+        "source": "MetroMapOpenMiniProgram"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.371394,
+          31.273483
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "station": "祁连山南路",
+        "name_zh": "祁连山南路",
+        "name_latin": "qilianshannanlu",
+        "lines": [
+          "13"
+        ],
+        "line_count": 1,
+        "interchange": false,
+        "source": "MetroMapOpenMiniProgram"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.362659,
+          31.239485
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "station": "青浦新城",
+        "name_zh": "青浦新城",
+        "name_latin": "qingpuxincheng",
+        "lines": [
+          "17"
+        ],
+        "line_count": 1,
+        "interchange": false,
+        "source": "MetroMapOpenMiniProgram"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.121055,
+          31.160818
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "station": "曲阜路",
+        "name_zh": "曲阜路",
+        "name_latin": "qufulu",
+        "lines": [
+          "8",
+          "12"
+        ],
+        "line_count": 2,
+        "interchange": true,
+        "source": "MetroMapOpenMiniProgram"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.467001,
+          31.244232
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "station": "曲阳路",
+        "name_zh": "曲阳路",
+        "name_latin": "quyanglu",
+        "lines": [
+          "8"
+        ],
+        "line_count": 1,
+        "interchange": false,
+        "source": "MetroMapOpenMiniProgram"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.486646,
+          31.278479
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "station": "人民广场",
+        "name_zh": "人民广场",
+        "name_latin": "renminguangchang",
+        "lines": [
+          "1",
+          "2",
+          "8"
+        ],
+        "line_count": 3,
+        "interchange": true,
+        "source": "MetroMapOpenMiniProgram"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.470576,
+          31.234619
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "station": "三林",
+        "name_zh": "三林",
+        "name_latin": "sanlin",
+        "lines": [
+          "11"
+        ],
+        "line_count": 1,
+        "interchange": false,
+        "source": "MetroMapOpenMiniProgram"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.507401,
+          31.145308
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "station": "三林东",
+        "name_zh": "三林东",
+        "name_latin": "sanlindong",
+        "lines": [
+          "11"
+        ],
+        "line_count": 1,
+        "interchange": false,
+        "source": "MetroMapOpenMiniProgram"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.518641,
+          31.148574
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "station": "三鲁公路",
+        "name_zh": "三鲁公路",
+        "name_latin": "sanlugonglu",
+        "lines": [
+          "pujiang"
+        ],
+        "line_count": 1,
+        "interchange": false,
+        "source": "MetroMapOpenMiniProgram"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.523051,
+          31.058286
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "station": "三门路",
+        "name_zh": "三门路",
+        "name_latin": "sanmenlu",
+        "lines": [
+          "10"
+        ],
+        "line_count": 1,
+        "interchange": false,
+        "source": "MetroMapOpenMiniProgram"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.503918,
+          31.315211
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "station": "陕西南路",
+        "name_zh": "陕西南路",
+        "name_latin": "shanxinnanlu",
+        "lines": [
+          "1",
+          "10",
+          "12"
+        ],
+        "line_count": 3,
+        "interchange": true,
+        "source": "MetroMapOpenMiniProgram"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.454398,
+          31.218719
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "station": "商城路",
+        "name_zh": "商城路",
+        "name_latin": "shangchenglu",
+        "lines": [
+          "9"
+        ],
+        "line_count": 1,
+        "interchange": false,
+        "source": "MetroMapOpenMiniProgram"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.511882,
+          31.232309
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "station": "上大路",
+        "name_zh": "上大路",
+        "name_latin": "shangdalu",
+        "lines": [
+          "7"
+        ],
+        "line_count": 1,
+        "interchange": false,
+        "source": "MetroMapOpenMiniProgram"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.404029,
+          31.316769
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "station": "上海财经大学",
+        "name_zh": "上海财经大学",
+        "name_latin": "shanghaicaijingdaxue",
+        "lines": [
+          "18"
+        ],
+        "line_count": 1,
+        "interchange": false,
+        "source": "MetroMapOpenMiniProgram"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.491864,
+          31.309634
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "station": "上海大学",
+        "name_zh": "上海大学",
+        "name_latin": "shanghaidaxue",
+        "lines": [
+          "7"
+        ],
+        "line_count": 1,
+        "interchange": false,
+        "source": "MetroMapOpenMiniProgram"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.384231,
+          31.32239
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "station": "上海动物园",
+        "name_zh": "上海动物园",
+        "name_latin": "shanghaidongwuyuan",
+        "lines": [
+          "10"
+        ],
+        "line_count": 1,
+        "interchange": false,
+        "source": "MetroMapOpenMiniProgram"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.363526,
+          31.192127
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "station": "上海儿童医学中心",
+        "name_zh": "上海儿童医学中心",
+        "name_latin": "shanghaiertongyixuezhongxin",
+        "lines": [
+          "6"
+        ],
+        "line_count": 1,
+        "interchange": false,
+        "source": "MetroMapOpenMiniProgram"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.519117,
+          31.20536
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "station": "上海火车站",
+        "name_zh": "上海火车站",
+        "name_latin": "shanghaihuochezhan",
+        "lines": [
+          "1",
+          "3",
+          "4"
+        ],
+        "line_count": 3,
+        "interchange": true,
+        "source": "MetroMapOpenMiniProgram"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.452583,
+          31.25178
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "station": "上海科技馆",
+        "name_zh": "上海科技馆",
+        "name_latin": "shanghaikejiguan",
+        "lines": [
+          "2"
+        ],
+        "line_count": 1,
+        "interchange": false,
+        "source": "MetroMapOpenMiniProgram"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.540132,
+          31.220952
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "station": "上海马戏城",
+        "name_zh": "上海马戏城",
+        "name_latin": "shanghaimaxicheng",
+        "lines": [
+          "1"
+        ],
+        "line_count": 1,
+        "interchange": false,
+        "source": "MetroMapOpenMiniProgram"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.447417,
+          31.28175
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "station": "上海南站",
+        "name_zh": "上海南站",
+        "name_latin": "shanghainanzhan",
+        "lines": [
+          "1",
+          "3",
+          "15"
+        ],
+        "line_count": 3,
+        "interchange": true,
+        "source": "MetroMapOpenMiniProgram"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.425408,
+          31.156464
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "station": "上海汽车城",
+        "name_zh": "上海汽车城",
+        "name_latin": "shanghaiqichecheng",
+        "lines": [
+          "11"
+        ],
+        "line_count": 1,
+        "interchange": false,
+        "source": "MetroMapOpenMiniProgram"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.176223,
+          31.287317
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "station": "上海赛车场",
+        "name_zh": "上海赛车场",
+        "name_latin": "shanghaisaichechang",
+        "lines": [
+          "11"
+        ],
+        "line_count": 1,
+        "interchange": false,
+        "source": "MetroMapOpenMiniProgram"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.221652,
+          31.333864
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "station": "上海松江站",
+        "name_zh": "上海松江站",
+        "name_latin": "shanghaisongjiangzhan",
+        "lines": [
+          "9"
+        ],
+        "line_count": 1,
+        "interchange": false,
+        "source": "MetroMapOpenMiniProgram"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.226469,
+          30.98697
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "station": "上海体育场",
+        "name_zh": "上海体育场",
+        "name_latin": "shanghaitiyuchang",
+        "lines": [
+          "4"
+        ],
+        "line_count": 1,
+        "interchange": false,
+        "source": "MetroMapOpenMiniProgram"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.438915,
+          31.187489
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "station": "上海体育馆",
+        "name_zh": "上海体育馆",
+        "name_latin": "shanghaitiyuguan",
+        "lines": [
+          "1",
+          "4"
+        ],
+        "line_count": 2,
+        "interchange": true,
+        "source": "MetroMapOpenMiniProgram"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.431715,
+          31.184463
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "station": "上海图书馆",
+        "name_zh": "上海图书馆",
+        "name_latin": "shanghaitushuguan",
+        "lines": [
+          "10"
+        ],
+        "line_count": 1,
+        "interchange": false,
+        "source": "MetroMapOpenMiniProgram"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.439747,
+          31.209836
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "station": "上海西站",
+        "name_zh": "上海西站",
+        "name_latin": "shanghaixizhan",
+        "lines": [
+          "11",
+          "15"
+        ],
+        "line_count": 2,
+        "interchange": true,
+        "source": "MetroMapOpenMiniProgram"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.396911,
+          31.264405
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "station": "上海游泳馆",
+        "name_zh": "上海游泳馆",
+        "name_latin": "shanghaiyouyongguan",
+        "lines": [
+          "11"
+        ],
+        "line_count": 1,
+        "interchange": false,
+        "source": "MetroMapOpenMiniProgram"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.436808,
+          31.181009
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "station": "上南路",
+        "name_zh": "上南路",
+        "name_latin": "shangnanlu",
+        "lines": [
+          "6"
+        ],
+        "line_count": 1,
+        "interchange": false,
+        "source": "MetroMapOpenMiniProgram"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.502025,
+          31.150884
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "station": "佘山",
+        "name_zh": "佘山",
+        "name_latin": "sheshan",
+        "lines": [
+          "9"
+        ],
+        "line_count": 1,
+        "interchange": false,
+        "source": "MetroMapOpenMiniProgram"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.225257,
+          31.106172
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "station": "申江路",
+        "name_zh": "申江路",
+        "name_latin": "shenjianglu",
+        "lines": [
+          "12"
+        ],
+        "line_count": 1,
+        "interchange": false,
+        "source": "MetroMapOpenMiniProgram"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.622651,
+          31.282398
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "station": "莘庄",
+        "name_zh": "莘庄",
+        "name_latin": "xinzhuang",
+        "lines": [
+          "1",
+          "5"
+        ],
+        "line_count": 2,
+        "interchange": true,
+        "source": "MetroMapOpenMiniProgram"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.380745,
+          31.113056
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "station": "沈杜公路",
+        "name_zh": "沈杜公路",
+        "name_latin": "shendugonglu",
+        "lines": [
+          "8",
+          "pujiang"
+        ],
+        "line_count": 2,
+        "interchange": true,
+        "source": "MetroMapOpenMiniProgram"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.507881,
+          31.063562
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "station": "沈梅路",
+        "name_zh": "沈梅路",
+        "name_latin": "shenmeilu",
+        "lines": [
+          "18"
+        ],
+        "line_count": 1,
+        "interchange": false,
+        "source": "MetroMapOpenMiniProgram"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.57638,
+          31.093377
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "station": "石龙路",
+        "name_zh": "石龙路",
+        "name_latin": "shilonglu",
+        "lines": [
+          "3"
+        ],
+        "line_count": 1,
+        "interchange": false,
+        "source": "MetroMapOpenMiniProgram"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.43859,
+          31.15985
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "station": "世博大道",
+        "name_zh": "世博大道",
+        "name_latin": "shibodadao",
+        "lines": [
+          "13"
+        ],
+        "line_count": 1,
+        "interchange": false,
+        "source": "MetroMapOpenMiniProgram"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.479812,
+          31.184767
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "station": "世博会博物馆",
+        "name_zh": "世博会博物馆",
+        "name_latin": "shibohuibowuguan",
+        "lines": [
+          "13"
+        ],
+        "line_count": 1,
+        "interchange": false,
+        "source": "MetroMapOpenMiniProgram"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.477083,
+          31.199537
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "station": "世纪大道",
+        "name_zh": "世纪大道",
+        "name_latin": "shijidadao",
+        "lines": [
+          "2",
+          "4",
+          "6",
+          "9"
+        ],
+        "line_count": 4,
+        "interchange": true,
+        "source": "MetroMapOpenMiniProgram"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.522849,
+          31.230776
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "station": "世纪公园",
+        "name_zh": "世纪公园",
+        "name_latin": "shijigongyuan",
+        "lines": [
+          "2"
+        ],
+        "line_count": 1,
+        "interchange": false,
+        "source": "MetroMapOpenMiniProgram"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.546609,
+          31.211575
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "station": "市光路",
+        "name_zh": "市光路",
+        "name_latin": "shiguanglu",
+        "lines": [
+          "8"
+        ],
+        "line_count": 1,
+        "interchange": false,
+        "source": "MetroMapOpenMiniProgram"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.527588,
+          31.324777
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "station": "书院",
+        "name_zh": "书院",
+        "name_latin": "shuyuan",
+        "lines": [
+          "16"
+        ],
+        "line_count": 1,
+        "interchange": false,
+        "source": "MetroMapOpenMiniProgram"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.846347,
+          30.96155
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "station": "曙建路",
+        "name_zh": "曙建路",
+        "name_latin": "shujianlu",
+        "lines": [
+          "15"
+        ],
+        "line_count": 1,
+        "interchange": false,
+        "source": "MetroMapOpenMiniProgram"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.413258,
+          31.092537
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "station": "双柏路",
+        "name_zh": "双柏路",
+        "name_latin": "shuangbailu",
+        "lines": [
+          "15"
+        ],
+        "line_count": 1,
+        "interchange": false,
+        "source": "MetroMapOpenMiniProgram"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.417117,
+          31.085125
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "station": "双江路",
+        "name_zh": "双江路",
+        "name_latin": "shuangjianglu",
+        "lines": [
+          "10"
+        ],
+        "line_count": 1,
+        "interchange": false,
+        "source": "MetroMapOpenMiniProgram"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.535103,
+          31.355672
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "station": "水产路",
+        "name_zh": "水产路",
+        "name_latin": "shuichanlu",
+        "lines": [
+          "3"
+        ],
+        "line_count": 1,
+        "interchange": false,
+        "source": "MetroMapOpenMiniProgram"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.483743,
+          31.383213
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "station": "水城路",
+        "name_zh": "水城路",
+        "name_latin": "shuichenglu",
+        "lines": [
+          "10"
+        ],
+        "line_count": 1,
+        "interchange": false,
+        "source": "MetroMapOpenMiniProgram"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.387612,
+          31.201335
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "station": "四川北路",
+        "name_zh": "四川北路",
+        "name_latin": "sichuanbeilu",
+        "lines": [
+          "10"
+        ],
+        "line_count": 1,
+        "interchange": false,
+        "source": "MetroMapOpenMiniProgram"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.479704,
+          31.253986
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "station": "四平路",
+        "name_zh": "四平路",
+        "name_latin": "sipinglu",
+        "lines": [
+          "8",
+          "10"
+        ],
+        "line_count": 2,
+        "interchange": true,
+        "source": "MetroMapOpenMiniProgram"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.497045,
+          31.276875
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "station": "泗泾",
+        "name_zh": "泗泾",
+        "name_latin": "sijing",
+        "lines": [
+          "9"
+        ],
+        "line_count": 1,
+        "interchange": false,
+        "source": "MetroMapOpenMiniProgram"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.255827,
+          31.120348
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "station": "松江大学城",
+        "name_zh": "松江大学城",
+        "name_latin": "songjiangdaxuecheng",
+        "lines": [
+          "9"
+        ],
+        "line_count": 1,
+        "interchange": false,
+        "source": "MetroMapOpenMiniProgram"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.228155,
+          31.056088
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "station": "松江体育中心",
+        "name_zh": "松江体育中心",
+        "name_latin": "songjiangtiyuzhongxin",
+        "lines": [
+          "9"
+        ],
+        "line_count": 1,
+        "interchange": false,
+        "source": "MetroMapOpenMiniProgram"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.22613,
+          31.018132
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "station": "松江新城",
+        "name_zh": "松江新城",
+        "name_latin": "songjiangxincheng",
+        "lines": [
+          "9"
+        ],
+        "line_count": 1,
+        "interchange": false,
+        "source": "MetroMapOpenMiniProgram"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.226321,
+          31.032412
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "station": "淞滨路",
+        "name_zh": "淞滨路",
+        "name_latin": "songbinlu",
+        "lines": [
+          "3"
+        ],
+        "line_count": 1,
+        "interchange": false,
+        "source": "MetroMapOpenMiniProgram"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.488334,
+          31.372857
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "station": "淞发路",
+        "name_zh": "淞发路",
+        "name_latin": "songfalu",
+        "lines": [
+          "3"
+        ],
+        "line_count": 1,
+        "interchange": false,
+        "source": "MetroMapOpenMiniProgram"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.495922,
+          31.347086
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "station": "淞虹路",
+        "name_zh": "淞虹路",
+        "name_latin": "songhonglu",
+        "lines": [
+          "2"
+        ],
+        "line_count": 1,
+        "interchange": false,
+        "source": "MetroMapOpenMiniProgram"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.354935,
+          31.220108
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "station": "宋园路",
+        "name_zh": "宋园路",
+        "name_latin": "songyuanlu",
+        "lines": [
+          "10"
+        ],
+        "line_count": 1,
+        "interchange": false,
+        "source": "MetroMapOpenMiniProgram"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.407429,
+          31.198393
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "station": "台儿庄路",
+        "name_zh": "台儿庄路",
+        "name_latin": "taierzhuanglu",
+        "lines": [
+          "9"
+        ],
+        "line_count": 1,
+        "interchange": false,
+        "source": "MetroMapOpenMiniProgram"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.593252,
+          31.255014
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "station": "唐镇",
+        "name_zh": "唐镇",
+        "name_latin": "tangzhen",
+        "lines": [
+          "2"
+        ],
+        "line_count": 1,
+        "interchange": false,
+        "source": "MetroMapOpenMiniProgram"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.652017,
+          31.21626
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "station": "塘桥",
+        "name_zh": "塘桥",
+        "name_latin": "tangqiao",
+        "lines": [
+          "4"
+        ],
+        "line_count": 1,
+        "interchange": false,
+        "source": "MetroMapOpenMiniProgram"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.514315,
+          31.211829
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "station": "桃浦新村",
+        "name_zh": "桃浦新村",
+        "name_latin": "taopuxincun",
+        "lines": [
+          "11"
+        ],
+        "line_count": 1,
+        "interchange": false,
+        "source": "MetroMapOpenMiniProgram"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.345027,
+          31.283468
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "station": "提篮桥",
+        "name_zh": "提篮桥",
+        "name_latin": "tilanqiao",
+        "lines": [
+          "12"
+        ],
+        "line_count": 1,
+        "interchange": false,
+        "source": "MetroMapOpenMiniProgram"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.502374,
+          31.255531
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "station": "天潼路",
+        "name_zh": "天潼路",
+        "name_latin": "tiantonglu",
+        "lines": [
+          "10",
+          "12"
+        ],
+        "line_count": 2,
+        "interchange": true,
+        "source": "MetroMapOpenMiniProgram"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.477801,
+          31.245759
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "station": "铁力路",
+        "name_zh": "铁力路",
+        "name_latin": "tielilu",
+        "lines": [
+          "3"
+        ],
+        "line_count": 1,
+        "interchange": false,
+        "source": "MetroMapOpenMiniProgram"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.456537,
+          31.409953
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "station": "通河新村",
+        "name_zh": "通河新村",
+        "name_latin": "tonghexincun",
+        "lines": [
+          "1"
+        ],
+        "line_count": 1,
+        "interchange": false,
+        "source": "MetroMapOpenMiniProgram"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.436914,
+          31.33295
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "station": "同济大学",
+        "name_zh": "同济大学",
+        "name_latin": "tongjidaxue",
+        "lines": [
+          "10"
+        ],
+        "line_count": 1,
+        "interchange": false,
+        "source": "MetroMapOpenMiniProgram"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.501829,
+          31.283909
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "station": "铜川路",
+        "name_zh": "铜川路",
+        "name_latin": "tongchuanlu",
+        "lines": [
+          "14",
+          "15"
+        ],
+        "line_count": 2,
+        "interchange": true,
+        "source": "MetroMapOpenMiniProgram"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.392848,
+          31.252534
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "station": "外高桥保税区北",
+        "name_zh": "外高桥保税区北",
+        "name_latin": "waigaoqiaobaoshuiqubei",
+        "lines": [
+          "6"
+        ],
+        "line_count": 1,
+        "interchange": false,
+        "source": "MetroMapOpenMiniProgram"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.582706,
+          31.34995
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "station": "外高桥保税区南",
+        "name_zh": "外高桥保税区南",
+        "name_latin": "waigaoqiaobaoshuiqunan",
+        "lines": [
+          "6"
+        ],
+        "line_count": 1,
+        "interchange": false,
+        "source": "MetroMapOpenMiniProgram"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.597758,
+          31.323742
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "station": "外环路",
+        "name_zh": "外环路",
+        "name_latin": "waihuanlu",
+        "lines": [
+          "1"
+        ],
+        "line_count": 1,
+        "interchange": false,
+        "source": "MetroMapOpenMiniProgram"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.388384,
+          31.122791
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "station": "望园路",
+        "name_zh": "望园路",
+        "name_latin": "wangyuanlu",
+        "lines": [
+          "5"
+        ],
+        "line_count": 1,
+        "interchange": false,
+        "source": "MetroMapOpenMiniProgram"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.479093,
+          30.934062
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "station": "威宁路",
+        "name_zh": "威宁路",
+        "name_latin": "weininglu",
+        "lines": [
+          "2"
+        ],
+        "line_count": 1,
+        "interchange": false,
+        "source": "MetroMapOpenMiniProgram"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.382643,
+          31.216722
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "station": "文井路",
+        "name_zh": "文井路",
+        "name_latin": "wenjinglu",
+        "lines": [
+          "5"
+        ],
+        "line_count": 1,
+        "interchange": false,
+        "source": "MetroMapOpenMiniProgram"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.376155,
+          31.005561
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "station": "汶水路",
+        "name_zh": "汶水路",
+        "name_latin": "wenshuilu",
+        "lines": [
+          "1"
+        ],
+        "line_count": 1,
+        "interchange": false,
+        "source": "MetroMapOpenMiniProgram"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.445644,
+          31.294403
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "station": "吴中路",
+        "name_zh": "吴中路",
+        "name_latin": "wuzhonglu",
+        "lines": [
+          "15"
+        ],
+        "line_count": 1,
+        "interchange": false,
+        "source": "MetroMapOpenMiniProgram"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.409255,
+          31.1862
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "station": "五角场",
+        "name_zh": "五角场",
+        "name_latin": "wujiaochang",
+        "lines": [
+          "10"
+        ],
+        "line_count": 1,
+        "interchange": false,
+        "source": "MetroMapOpenMiniProgram"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.51023,
+          31.300063
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "station": "五莲路",
+        "name_zh": "五莲路",
+        "name_latin": "wulianlu",
+        "lines": [
+          "6"
+        ],
+        "line_count": 1,
+        "interchange": false,
+        "source": "MetroMapOpenMiniProgram"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.58365,
+          31.274203
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "station": "五洲大道",
+        "name_zh": "五洲大道",
+        "name_latin": "wuzhoudadao",
+        "lines": [
+          "6"
+        ],
+        "line_count": 1,
+        "interchange": false,
+        "source": "MetroMapOpenMiniProgram"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.58499,
+          31.304737
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "station": "武定路",
+        "name_zh": "武定路",
+        "name_latin": "wudinglu",
+        "lines": [
+          "14"
+        ],
+        "line_count": 1,
+        "interchange": false,
+        "source": "MetroMapOpenMiniProgram"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.431529,
+          31.229161
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "station": "武宁路",
+        "name_zh": "武宁路",
+        "name_latin": "wuninglu",
+        "lines": [
+          "13",
+          "14"
+        ],
+        "line_count": 2,
+        "interchange": true,
+        "source": "MetroMapOpenMiniProgram"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.42586,
+          31.236193
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "station": "武威东路",
+        "name_zh": "武威东路",
+        "name_latin": "wuweidonglu",
+        "lines": [
+          "15"
+        ],
+        "line_count": 1,
+        "interchange": false,
+        "source": "MetroMapOpenMiniProgram"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.387442,
+          31.277465
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "station": "武威路",
+        "name_zh": "武威路",
+        "name_latin": "wuweilu",
+        "lines": [
+          "11"
+        ],
+        "line_count": 1,
+        "interchange": false,
+        "source": "MetroMapOpenMiniProgram"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.360066,
+          31.278494
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "station": "西藏北路",
+        "name_zh": "西藏北路",
+        "name_latin": "xizangbeilu",
+        "lines": [
+          "8"
+        ],
+        "line_count": 1,
+        "interchange": false,
+        "source": "MetroMapOpenMiniProgram"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.46426,
+          31.265357
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "station": "西藏南路",
+        "name_zh": "西藏南路",
+        "name_latin": "xizangnanlu",
+        "lines": [
+          "4",
+          "8"
+        ],
+        "line_count": 2,
+        "interchange": true,
+        "source": "MetroMapOpenMiniProgram"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.485079,
+          31.203951
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "station": "西岑",
+        "name_zh": "西岑",
+        "name_latin": "xicen",
+        "lines": [
+          "17"
+        ],
+        "line_count": 1,
+        "interchange": false,
+        "source": "MetroMapOpenMiniProgram"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          120.957799,
+          31.072258
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "station": "西渡",
+        "name_zh": "西渡",
+        "name_latin": "xidu",
+        "lines": [
+          "5"
+        ],
+        "line_count": 1,
+        "interchange": false,
+        "source": "MetroMapOpenMiniProgram"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.427829,
+          30.991329
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "station": "下南路",
+        "name_zh": "下南路",
+        "name_latin": "xiananlu",
+        "lines": [
+          "13"
+        ],
+        "line_count": 1,
+        "interchange": false,
+        "source": "MetroMapOpenMiniProgram"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.535882,
+          31.181442
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "station": "下沙",
+        "name_zh": "下沙",
+        "name_latin": "xiasha",
+        "lines": [
+          "18"
+        ],
+        "line_count": 1,
+        "interchange": false,
+        "source": "MetroMapOpenMiniProgram"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.584796,
+          31.056687
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "station": "翔殷路",
+        "name_zh": "翔殷路",
+        "name_latin": "xiangyinlu",
+        "lines": [
+          "8"
+        ],
+        "line_count": 1,
+        "interchange": false,
+        "source": "MetroMapOpenMiniProgram"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.527627,
+          31.307061
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "station": "向城路",
+        "name_zh": "向城路",
+        "name_latin": "xiangchenglu",
+        "lines": [
+          "4"
+        ],
+        "line_count": 1,
+        "interchange": false,
+        "source": "MetroMapOpenMiniProgram"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.527747,
+          31.22439
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "station": "萧塘",
+        "name_zh": "萧塘",
+        "name_latin": "xiaotang",
+        "lines": [
+          "5"
+        ],
+        "line_count": 1,
+        "interchange": false,
+        "source": "MetroMapOpenMiniProgram"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.437262,
+          30.967893
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "station": "小南门",
+        "name_zh": "小南门",
+        "name_latin": "xiaonanmen",
+        "lines": [
+          "9"
+        ],
+        "line_count": 1,
+        "interchange": false,
+        "source": "MetroMapOpenMiniProgram"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.493943,
+          31.218874
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "station": "歇浦路",
+        "name_zh": "歇浦路",
+        "name_latin": "xiepulu",
+        "lines": [
+          "14"
+        ],
+        "line_count": 1,
+        "interchange": false,
+        "source": "MetroMapOpenMiniProgram"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.547223,
+          31.252862
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "station": "新场",
+        "name_zh": "新场",
+        "name_latin": "xinchang",
+        "lines": [
+          "16"
+        ],
+        "line_count": 1,
+        "interchange": false,
+        "source": "MetroMapOpenMiniProgram"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.644748,
+          31.047818
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "station": "新村路",
+        "name_zh": "新村路",
+        "name_latin": "xincunlu",
+        "lines": [
+          "7"
+        ],
+        "line_count": 1,
+        "interchange": false,
+        "source": "MetroMapOpenMiniProgram"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.418023,
+          31.265682
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "station": "新江湾城",
+        "name_zh": "新江湾城",
+        "name_latin": "xinjiangwancheng",
+        "lines": [
+          "10"
+        ],
+        "line_count": 1,
+        "interchange": false,
+        "source": "MetroMapOpenMiniProgram"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.502519,
+          31.330476
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "station": "新闸路",
+        "name_zh": "新闸路",
+        "name_latin": "xinzhalu",
+        "lines": [
+          "1"
+        ],
+        "line_count": 1,
+        "interchange": false,
+        "source": "MetroMapOpenMiniProgram"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.463599,
+          31.240288
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "station": "星中路",
+        "name_zh": "星中路",
+        "name_latin": "xingzhonglu",
+        "lines": [
+          "9"
+        ],
+        "line_count": 1,
+        "interchange": false,
+        "source": "MetroMapOpenMiniProgram"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.364286,
+          31.160005
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "station": "行知路",
+        "name_zh": "行知路",
+        "name_latin": "xingzhilu",
+        "lines": [
+          "7"
+        ],
+        "line_count": 1,
+        "interchange": false,
+        "source": "MetroMapOpenMiniProgram"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.41712,
+          31.286312
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "station": "秀沿路",
+        "name_zh": "秀沿路",
+        "name_latin": "xiuyanlu",
+        "lines": [
+          "11"
+        ],
+        "line_count": 1,
+        "interchange": false,
+        "source": "MetroMapOpenMiniProgram"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.5942,
+          31.140381
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "station": "徐家汇",
+        "name_zh": "徐家汇",
+        "name_latin": "xujiahui",
+        "lines": [
+          "1",
+          "9",
+          "11"
+        ],
+        "line_count": 3,
+        "interchange": true,
+        "source": "MetroMapOpenMiniProgram"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.433516,
+          31.193572
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "station": "徐泾北城",
+        "name_zh": "徐泾北城",
+        "name_latin": "xujingbeicheng",
+        "lines": [
+          "17"
+        ],
+        "line_count": 1,
+        "interchange": false,
+        "source": "MetroMapOpenMiniProgram"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.237251,
+          31.177562
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "station": "徐盈路",
+        "name_zh": "徐盈路",
+        "name_latin": "xuyinglu",
+        "lines": [
+          "17"
+        ],
+        "line_count": 1,
+        "interchange": false,
+        "source": "MetroMapOpenMiniProgram"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.249538,
+          31.180162
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "station": "学林路",
+        "name_zh": "学林路",
+        "name_latin": "xuelinlu",
+        "lines": [
+          "13"
+        ],
+        "line_count": 1,
+        "interchange": false,
+        "source": "MetroMapOpenMiniProgram"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.610161,
+          31.185695
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "station": "延安西路",
+        "name_zh": "延安西路",
+        "name_latin": "yananxilu",
+        "lines": [
+          "3",
+          "4"
+        ],
+        "line_count": 2,
+        "interchange": true,
+        "source": "MetroMapOpenMiniProgram"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.412406,
+          31.211459
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "station": "延吉中路",
+        "name_zh": "延吉中路",
+        "name_latin": "yanjizhonglu",
+        "lines": [
+          "8"
+        ],
+        "line_count": 1,
+        "interchange": false,
+        "source": "MetroMapOpenMiniProgram"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.530609,
+          31.290629
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "station": "延长路",
+        "name_zh": "延长路",
+        "name_latin": "yanchanglu",
+        "lines": [
+          "1"
+        ],
+        "line_count": 1,
+        "interchange": false,
+        "source": "MetroMapOpenMiniProgram"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.450736,
+          31.273547
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "station": "杨高北路",
+        "name_zh": "杨高北路",
+        "name_latin": "yanggaobeilu",
+        "lines": [
+          "12"
+        ],
+        "line_count": 1,
+        "interchange": false,
+        "source": "MetroMapOpenMiniProgram"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.598754,
+          31.282264
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "station": "杨高南路",
+        "name_zh": "杨高南路",
+        "name_latin": "yanggaonanlu",
+        "lines": [
+          "7"
+        ],
+        "line_count": 1,
+        "interchange": false,
+        "source": "MetroMapOpenMiniProgram"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.520181,
+          31.189708
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "station": "杨高中路",
+        "name_zh": "杨高中路",
+        "name_latin": "yanggaozhonglu",
+        "lines": [
+          "9",
+          "18"
+        ],
+        "line_count": 2,
+        "interchange": true,
+        "source": "MetroMapOpenMiniProgram"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.544304,
+          31.229625
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "station": "杨树浦路",
+        "name_zh": "杨树浦路",
+        "name_latin": "yangshupulu",
+        "lines": [
+          "4"
+        ],
+        "line_count": 1,
+        "interchange": false,
+        "source": "MetroMapOpenMiniProgram"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.512823,
+          31.25398
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "station": "杨思",
+        "name_zh": "杨思",
+        "name_latin": "yangsi",
+        "lines": [
+          "8"
+        ],
+        "line_count": 1,
+        "interchange": false,
+        "source": "MetroMapOpenMiniProgram"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.488977,
+          31.163072
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "station": "姚虹路",
+        "name_zh": "姚虹路",
+        "name_latin": "yaohonglu",
+        "lines": [
+          "15"
+        ],
+        "line_count": 1,
+        "interchange": false,
+        "source": "MetroMapOpenMiniProgram"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.401753,
+          31.193398
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "station": "耀华路",
+        "name_zh": "耀华路",
+        "name_latin": "yaohualu",
+        "lines": [
+          "7",
+          "8"
+        ],
+        "line_count": 2,
+        "interchange": true,
+        "source": "MetroMapOpenMiniProgram"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.490144,
+          31.180528
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "station": "野生动物园",
+        "name_zh": "野生动物园",
+        "name_latin": "yeshengdongwuyuan",
+        "lines": [
+          "16"
+        ],
+        "line_count": 1,
+        "interchange": false,
+        "source": "MetroMapOpenMiniProgram"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.6949,
+          31.052487
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "station": "一大会址·黄陂南路",
+        "name_zh": "一大会址·黄陂南路",
+        "name_latin": "yidahuizhihuangpinanlu",
+        "lines": [
+          "1",
+          "14"
+        ],
+        "line_count": 2,
+        "interchange": true,
+        "source": "MetroMapOpenMiniProgram"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.46868,
+          31.224651
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "station": "一大会址·新天地",
+        "name_zh": "一大会址·新天地",
+        "name_latin": "yidahuizhixintiandi",
+        "lines": [
+          "10",
+          "13"
+        ],
+        "line_count": 2,
+        "interchange": true,
+        "source": "MetroMapOpenMiniProgram"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.469928,
+          31.218064
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "station": "伊犁路",
+        "name_zh": "伊犁路",
+        "name_latin": "yililu",
+        "lines": [
+          "10"
+        ],
+        "line_count": 1,
+        "interchange": false,
+        "source": "MetroMapOpenMiniProgram"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.399249,
+          31.200729
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "station": "宜山路",
+        "name_zh": "宜山路",
+        "name_latin": "yishanlu",
+        "lines": [
+          "3",
+          "4",
+          "9"
+        ],
+        "line_count": 3,
+        "interchange": true,
+        "source": "MetroMapOpenMiniProgram"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.422552,
+          31.188584
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "station": "殷高东路",
+        "name_zh": "殷高东路",
+        "name_latin": "yingaodonglu",
+        "lines": [
+          "10"
+        ],
+        "line_count": 1,
+        "interchange": false,
+        "source": "MetroMapOpenMiniProgram"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.502366,
+          31.323758
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "station": "殷高路",
+        "name_zh": "殷高路",
+        "name_latin": "yingaolu",
+        "lines": [
+          "18"
+        ],
+        "line_count": 1,
+        "interchange": false,
+        "source": "MetroMapOpenMiniProgram"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.49109,
+          31.323656
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "station": "殷高西路",
+        "name_zh": "殷高西路",
+        "name_latin": "yingaoxilu",
+        "lines": [
+          "3"
+        ],
+        "line_count": 1,
+        "interchange": false,
+        "source": "MetroMapOpenMiniProgram"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.480348,
+          31.321925
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "station": "银都路",
+        "name_zh": "银都路",
+        "name_latin": "yindulu",
+        "lines": [
+          "5"
+        ],
+        "line_count": 1,
+        "interchange": false,
+        "source": "MetroMapOpenMiniProgram"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.385625,
+          31.091261
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "station": "迎春路",
+        "name_zh": "迎春路",
+        "name_latin": "yingchunlu",
+        "lines": [
+          "18"
+        ],
+        "line_count": 1,
+        "interchange": false,
+        "source": "MetroMapOpenMiniProgram"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.54672,
+          31.223153
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "station": "永德路",
+        "name_zh": "永德路",
+        "name_latin": "yongdelu",
+        "lines": [
+          "15"
+        ],
+        "line_count": 1,
+        "interchange": false,
+        "source": "MetroMapOpenMiniProgram"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.438598,
+          31.041113
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "station": "邮电新村",
+        "name_zh": "邮电新村",
+        "name_latin": "youdianxincun",
+        "lines": [
+          "10"
+        ],
+        "line_count": 1,
+        "interchange": false,
+        "source": "MetroMapOpenMiniProgram"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.489776,
+          31.270399
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "station": "友谊路",
+        "name_zh": "友谊路",
+        "name_latin": "youyilu",
+        "lines": [
+          "3"
+        ],
+        "line_count": 1,
+        "interchange": false,
+        "source": "MetroMapOpenMiniProgram"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.471382,
+          31.405885
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "station": "友谊西路",
+        "name_zh": "友谊西路",
+        "name_latin": "youyixilu",
+        "lines": [
+          "1"
+        ],
+        "line_count": 1,
+        "interchange": false,
+        "source": "MetroMapOpenMiniProgram"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.423299,
+          31.383083
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "station": "御桥",
+        "name_zh": "御桥",
+        "name_latin": "yuqiao",
+        "lines": [
+          "11",
+          "18"
+        ],
+        "line_count": 2,
+        "interchange": true,
+        "source": "MetroMapOpenMiniProgram"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.567451,
+          31.160513
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "station": "豫园",
+        "name_zh": "豫园",
+        "name_latin": "yuyuan",
+        "lines": [
+          "10",
+          "14"
+        ],
+        "line_count": 2,
+        "interchange": true,
+        "source": "MetroMapOpenMiniProgram"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.482633,
+          31.231168
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "station": "元江路",
+        "name_zh": "元江路",
+        "name_latin": "yuanjianglu",
+        "lines": [
+          "15"
+        ],
+        "line_count": 1,
+        "interchange": false,
+        "source": "MetroMapOpenMiniProgram"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.42728,
+          31.064748
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "station": "源深路",
+        "name_zh": "源深路",
+        "name_latin": "yuanshenlu",
+        "lines": [
+          "14"
+        ],
+        "line_count": 1,
+        "interchange": false,
+        "source": "MetroMapOpenMiniProgram"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.526677,
+          31.243411
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "station": "源深体育中心",
+        "name_zh": "源深体育中心",
+        "name_latin": "yuanshentiyuzhongxin",
+        "lines": [
+          "6"
+        ],
+        "line_count": 1,
+        "interchange": false,
+        "source": "MetroMapOpenMiniProgram"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.530313,
+          31.235111
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "station": "远东大道",
+        "name_zh": "远东大道",
+        "name_latin": "yuandongdadao",
+        "lines": [
+          "2"
+        ],
+        "line_count": 1,
+        "interchange": false,
+        "source": "MetroMapOpenMiniProgram"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.750917,
+          31.20142
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "station": "云锦路",
+        "name_zh": "云锦路",
+        "name_latin": "yunjinlu",
+        "lines": [
+          "11"
+        ],
+        "line_count": 1,
+        "interchange": false,
+        "source": "MetroMapOpenMiniProgram"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.453943,
+          31.168409
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "station": "云山路",
+        "name_zh": "云山路",
+        "name_latin": "yunshanlu",
+        "lines": [
+          "6",
+          "14"
+        ],
+        "line_count": 2,
+        "interchange": true,
+        "source": "MetroMapOpenMiniProgram"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.568544,
+          31.252586
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "station": "云顺路",
+        "name_zh": "云顺路",
+        "name_latin": "yunshunlu",
+        "lines": [
+          "14"
+        ],
+        "line_count": 1,
+        "interchange": false,
+        "source": "MetroMapOpenMiniProgram"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.596138,
+          31.239263
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "station": "云台路",
+        "name_zh": "云台路",
+        "name_latin": "yuntailu",
+        "lines": [
+          "7"
+        ],
+        "line_count": 1,
+        "interchange": false,
+        "source": "MetroMapOpenMiniProgram"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.495993,
+          31.184246
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "station": "张华浜",
+        "name_zh": "张华浜",
+        "name_latin": "zhanghuabang",
+        "lines": [
+          "3"
+        ],
+        "line_count": 1,
+        "interchange": false,
+        "source": "MetroMapOpenMiniProgram"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.494209,
+          31.359964
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "station": "张江高科",
+        "name_zh": "张江高科",
+        "name_latin": "zhangjianggaoke",
+        "lines": [
+          "2"
+        ],
+        "line_count": 1,
+        "interchange": false,
+        "source": "MetroMapOpenMiniProgram"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.583281,
+          31.204095
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "station": "张江路",
+        "name_zh": "张江路",
+        "name_latin": "zhangjianglu",
+        "lines": [
+          "13"
+        ],
+        "line_count": 1,
+        "interchange": false,
+        "source": "MetroMapOpenMiniProgram"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.624972,
+          31.191335
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "station": "长风公园",
+        "name_zh": "长风公园",
+        "name_latin": "changfenggongyuan",
+        "lines": [
+          "15"
+        ],
+        "line_count": 1,
+        "interchange": false,
+        "source": "MetroMapOpenMiniProgram"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.39167,
+          31.227089
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "station": "长江南路",
+        "name_zh": "长江南路",
+        "name_latin": "changjiangnanlu",
+        "lines": [
+          "3",
+          "18"
+        ],
+        "line_count": 2,
+        "interchange": true,
+        "source": "MetroMapOpenMiniProgram"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.486437,
+          31.333261
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "station": "长清路",
+        "name_zh": "长清路",
+        "name_latin": "changqinglu",
+        "lines": [
+          "7",
+          "13"
+        ],
+        "line_count": 2,
+        "interchange": true,
+        "source": "MetroMapOpenMiniProgram"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.481623,
+          31.176609
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "station": "长寿路",
+        "name_zh": "长寿路",
+        "name_latin": "changshoulu",
+        "lines": [
+          "7",
+          "13"
+        ],
+        "line_count": 2,
+        "interchange": true,
+        "source": "MetroMapOpenMiniProgram"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.433065,
+          31.242233
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "station": "兆丰路",
+        "name_zh": "兆丰路",
+        "name_latin": "zhaofenglu",
+        "lines": [
+          "11"
+        ],
+        "line_count": 1,
+        "interchange": false,
+        "source": "MetroMapOpenMiniProgram"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.145737,
+          31.290903
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "station": "赵巷",
+        "name_zh": "赵巷",
+        "name_latin": "zhaoxiang",
+        "lines": [
+          "17"
+        ],
+        "line_count": 1,
+        "interchange": false,
+        "source": "MetroMapOpenMiniProgram"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.187787,
+          31.163243
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "station": "肇嘉浜路",
+        "name_zh": "肇嘉浜路",
+        "name_latin": "zhaojiabanglu",
+        "lines": [
+          "7",
+          "9"
+        ],
+        "line_count": 2,
+        "interchange": true,
+        "source": "MetroMapOpenMiniProgram"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.445624,
+          31.201335
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "station": "真北路",
+        "name_zh": "真北路",
+        "name_latin": "zhenbeilu",
+        "lines": [
+          "13"
+        ],
+        "line_count": 1,
+        "interchange": false,
+        "source": "MetroMapOpenMiniProgram"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.377309,
+          31.234083
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "station": "真光路",
+        "name_zh": "真光路",
+        "name_latin": "zhenguanglu",
+        "lines": [
+          "14"
+        ],
+        "line_count": 1,
+        "interchange": false,
+        "source": "MetroMapOpenMiniProgram"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.379521,
+          31.255114
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "station": "真如",
+        "name_zh": "真如",
+        "name_latin": "zhenru",
+        "lines": [
+          "11",
+          "14"
+        ],
+        "line_count": 2,
+        "interchange": true,
+        "source": "MetroMapOpenMiniProgram"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.402551,
+          31.252656
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "station": "真新新村",
+        "name_zh": "真新新村",
+        "name_latin": "zhenxinxincun",
+        "lines": [
+          "14"
+        ],
+        "line_count": 1,
+        "interchange": false,
+        "source": "MetroMapOpenMiniProgram"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.36732,
+          31.257415
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "station": "镇坪路",
+        "name_zh": "镇坪路",
+        "name_latin": "zhenpinglu",
+        "lines": [
+          "3",
+          "4",
+          "7"
+        ],
+        "line_count": 3,
+        "interchange": true,
+        "source": "MetroMapOpenMiniProgram"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.426419,
+          31.249245
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "station": "中春路",
+        "name_zh": "中春路",
+        "name_latin": "zhongchunlu",
+        "lines": [
+          "9"
+        ],
+        "line_count": 1,
+        "interchange": false,
+        "source": "MetroMapOpenMiniProgram"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.333152,
+          31.151373
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "station": "中华艺术宫",
+        "name_zh": "中华艺术宫",
+        "name_latin": "zhonghuayishugong",
+        "lines": [
+          "8"
+        ],
+        "line_count": 1,
+        "interchange": false,
+        "source": "MetroMapOpenMiniProgram"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.48916,
+          31.187248
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "station": "中科路",
+        "name_zh": "中科路",
+        "name_latin": "zhongkelu",
+        "lines": [
+          "13"
+        ],
+        "line_count": 1,
+        "interchange": false,
+        "source": "MetroMapOpenMiniProgram"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.598265,
+          31.181091
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "station": "中宁路",
+        "name_zh": "中宁路",
+        "name_latin": "zhongninglu",
+        "lines": [
+          "14"
+        ],
+        "line_count": 1,
+        "interchange": false,
+        "source": "MetroMapOpenMiniProgram"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.409886,
+          31.246879
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "station": "中山北路",
+        "name_zh": "中山北路",
+        "name_latin": "zhongshanbeilu",
+        "lines": [
+          "1"
+        ],
+        "line_count": 1,
+        "interchange": false,
+        "source": "MetroMapOpenMiniProgram"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.454621,
+          31.260773
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "station": "中山公园",
+        "name_zh": "中山公园",
+        "name_latin": "zhongshangongyuan",
+        "lines": [
+          "2",
+          "3",
+          "4"
+        ],
+        "line_count": 3,
+        "interchange": true,
+        "source": "MetroMapOpenMiniProgram"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.411161,
+          31.219722
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "station": "中潭路",
+        "name_zh": "中潭路",
+        "name_latin": "zhongtanlu",
+        "lines": [
+          "3",
+          "4"
+        ],
+        "line_count": 2,
+        "interchange": true,
+        "source": "MetroMapOpenMiniProgram"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.436378,
+          31.256426
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "station": "中兴路",
+        "name_zh": "中兴路",
+        "name_latin": "zhongxinglu",
+        "lines": [
+          "8"
+        ],
+        "line_count": 1,
+        "interchange": false,
+        "source": "MetroMapOpenMiniProgram"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.464473,
+          31.255139
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "station": "周浦",
+        "name_zh": "周浦",
+        "name_latin": "zhoupu",
+        "lines": [
+          "18"
+        ],
+        "line_count": 1,
+        "interchange": false,
+        "source": "MetroMapOpenMiniProgram"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.563386,
+          31.116364
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "station": "周浦东",
+        "name_zh": "周浦东",
+        "name_latin": "zhoupudong",
+        "lines": [
+          "16"
+        ],
+        "line_count": 1,
+        "interchange": false,
+        "source": "MetroMapOpenMiniProgram"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.6027,
+          31.112296
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "station": "洲海路",
+        "name_zh": "洲海路",
+        "name_latin": "zhouhailu",
+        "lines": [
+          "6"
+        ],
+        "line_count": 1,
+        "interchange": false,
+        "source": "MetroMapOpenMiniProgram"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.58518,
+          31.314395
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "station": "朱家角",
+        "name_zh": "朱家角",
+        "name_latin": "zhujiajiao",
+        "lines": [
+          "17"
+        ],
+        "line_count": 1,
+        "interchange": false,
+        "source": "MetroMapOpenMiniProgram"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.044439,
+          31.102557
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "station": "朱梅路",
+        "name_zh": "朱梅路",
+        "name_latin": "zhumeilu",
+        "lines": [
+          "15"
+        ],
+        "line_count": 1,
+        "interchange": false,
+        "source": "MetroMapOpenMiniProgram"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.433182,
+          31.12627
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "station": "颛桥",
+        "name_zh": "颛桥",
+        "name_latin": "zhuanqiao",
+        "lines": [
+          "5"
+        ],
+        "line_count": 1,
+        "interchange": false,
+        "source": "MetroMapOpenMiniProgram"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.39723,
+          31.06893
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "station": "紫藤路",
+        "name_zh": "紫藤路",
+        "name_latin": "zitenglu",
+        "lines": [
+          "10"
+        ],
+        "line_count": 1,
+        "interchange": false,
+        "source": "MetroMapOpenMiniProgram"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.360223,
+          31.171569
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "station": "紫竹高新区",
+        "name_zh": "紫竹高新区",
+        "name_latin": "zizhugaoxinqu",
+        "lines": [
+          "15"
+        ],
+        "line_count": 1,
+        "interchange": false,
+        "source": "MetroMapOpenMiniProgram"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.44664,
+          31.025178
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "station": "自然博物馆",
+        "name_zh": "自然博物馆",
+        "name_latin": "ziranbowuguan",
+        "lines": [
+          "13"
+        ],
+        "line_count": 1,
+        "interchange": false,
+        "source": "MetroMapOpenMiniProgram"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.457792,
+          31.238348
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "station": "醉白池",
+        "name_zh": "醉白池",
+        "name_latin": "zuibaichi",
+        "lines": [
+          "9"
+        ],
+        "line_count": 1,
+        "interchange": false,
+        "source": "MetroMapOpenMiniProgram"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.224943,
+          31.003263
+        ]
+      }
+    }
+  ]
+}
+
