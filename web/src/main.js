@@ -2,6 +2,7 @@ import {
   StyleSwitchCoordinator,
   bindLayerHandlerOnce,
   createRasterStyle,
+  createWarmVectorStyle,
   enrichStationFeature,
   findStationMatch,
   matchingStations,
@@ -50,8 +51,7 @@ const esriAttribution =
 
 const basemaps = {
   transit: {
-    attribution:
-      '© OpenStreetMap contributors. Apple-inspired controls only; no Apple Maps data.',
+    attribution: '© OpenStreetMap contributors',
     style: () =>
       createRasterStyle(
         'transit',
@@ -61,8 +61,7 @@ const basemaps = {
       ),
   },
   explore: {
-    attribution:
-      '© OpenStreetMap contributors © CARTO. Apple Explore-inspired visual treatment only.',
+    attribution: '© OpenStreetMap contributors © CARTO',
     style: () =>
       createRasterStyle(
         'explore',
@@ -73,6 +72,21 @@ const basemaps = {
         ],
         cartoAttribution,
       ),
+  },
+  apple: {
+    attribution:
+      'OpenFreeMap · OpenMapTiles · OpenStreetMap. Independent custom cartography.',
+    style: () => createWarmVectorStyle('apple'),
+  },
+  'apple-transit': {
+    attribution:
+      'OpenFreeMap · OpenMapTiles · OpenStreetMap · Shanghai metro network and palette (MIT). Independent custom cartography.',
+    style: () =>
+      createWarmVectorStyle('apple-transit', {
+        transit: true,
+        metroLines,
+        metroStations,
+      }),
   },
   dark: {
     attribution: '© OpenStreetMap contributors © CARTO',
@@ -281,6 +295,8 @@ let stations;
 let areas;
 let outsideAreas;
 let manifest;
+let metroLines;
+let metroStations;
 let controlsWired = false;
 let activePopup;
 let highlightedStation;
@@ -827,48 +843,61 @@ Promise.all([
   fetchJson('outside-reach-areas.geojson'),
   fetchJson('stations.geojson'),
   fetchJson('manifest.json'),
+  fetchJson('shanghai-metro-lines.geojson'),
+  fetchJson('shanghai-metro-stations.geojson'),
 ])
-  .then(([reachData, outsideData, stationDataValue, manifestValue]) => {
-    areas = reachData;
-    outsideAreas = outsideData;
-    stations = stationDataValue;
-    manifest = manifestValue;
+  .then(
+    ([
+      reachData,
+      outsideData,
+      stationDataValue,
+      manifestValue,
+      metroLineData,
+      metroStationData,
+    ]) => {
+      areas = reachData;
+      outsideAreas = outsideData;
+      stations = stationDataValue;
+      manifest = manifestValue;
+      metroLines = metroLineData;
+      metroStations = metroStationData;
 
-    if (!manifest.production_data) {
-      const notice = byId('sample');
-      notice.hidden = false;
-      notice.textContent =
-        'Development sample data — production ORS polygons have not been generated yet. Do not use this map as final coverage.';
-    }
+      if (!manifest.production_data) {
+        const notice = byId('sample');
+        notice.hidden = false;
+        notice.textContent =
+          'Development sample data — production ORS polygons have not been generated yet. Do not use this map as final coverage.';
+      }
 
-    byId('search').disabled = false;
-    byId('stationDisplay').disabled = false;
-    updateSearchSuggestions();
-    renderAbout();
-    renderState();
+      byId('search').disabled = false;
+      byId('stationDisplay').disabled = false;
+      updateSearchSuggestions();
+      renderAbout();
+      renderState();
 
-    try {
-      map = new maplibregl.Map({
-        container: 'map',
-        style: basemaps[state.basemap].style(),
-        center: [121.597836, 31.2064028],
-        zoom: 10,
-      });
-      map.addControl(new maplibregl.NavigationControl(), 'bottom-right');
-      styleSwitch = new StyleSwitchCoordinator(
-        map,
-        state.basemap,
-        restoreCustomLayers,
-      );
-      if (map.isStyleLoaded()) restoreCustomLayers();
-    } catch (error) {
-      console.error('Map rendering failed', error);
-      setMapMessage(
-        'Map rendering is not available in this browser. The data and controls are still available.',
-        { error: true },
-      );
-    }
-  })
+      try {
+        map = new maplibregl.Map({
+          container: 'map',
+          style: basemaps[state.basemap].style(),
+          center: [121.597836, 31.2064028],
+          zoom: 10,
+        });
+        map.addControl(new maplibregl.NavigationControl(), 'bottom-right');
+        styleSwitch = new StyleSwitchCoordinator(
+          map,
+          state.basemap,
+          restoreCustomLayers,
+        );
+        if (map.isStyleLoaded()) restoreCustomLayers();
+      } catch (error) {
+        console.error('Map rendering failed', error);
+        setMapMessage(
+          'Map rendering is not available in this browser. The data and controls are still available.',
+          { error: true },
+        );
+      }
+    },
+  )
   .catch(error => {
     console.error('Jinke data load failed', error);
     byId('summaryTitle').textContent = 'Map data unavailable';

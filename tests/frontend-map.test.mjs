@@ -1,10 +1,12 @@
 import assert from 'node:assert/strict';
+import { readFileSync } from 'node:fs';
 import test from 'node:test';
 
 import {
   StyleSwitchCoordinator,
   bindLayerHandlerOnce,
   createRasterStyle,
+  createWarmVectorStyle,
   enrichStationFeature,
   findStationMatch,
   matchingStations,
@@ -218,4 +220,160 @@ test('relevant station display keeps origin, included, and boundary only', () =>
       .remaining_walk_minutes,
     1,
   );
+});
+
+
+const metroLines = JSON.parse(
+  readFileSync(
+    new URL('../web/public/data/shanghai-metro-lines.geojson', import.meta.url),
+    'utf8',
+  ),
+);
+const metroStations = JSON.parse(
+  readFileSync(
+    new URL('../web/public/data/shanghai-metro-stations.geojson', import.meta.url),
+    'utf8',
+  ),
+);
+
+
+test('warm vector styles use attributed OpenFreeMap tiles and local transit data', () => {
+  const warm = createWarmVectorStyle('apple');
+  assert.equal(warm.metadata.jinkeBasemap, 'apple');
+  assert.equal(warm.sources.openfreemap.type, 'vector');
+  assert.equal(
+    warm.sources.openfreemap.url,
+    'https://tiles.openfreemap.org/planet',
+  );
+  assert.match(warm.sources.openfreemap.attribution, /OpenFreeMap/);
+  assert.match(warm.sources.openfreemap.attribution, /OpenStreetMap/);
+  assert.equal(warm.sources['shanghai-metro-lines'], undefined);
+
+  const transit = createWarmVectorStyle('apple-transit', {
+    transit: true,
+    metroLines,
+    metroStations,
+  });
+  assert.equal(transit.metadata.jinkeBasemap, 'apple-transit');
+  assert.equal(transit.sources['shanghai-metro-lines'].data, metroLines);
+  assert.equal(
+    transit.sources['shanghai-metro-stations'].data,
+    metroStations,
+  );
+
+  const layerIds = transit.layers.map(layer => layer.id);
+  assert.ok(
+    layerIds.indexOf('metro-lines') <
+      layerIds.indexOf('metro-station-labels'),
+  );
+  assert.deepEqual(
+    transit.layers.find(layer => layer.id === 'metro-lines').paint[
+      'line-color'
+    ],
+    ['get', 'color'],
+  );
+});
+
+
+test('static Shanghai metro GeoJSON is licensed, valid, and complete', () => {
+  assert.equal(metroLines.metadata.source.license, 'MIT');
+  assert.equal(metroLines.metadata.source.retrieved_date, '2026-08-05');
+  assert.equal(metroStations.metadata.source.license, 'MIT');
+  assert.equal(metroLines.features.length, 19);
+  assert.deepEqual(
+    new Set(metroLines.features.map(feature => feature.properties.line_id)),
+    new Set([
+      ...Array.from({ length: 18 }, (_, index) => String(index + 1)),
+      'pujiang',
+    ]),
+  );
+
+  const expectedColors = {
+    1: '#E3002B',
+    2: '#8CC220',
+    3: '#FCD600',
+    4: '#461D84',
+    5: '#944D9A',
+    6: '#D40068',
+    7: '#ED6F00',
+    8: '#0094D8',
+    9: '#87CAED',
+    10: '#C6AFD4',
+    11: '#871C2B',
+    12: '#007B61',
+    13: '#E999C0',
+    14: '#626020',
+    15: '#BCA886',
+    16: '#98D1C0',
+    17: '#BC796F',
+    18: '#C4984F',
+    pujiang: '#B3B3C5',
+  };
+  assert.deepEqual(
+    Object.fromEntries(
+      metroLines.features.map(feature => [
+        feature.properties.line_id,
+        feature.properties.color,
+      ]),
+    ),
+    expectedColors,
+  );
+
+  assert.ok(metroLines.features.every(feature =>
+    ['LineString', 'MultiLineString'].includes(feature.geometry.type),
+  ));
+  assert.ok(metroStations.features.length > 400);
+  assert.ok(
+    metroStations.features.every(feature => feature.geometry.type === 'Point'),
+  );
+  assert.ok(
+    metroStations.features.some(feature => feature.properties.interchange),
+  );
+});
+
+
+test('rapid warm-vector switching still restores only the newest request', () => {
+  const listeners = [];
+  const ready = [];
+  const jumps = [];
+  let loaded = true;
+  let style = createRasterStyle('explore', 'explore-source', [], '');
+  const map = {
+    on(eventName, handler) {
+      assert.equal(eventName, 'style.load');
+      listeners.push(handler);
+    },
+    getCenter: () => ({ toArray: () => [121.6, 31.2] }),
+    getZoom: () => 10,
+    getBearing: () => 8,
+    getPitch: () => 18,
+    setStyle() {
+      loaded = false;
+    },
+    getStyle: () => style,
+    isStyleLoaded: () => loaded,
+    jumpTo(camera) {
+      jumps.push(camera);
+    },
+  };
+  const coordinator = new StyleSwitchCoordinator(
+    map,
+    'explore',
+    event => ready.push(event),
+  );
+
+  coordinator.switchTo('apple', createWarmVectorStyle('apple'));
+  coordinator.switchTo(
+    'apple-transit',
+    createWarmVectorStyle('apple-transit'),
+  );
+  style = createWarmVectorStyle('apple-transit');
+  loaded = true;
+  listeners[0]();
+  listeners[0]();
+
+  assert.deepEqual(ready, [{ key: 'apple-transit', requestId: 2 }]);
+  assert.deepEqual(jumps, [
+    { center: [121.6, 31.2], zoom: 10, bearing: 8, pitch: 18 },
+  ]);
 });
