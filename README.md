@@ -21,6 +21,8 @@ The frontend reads only static files and never calls ORS:
 - `web/public/data/manifest.json` — data version, limits, source, and `production_data` flag.
 - `web/public/data/shanghai-boundary.geojson` — simplified Shanghai Municipality boundary used only for the inverse view.
 - `web/public/data/outside-reach-areas.geojson` — five precomputed Shanghai-minus-reach features for 10/20/30/40/50 minutes.
+- `web/public/data/shanghai-metro-lines.geojson` — 19 locally stored Shanghai Metro line features for the transit-focused basemap.
+- `web/public/data/shanghai-metro-stations.geojson` — locally stored station and interchange points for the transit-focused basemap.
 - `MyDrive/Jinke50min/audit_outputs/web-data.zip` — final audited export containing exactly the three frontend data files.
 
 When `manifest.production_data` is false, the frontend shows a non-dismissible warning and the polygons must not be treated as final coverage.
@@ -36,6 +38,19 @@ python scripts/generate_outside_reach_areas.py
 ```
 
 The script refuses missing, duplicate, invalid, empty, or non-polygon limits; verifies that each result stays inside Shanghai; and rejects any positive-area overlap with the matching reach geometry.
+
+## Warm vector and Shanghai transit basemaps
+
+The selector identifiers `apple` and `apple-transit` are retained as required UI labels. Both styles are independent Jinke cartography: they contain no proprietary vendor tiles, map data, logos, private endpoints, or official-status claim.
+
+Both styles use the public OpenFreeMap vector-tile instance with the unmodified OpenMapTiles schema and OpenStreetMap data. OpenFreeMap documents that its public instance requires no registration or API key and permits commercial usage. The style source carries the required OpenFreeMap/OpenMapTiles/OpenStreetMap attribution. See <https://openfreemap.org/> and <https://openfreemap.org/quick_start/>.
+
+The Shanghai Metro topology is committed locally in the two GeoJSON files above. It was derived on **2026-08-05** from `metromancn/MetroMapOpenMiniProgram` at pinned commit `087310aa159d44583cc5fef240466439570dbd62`, file `src/data/sh.js`, under the repository's **MIT License**:
+
+- source: <https://github.com/metromancn/MetroMapOpenMiniProgram/blob/087310aa159d44583cc5fef240466439570dbd62/src/data/sh.js>
+- license: <https://github.com/metromancn/MetroMapOpenMiniProgram/blob/087310aa159d44583cc5fef240466439570dbd62/LICENSE>
+
+The static dataset includes urban metro lines 1–18 and Pujiang Line. Source GCJ-02 coordinates were converted to WGS84; line geometry connects stations in service order and is intended for cartographic display, not surveyed track alignment. Lines 1–18 use the recognizable colors from `@kyuri-metro/shmetro-palette` 0.1.1 (published 2026-05-04, MIT); Pujiang Line retains the network dataset color. The GeoJSON top-level metadata records the source, date, license, derivation, and palette provenance. No metro data is fetched at runtime.
 
 ## Local frontend development
 
@@ -147,7 +162,8 @@ Rerun the dry-run estimate first. Boundary stations where `apple == limit` are k
 
 ## Basemap provider configuration
 
-- No-key defaults for light/dark/monochrome use public OpenStreetMap/CARTO raster tiles subject to provider fair-use policies.
+- Existing no-key light/dark/monochrome styles use public OpenStreetMap/CARTO raster tiles subject to provider fair-use policies.
 - Satellite uses Esri World Imagery tiles; review Esri licensing, attribution, and domain restrictions before production use.
 - Pastel uses the official keyless CARTO Voyager raster basemap with OpenStreetMap and CARTO attribution.
-- Apple-inspired labels describe UI/visual treatment only; no Apple Maps data or tiles are used.
+- The two warm vector styles use OpenFreeMap/OpenMapTiles/OpenStreetMap with source attribution embedded in each MapLibre style.
+- The transit-focused style reads only the two locally committed MIT-licensed metro GeoJSON files.
