@@ -590,17 +590,6 @@ output {
     text-align: left;
   }
 
-  .sheet-grabber {
-    position: absolute;
-    top: 7px;
-    left: 50%;
-    width: 36px;
-    height: 4px;
-    border-radius: 999px;
-    background: #cbd5db;
-    transform: translateX(-50%);
-  }
-
   .sheet-toggle-state {
     color: var(--accent);
   }

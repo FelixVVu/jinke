@@ -146,7 +146,6 @@ document.querySelector('#app').innerHTML = `
         aria-controls="panelControls"
         aria-expanded="false"
       >
-        <span class="sheet-grabber" aria-hidden="true"></span>
         <span>Map options</span>
         <span id="sheetToggleState" class="sheet-toggle-state">Expand</span>
       </button>
