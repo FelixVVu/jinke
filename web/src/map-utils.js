@@ -25,6 +25,73 @@ export function selectedFeatureCollection(collection, limit) {
   };
 }
 
+export function normalizeStationQuery(value) {
+  return String(value ?? '')
+    .normalize('NFKC')
+    .trim()
+    .toLocaleLowerCase();
+}
+
+export function matchingStations(features, query, maximum = 12) {
+  const normalizedQuery = normalizeStationQuery(query);
+  if (!normalizedQuery) return features.slice(0, maximum);
+
+  return features
+    .map((feature, index) => {
+      const name = normalizeStationQuery(feature.properties?.station);
+      const rank =
+        name === normalizedQuery
+          ? 0
+          : name.startsWith(normalizedQuery)
+            ? 1
+            : name.includes(normalizedQuery)
+              ? 2
+              : 3;
+      return { feature, index, rank };
+    })
+    .filter(result => result.rank < 3)
+    .sort((left, right) => left.rank - right.rank || left.index - right.index)
+    .slice(0, maximum)
+    .map(result => result.feature);
+}
+
+export function findStationMatch(features, query) {
+  return matchingStations(features, query, 1)[0] ?? null;
+}
+
+export function stationStatus(feature, limit) {
+  const transitMinutes = Number(feature.properties?.apple);
+  if (transitMinutes < Number(limit)) return 'included';
+  if (transitMinutes === Number(limit)) return 'boundary';
+  return 'excluded';
+}
+
+export function enrichStationFeature(feature, limit) {
+  const transitMinutes = Number(feature.properties?.apple);
+  return {
+    ...feature,
+    properties: {
+      ...feature.properties,
+      selected_limit: Number(limit),
+      remaining_walk_minutes: Math.max(0, Number(limit) - transitMinutes),
+      status: stationStatus(feature, limit),
+    },
+  };
+}
+
+export function stationFeatureCollection(collection, limit, display) {
+  const features = collection.features
+    .map(feature => enrichStationFeature(feature, limit))
+    .filter(
+      feature =>
+        display === 'all' ||
+        Boolean(feature.properties.is_jinke) ||
+        feature.properties.status !== 'excluded',
+    );
+
+  return { type: 'FeatureCollection', features };
+}
+
 export function polygonPaintForState(state) {
   const visible = Boolean(state.showPoly);
   return {

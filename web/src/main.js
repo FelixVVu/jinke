@@ -2,10 +2,16 @@ import {
   StyleSwitchCoordinator,
   bindLayerHandlerOnce,
   createRasterStyle,
+  enrichStationFeature,
+  findStationMatch,
+  matchingStations,
+  normalizeStationQuery,
   polygonPaintForState,
   selectedFeatureCollection,
+  stationFeatureCollection,
 } from './map-utils.js';
 
+const LIMITS = [10, 20, 30, 40, 50];
 const base = window.JINKE_BASE || '/';
 const assetUrl = path =>
   `${base}${path}`.replace(/\/+/g, '/').replace(':/', '://');
@@ -22,6 +28,7 @@ const defaults = {
   showStations: true,
   showLabels: true,
   stationSize: 7,
+  stationDisplay: 'relevant',
 };
 
 function savedAppearance() {
@@ -43,7 +50,8 @@ const esriAttribution =
 
 const basemaps = {
   transit: {
-    attribution: '© OpenStreetMap contributors. Apple-inspired controls only; no Apple Maps data.',
+    attribution:
+      '© OpenStreetMap contributors. Apple-inspired controls only; no Apple Maps data.',
     style: () =>
       createRasterStyle(
         'transit',
@@ -53,7 +61,8 @@ const basemaps = {
       ),
   },
   explore: {
-    attribution: '© OpenStreetMap contributors © CARTO. Apple Explore-inspired visual treatment only.',
+    attribution:
+      '© OpenStreetMap contributors © CARTO. Apple Explore-inspired visual treatment only.',
     style: () =>
       createRasterStyle(
         'explore',
@@ -115,50 +124,153 @@ const basemaps = {
 };
 
 if (!basemaps[state.basemap]) state.basemap = defaults.basemap;
-if (![10, 20, 30, 40, 50].includes(Number(state.limit))) {
-  state.limit = defaults.limit;
+if (!LIMITS.includes(Number(state.limit))) state.limit = defaults.limit;
+if (!['relevant', 'all'].includes(state.stationDisplay)) {
+  state.stationDisplay = defaults.stationDisplay;
 }
 
 document.querySelector('#app').innerHTML = `
   <main>
-    <section id="map" aria-label="Reach area map"></section>
-    <aside class="panel" aria-label="Map controls">
-      <div id="sample" class="sample" hidden role="alert"></div>
-      <h1>金科路 Reach Map</h1>
-      <p id="stats" aria-live="polite">Loading…</p>
-      <div class="segments" role="group" aria-label="Total time limit">
-        ${[10, 20, 30, 40, 50]
-          .map(
-            limit =>
-              `<button data-limit="${limit}" aria-pressed="false">${limit}</button>`,
-          )
-          .join('')}
+    <section class="map-shell" aria-label="Reach area map" aria-busy="true">
+      <div id="map"></div>
+      <div id="mapMessage" class="map-message" role="status" aria-live="polite">
+        <span class="loading-spinner" aria-hidden="true"></span>
+        <span id="mapMessageText">Loading map data…</span>
       </div>
-      <label>Basemap
-        <select id="basemap">
-          ${Object.keys(basemaps)
-            .map(key => `<option value="${key}">${key}</option>`)
-            .join('')}
-        </select>
-      </label>
-      <p class="provider" id="provider"></p>
-      <label>Station search
-        <input id="search" list="stations" placeholder="Search station"/>
-        <datalist id="stations"></datalist>
-      </label>
-      <label>Fill<input id="fill" type="color"/></label>
-      <label>Outline<input id="outline" type="color"/></label>
-      <label>Opacity<input id="opacity" type="range" min="0" max="1" step="0.01"/></label>
-      <label>Outline width<input id="width" type="range" min="0" max="8" step="0.5"/></label>
-      <label>Station size<input id="stationSize" type="range" min="3" max="18" step="1"/></label>
-      <label class="toggle"><input id="showPoly" type="checkbox"/> Show polygon</label>
-      <label class="toggle"><input id="invertFill" type="checkbox"/> Invert fill — Shanghai only</label>
-      <label class="toggle"><input id="showStations" type="checkbox"/> Show stations</label>
-      <label class="toggle"><input id="showLabels" type="checkbox"/> Show labels</label>
-      <div class="actions">
-        <button id="fit">Fit to area</button>
-        <button id="full">Fullscreen</button>
-        <button id="reset">Reset appearance</button>
+    </section>
+    <aside class="panel" aria-label="Map controls">
+      <button
+        id="sheetToggle"
+        class="sheet-toggle"
+        type="button"
+        aria-controls="panelControls"
+        aria-expanded="false"
+      >
+        <span>Map options</span>
+        <span id="sheetToggleState" class="sheet-toggle-state">Expand</span>
+      </button>
+      <div id="sample" class="sample" hidden role="alert"></div>
+      <header class="panel-header">
+        <h1>金科路 Reach Map</h1>
+        <p id="stats" class="stats" aria-live="polite">
+          <span id="summaryTitle" class="stats-title">Loading map data…</span>
+          <span id="summaryCounts" class="stats-counts">Please wait.</span>
+        </p>
+      </header>
+      <div class="segments" role="group" aria-label="Total time limit">
+        ${LIMITS.map(
+          limit =>
+            `<button type="button" data-limit="${limit}" aria-label="${limit} minutes" aria-pressed="false">${limit}</button>`,
+        ).join('')}
+      </div>
+      <div id="panelControls" class="panel-controls">
+        <p class="journey-note">
+          Total time = transit time from 金科路 + remaining walking time.
+        </p>
+
+        <label class="field" for="basemap">Basemap
+          <select id="basemap">
+            ${Object.keys(basemaps)
+              .map(key => `<option value="${key}">${key}</option>`)
+              .join('')}
+          </select>
+        </label>
+        <p class="provider" id="provider"></p>
+
+        <div class="field">
+          <label for="search">Station search</label>
+          <div class="search-row">
+            <input
+              id="search"
+              list="stations"
+              placeholder="Type part of a station name"
+              autocomplete="off"
+              aria-describedby="searchHint"
+              disabled
+            />
+            <button id="clearSearch" class="clear-search" type="button" hidden>
+              Clear
+            </button>
+          </div>
+          <datalist id="stations"></datalist>
+          <p id="searchHint" class="hint" aria-live="polite">
+            Type part of a station name, then choose a match.
+          </p>
+        </div>
+
+        <label class="field" for="stationDisplay">Station display
+          <select id="stationDisplay" disabled>
+            <option value="relevant">Relevant only</option>
+            <option value="all">All stations</option>
+          </select>
+        </label>
+
+        <fieldset class="layer-controls">
+          <legend>Map layers</legend>
+          <label class="toggle"><input id="showPoly" type="checkbox"/> Show polygon</label>
+          <label class="toggle"><input id="invertFill" type="checkbox"/> Invert fill — Shanghai only</label>
+          <label class="toggle"><input id="showStations" type="checkbox"/> Show stations</label>
+          <label class="toggle"><input id="showLabels" type="checkbox"/> Show labels</label>
+        </fieldset>
+
+        <details id="appearance" class="control-section">
+          <summary>Appearance</summary>
+          <div class="details-content">
+            <div class="color-grid">
+              <label class="field" for="fill">Fill color
+                <input id="fill" type="color"/>
+              </label>
+              <label class="field" for="outline">Outline color
+                <input id="outline" type="color"/>
+              </label>
+            </div>
+            <label class="field" for="opacity">
+              <span class="label-line">Opacity <output id="opacityValue"></output></span>
+              <input id="opacity" type="range" min="0" max="1" step="0.01"/>
+            </label>
+            <label class="field" for="width">
+              <span class="label-line">Outline width <output id="widthValue"></output></span>
+              <input id="width" type="range" min="0" max="8" step="0.5"/>
+            </label>
+            <label class="field" for="stationSize">
+              <span class="label-line">Station size <output id="stationSizeValue"></output></span>
+              <input id="stationSize" type="range" min="3" max="18" step="1"/>
+            </label>
+          </div>
+        </details>
+
+        <details id="legend" class="control-section legend">
+          <summary>Legend</summary>
+          <ul class="legend-list">
+            <li><span class="legend-mark origin"></span><span><strong>Orange</strong> — 金科路 origin</span></li>
+            <li><span class="legend-mark reachable"></span><span><strong>Green</strong> — reachable station</span></li>
+            <li><span class="legend-mark boundary"></span><span><strong>White</strong> — boundary station</span></li>
+            <li><span class="legend-mark outside"></span><span><strong>Gray</strong> — outside selected time</span></li>
+            <li><span class="legend-mark area"></span><span><strong>Turquoise area</strong> — reachable area</span></li>
+          </ul>
+        </details>
+
+        <details id="about" class="control-section about">
+          <summary>About this map</summary>
+          <div class="details-content">
+            <dl class="about-list">
+              <div><dt>Last generated</dt><dd id="generatedAt">—</dd></div>
+              <div><dt>Available limits</dt><dd id="availableLimits">—</dd></div>
+              <div><dt>Data status</dt><dd id="productionStatus">—</dd></div>
+            </dl>
+            <p id="transitMethod"></p>
+            <p id="walkingMethod"></p>
+            <a id="sourceSheet" class="source-link" target="_blank" rel="noopener noreferrer" hidden>
+              Transit source sheet
+            </a>
+          </div>
+        </details>
+
+        <div class="actions">
+          <button id="fit" type="button" disabled>Fit to area</button>
+          <button id="full" type="button">Fullscreen</button>
+          <button id="reset" type="button">Reset appearance</button>
+        </div>
       </div>
     </aside>
   </main>`;
@@ -170,39 +282,90 @@ let areas;
 let outsideAreas;
 let manifest;
 let controlsWired = false;
+let activePopup;
+let highlightedStation;
+let highlightTimer;
 
-const save = () =>
-  localStorage.setItem('jinkeAppearance', JSON.stringify(state));
+const mobileQuery = window.matchMedia('(max-width: 760px)');
+const byId = id => document.getElementById(id);
+
+function save() {
+  try {
+    localStorage.setItem('jinkeAppearance', JSON.stringify(state));
+  } catch {
+    // The map remains usable when browser storage is unavailable.
+  }
+}
 
 const selectedAreas = () => selectedFeatureCollection(areas, state.limit);
 const selectedOutsideAreas = () =>
   selectedFeatureCollection(outsideAreas, state.limit);
 
 function stationData() {
+  return stationFeatureCollection(
+    stations,
+    state.limit,
+    state.stationDisplay,
+  );
+}
+
+function highlightedStationData() {
   return {
     type: 'FeatureCollection',
-    features: stations.features.map(feature => {
-      const apple = Number(feature.properties.apple);
-      return {
-        ...feature,
-        properties: {
-          ...feature.properties,
-          selected_limit: state.limit,
-          remaining_walk_minutes: Math.max(0, state.limit - apple),
-          status:
-            apple < state.limit
-              ? 'included'
-              : apple === state.limit
-                ? 'boundary'
-                : 'excluded',
-        },
-      };
-    }),
+    features: highlightedStation ? [highlightedStation] : [],
   };
 }
 
-function setPaintProperty(layerId, property, value) {
-  if (map.getLayer(layerId)) map.setPaintProperty(layerId, property, value);
+function setMapMessage(message, { error = false, hidden = false } = {}) {
+  const shell = document.querySelector('.map-shell');
+  const notice = byId('mapMessage');
+  byId('mapMessageText').textContent = message;
+  notice.hidden = hidden;
+  notice.classList.toggle('is-error', error);
+  shell.setAttribute('aria-busy', String(!hidden && !error));
+}
+
+function renderAbout() {
+  if (!manifest) return;
+
+  const generatedAt = new Date(manifest.generated_at);
+  const generatedText = Number.isNaN(generatedAt.getTime())
+    ? 'Not provided'
+    : generatedAt.toLocaleString(undefined, {
+        dateStyle: 'medium',
+        timeStyle: 'short',
+      });
+  byId('generatedAt').textContent = generatedText;
+  if (manifest.generated_at) byId('generatedAt').title = manifest.generated_at;
+
+  const limits = Array.isArray(manifest.limits) ? manifest.limits : [];
+  byId('availableLimits').textContent = limits.length
+    ? `${limits.join(' · ')} minutes`
+    : 'Not provided';
+
+  const productionStatus = byId('productionStatus');
+  productionStatus.textContent = manifest.production_data
+    ? 'Production data'
+    : 'Development sample';
+  productionStatus.className = manifest.production_data
+    ? 'status-value is-production'
+    : 'status-value is-sample';
+
+  byId('transitMethod').textContent =
+    'Transit: times from 金科路 are read from the published source sheet.';
+  byId('walkingMethod').textContent =
+    `Walking: ORS walking-time areas use the remaining minutes; polygons are merged with ${
+      manifest.geometry_union || 'a polygon union'
+    }.`;
+
+  const sourceLink = byId('sourceSheet');
+  if (
+    typeof manifest.source_sheet === 'string' &&
+    /^https?:\/\//.test(manifest.source_sheet)
+  ) {
+    sourceLink.href = manifest.source_sheet;
+    sourceLink.hidden = false;
+  }
 }
 
 function renderState() {
@@ -212,26 +375,55 @@ function renderState() {
     button.setAttribute('aria-pressed', String(active));
   });
 
-  document.getElementById('provider').textContent =
-    basemaps[state.basemap].attribution;
+  byId('provider').textContent = basemaps[state.basemap].attribution;
+  byId('stationDisplay').value = state.stationDisplay;
+  document.documentElement.style.setProperty('--reach-color', state.fill);
 
   if (areas) {
     const feature = selectedAreas().features[0];
-    document.getElementById('stats').textContent =
-      `${state.limit} min: ${feature.properties.included_stations} included, ` +
-      `${feature.properties.boundary_stations} boundary stations`;
+    if (feature) {
+      byId('summaryTitle').textContent =
+        `${state.limit}-minute total journey`;
+      byId('summaryCounts').textContent =
+        `${feature.properties.included_stations} reachable stations · ` +
+        `${feature.properties.boundary_stations} boundary stations`;
+    }
   }
 
   save();
 }
 
+function updateAppearanceOutputs() {
+  byId('opacityValue').textContent = `${Math.round(state.opacity * 100)}%`;
+  byId('widthValue').textContent = `${state.width}px`;
+  byId('stationSizeValue').textContent = `${state.stationSize}px`;
+}
+
+function setControlValues() {
+  ['fill', 'outline', 'opacity', 'width', 'stationSize'].forEach(id => {
+    byId(id).value = state[id];
+  });
+  ['showPoly', 'invertFill', 'showStations', 'showLabels'].forEach(id => {
+    byId(id).checked = Boolean(state[id]);
+  });
+  byId('basemap').value = state.basemap;
+  byId('stationDisplay').value = state.stationDisplay;
+  updateAppearanceOutputs();
+}
+
+function setPaintProperty(layerId, property, value) {
+  if (map?.getLayer(layerId)) map.setPaintProperty(layerId, property, value);
+}
+
 function applyMapState() {
   renderState();
-  if (!areas || !outsideAreas || !stations) return;
+  updateAppearanceOutputs();
+  if (!map || !areas || !outsideAreas || !stations) return;
 
   map.getSource('areas')?.setData(selectedAreas());
   map.getSource('outside-areas')?.setData(selectedOutsideAreas());
   map.getSource('stations')?.setData(stationData());
+  map.getSource('station-highlight')?.setData(highlightedStationData());
 
   const polygonPaint = polygonPaintForState(state);
   setPaintProperty('reach-fill', 'fill-color', state.fill);
@@ -248,13 +440,28 @@ function applyMapState() {
   );
   setPaintProperty('reach-line', 'line-color', state.outline);
   setPaintProperty('reach-line', 'line-width', polygonPaint.outlineWidth);
+  setPaintProperty('station-circle', 'circle-radius', [
+    'case',
+    ['get', 'is_jinke'],
+    state.stationSize + 3,
+    state.stationSize,
+  ]);
   setPaintProperty(
     'station-circle',
-    'circle-radius',
-    state.showStations
-      ? ['case', ['get', 'is_jinke'], state.stationSize + 3, state.stationSize]
-      : 0,
+    'circle-opacity',
+    state.showStations ? 1 : 0,
   );
+  setPaintProperty(
+    'station-circle',
+    'circle-stroke-opacity',
+    state.showStations ? 1 : 0,
+  );
+  setPaintProperty(
+    'station-highlight',
+    'circle-radius',
+    state.stationSize + 7,
+  );
+
   if (map.getLayer('station-label')) {
     map.setLayoutProperty(
       'station-label',
@@ -272,19 +479,49 @@ function addLayerOnce(definition) {
   if (!map.getLayer(definition.id)) map.addLayer(definition);
 }
 
-function handleStationClick(event) {
-  const feature = event.features?.[0];
-  if (!feature) return;
-  const properties = feature.properties;
-  new maplibregl.Popup()
-    .setLngLat(feature.geometry.coordinates)
+function escapeHtml(value) {
+  return String(value)
+    .replaceAll('&', '&amp;')
+    .replaceAll('<', '&lt;')
+    .replaceAll('>', '&gt;')
+    .replaceAll('"', '&quot;')
+    .replaceAll("'", '&#039;');
+}
+
+function openStationPopup(feature) {
+  if (!map) return;
+  const enriched = enrichStationFeature(feature, state.limit);
+  const properties = enriched.properties;
+  activePopup?.remove();
+  activePopup = new maplibregl.Popup()
+    .setLngLat(enriched.geometry.coordinates)
     .setHTML(
-      `<b>${properties.station}</b><br/>` +
-        `Apple transit: ${properties.apple} min<br/>` +
-        `Remaining walk: ${Math.max(0, state.limit - properties.apple)} min<br/>` +
-        `Selected limit: ${state.limit} min`,
+      `<strong>${escapeHtml(properties.station)}</strong>` +
+        `<dl class="station-popup">` +
+        `<div><dt>Transit from 金科路</dt><dd>${properties.apple} min</dd></div>` +
+        `<div><dt>Remaining walk</dt><dd>${properties.remaining_walk_minutes} min</dd></div>` +
+        `<div><dt>Selected total</dt><dd>${state.limit} min</dd></div>` +
+        `</dl>`,
     )
     .addTo(map);
+}
+
+function handleStationClick(event) {
+  const feature = event.features?.[0];
+  if (feature) openStationPopup(feature);
+}
+
+function clearHighlight() {
+  highlightedStation = null;
+  window.clearTimeout(highlightTimer);
+  map?.getSource('station-highlight')?.setData(highlightedStationData());
+}
+
+function highlightStation(feature) {
+  highlightedStation = enrichStationFeature(feature, state.limit);
+  map?.getSource('station-highlight')?.setData(highlightedStationData());
+  window.clearTimeout(highlightTimer);
+  highlightTimer = window.setTimeout(clearHighlight, 4500);
 }
 
 function restoreCustomLayers() {
@@ -297,6 +534,10 @@ function restoreCustomLayers() {
     attribution: 'Shanghai boundary: geoBoundaries (Public Domain)',
   });
   addSourceOnce('stations', { type: 'geojson', data: stationData() });
+  addSourceOnce('station-highlight', {
+    type: 'geojson',
+    data: highlightedStationData(),
+  });
 
   addLayerOnce({
     id: 'outside-fill',
@@ -335,10 +576,21 @@ function restoreCustomLayers() {
         'case',
         ['==', ['get', 'status'], 'boundary'],
         '#111827',
-        '#fff',
+        '#ffffff',
       ],
       'circle-stroke-width': 2,
       'circle-radius': state.stationSize,
+    },
+  });
+  addLayerOnce({
+    id: 'station-highlight',
+    type: 'circle',
+    source: 'station-highlight',
+    paint: {
+      'circle-color': 'rgba(255,255,255,0)',
+      'circle-stroke-color': '#f97316',
+      'circle-stroke-width': 4,
+      'circle-radius': state.stationSize + 7,
     },
   });
   addLayerOnce({
@@ -350,11 +602,13 @@ function restoreCustomLayers() {
       'text-size': 12,
       'text-offset': [0, 1.2],
     },
-    paint: { 'text-halo-color': '#fff', 'text-halo-width': 1 },
+    paint: { 'text-halo-color': '#ffffff', 'text-halo-width': 1 },
   });
 
   bindLayerHandlerOnce(map, 'click', 'station-circle', handleStationClick);
   applyMapState();
+  byId('fit').disabled = false;
+  setMapMessage('', { hidden: true });
 }
 
 function extendBounds(bounds, coordinates) {
@@ -369,13 +623,80 @@ function extendBounds(bounds, coordinates) {
   coordinates.forEach(value => extendBounds(bounds, value));
 }
 
+function updateSearchSuggestions(query = '') {
+  if (!stations) return;
+  const datalist = byId('stations');
+  datalist.replaceChildren(
+    ...matchingStations(stations.features, query, 14).map(feature => {
+      const option = document.createElement('option');
+      option.value = feature.properties.station;
+      return option;
+    }),
+  );
+}
+
+function selectStation(feature) {
+  if (!feature) return;
+  const input = byId('search');
+  input.value = feature.properties.station;
+  byId('clearSearch').hidden = false;
+  byId('searchHint').textContent =
+    `Showing ${feature.properties.station}. Highlight fades after a few seconds.`;
+
+  if (!map) return;
+  map.flyTo({
+    center: feature.geometry.coordinates,
+    zoom: Math.max(map.getZoom(), 13),
+  });
+  highlightStation(feature);
+  openStationPopup(feature);
+}
+
+function clearStationSearch({ focus = true } = {}) {
+  const input = byId('search');
+  input.value = '';
+  byId('clearSearch').hidden = true;
+  byId('searchHint').textContent =
+    'Type part of a station name, then choose a match.';
+  updateSearchSuggestions();
+  clearHighlight();
+  activePopup?.remove();
+  activePopup = undefined;
+  if (focus) input.focus();
+}
+
+function setSheetExpanded(expanded) {
+  const panel = document.querySelector('.panel');
+  panel.classList.toggle('is-expanded', expanded);
+  byId('sheetToggle').setAttribute('aria-expanded', String(expanded));
+  byId('sheetToggleState').textContent = expanded ? 'Collapse' : 'Expand';
+  window.setTimeout(() => map?.resize(), 220);
+}
+
 function wireControls() {
   if (controlsWired) return;
   controlsWired = true;
 
+  setControlValues();
+  byId('legend').open = !mobileQuery.matches;
+  setSheetExpanded(!mobileQuery.matches);
+
+  byId('sheetToggle').onclick = () => {
+    const expanded = !document
+      .querySelector('.panel')
+      .classList.contains('is-expanded');
+    setSheetExpanded(expanded);
+  };
+
+  if (typeof mobileQuery.addEventListener === 'function') {
+    mobileQuery.addEventListener('change', event => {
+      setSheetExpanded(!event.matches);
+      if (event.matches) byId('legend').open = false;
+    });
+  }
+
   ['fill', 'outline', 'opacity', 'width', 'stationSize'].forEach(id => {
-    const element = document.getElementById(id);
-    element.value = state[id];
+    const element = byId(id);
     element.oninput = () => {
       state[id] =
         element.type === 'range' ? Number(element.value) : element.value;
@@ -384,8 +705,7 @@ function wireControls() {
   });
 
   ['showPoly', 'invertFill', 'showStations', 'showLabels'].forEach(id => {
-    const element = document.getElementById(id);
-    element.checked = Boolean(state[id]);
+    const element = byId(id);
     element.onchange = () => {
       state[id] = element.checked;
       applyMapState();
@@ -395,37 +715,101 @@ function wireControls() {
   document.querySelectorAll('[data-limit]').forEach(button => {
     button.onclick = () => {
       state.limit = Number(button.dataset.limit);
+      if (highlightedStation) {
+        highlightedStation = enrichStationFeature(
+          highlightedStation,
+          state.limit,
+        );
+      }
       applyMapState();
+      if (activePopup && byId('search').value) {
+        const feature = findStationMatch(
+          stations?.features || [],
+          byId('search').value,
+        );
+        if (feature) openStationPopup(feature);
+      }
     };
   });
 
-  const basemap = document.getElementById('basemap');
-  basemap.value = state.basemap;
+  const basemap = byId('basemap');
   basemap.onchange = () => {
     if (!basemaps[basemap.value]) return;
     state.basemap = basemap.value;
     renderState();
-    styleSwitch.switchTo(state.basemap, basemaps[state.basemap].style());
+    if (styleSwitch) {
+      setMapMessage('Changing basemap…');
+      styleSwitch.switchTo(state.basemap, basemaps[state.basemap].style());
+    }
   };
 
-  document.getElementById('fit').onclick = () => {
+  byId('stationDisplay').onchange = event => {
+    state.stationDisplay = event.target.value;
+    applyMapState();
+  };
+
+  byId('fit').onclick = () => {
+    if (!map || !areas) return;
+    const feature = selectedAreas().features[0];
+    if (!feature) return;
     const bounds = new maplibregl.LngLatBounds();
-    extendBounds(bounds, selectedAreas().features[0].geometry.coordinates);
+    extendBounds(bounds, feature.geometry.coordinates);
     map.fitBounds(bounds, { padding: 50 });
   };
-  document.getElementById('full').onclick = () =>
-    document.documentElement.requestFullscreen();
-  document.getElementById('reset').onclick = () => {
+
+  byId('full').onclick = () => {
+    if (document.fullscreenElement) {
+      document.exitFullscreen?.();
+    } else {
+      document.documentElement.requestFullscreen?.();
+    }
+  };
+
+  byId('reset').onclick = () => {
+    const previousBasemap = state.basemap;
     Object.assign(state, defaults);
-    save();
-    location.reload();
+    setControlValues();
+    clearStationSearch({ focus: false });
+    renderState();
+    if (styleSwitch && previousBasemap !== state.basemap) {
+      setMapMessage('Changing basemap…');
+      styleSwitch.switchTo(state.basemap, basemaps[state.basemap].style());
+    } else {
+      applyMapState();
+    }
   };
-  document.getElementById('search').onchange = event => {
-    const feature = stations.features.find(
-      candidate => candidate.properties.station === event.target.value,
+
+  const search = byId('search');
+  search.oninput = event => {
+    const query = event.target.value;
+    byId('clearSearch').hidden = !query;
+    updateSearchSuggestions(query);
+    const exact = (stations?.features || []).find(
+      feature =>
+        normalizeStationQuery(feature.properties.station) ===
+        normalizeStationQuery(query),
     );
-    if (feature) map.flyTo({ center: feature.geometry.coordinates, zoom: 13 });
+    if (exact) selectStation(exact);
   };
+  search.onchange = event => {
+    const feature = findStationMatch(
+      stations?.features || [],
+      event.target.value,
+    );
+    if (feature) selectStation(feature);
+  };
+  search.onkeydown = event => {
+    if (event.key !== 'Enter') return;
+    const feature = findStationMatch(
+      stations?.features || [],
+      event.currentTarget.value,
+    );
+    if (feature) {
+      event.preventDefault();
+      selectStation(feature);
+    }
+  };
+  byId('clearSearch').onclick = () => clearStationSearch();
 }
 
 async function fetchJson(filename) {
@@ -436,50 +820,61 @@ async function fetchJson(filename) {
   return response.json();
 }
 
+wireControls();
+
 Promise.all([
   fetchJson('reach-areas.geojson'),
   fetchJson('outside-reach-areas.geojson'),
   fetchJson('stations.geojson'),
   fetchJson('manifest.json'),
-]).then(([reachData, outsideData, stationDataValue, manifestValue]) => {
-  areas = reachData;
-  outsideAreas = outsideData;
-  stations = stationDataValue;
-  manifest = manifestValue;
+])
+  .then(([reachData, outsideData, stationDataValue, manifestValue]) => {
+    areas = reachData;
+    outsideAreas = outsideData;
+    stations = stationDataValue;
+    manifest = manifestValue;
 
-  if (!manifest.production_data) {
-    const notice = document.getElementById('sample');
-    notice.hidden = false;
-    notice.textContent =
-      'Development sample data — production ORS polygons have not been generated yet. Do not use this map as final coverage.';
-  }
+    if (!manifest.production_data) {
+      const notice = byId('sample');
+      notice.hidden = false;
+      notice.textContent =
+        'Development sample data — production ORS polygons have not been generated yet. Do not use this map as final coverage.';
+    }
 
-  document.getElementById('stations').innerHTML = stations.features
-    .map(feature => `<option value="${feature.properties.station}">`)
-    .join('');
-  try {
-    map = new maplibregl.Map({
-      container: 'map',
-      style: basemaps[state.basemap].style(),
-      center: [121.597836, 31.2064028],
-      zoom: 10,
-    });
-    map.addControl(new maplibregl.NavigationControl(), 'bottom-right');
-    styleSwitch = new StyleSwitchCoordinator(
-      map,
-      state.basemap,
-      restoreCustomLayers,
-    );
-    wireControls();
+    byId('search').disabled = false;
+    byId('stationDisplay').disabled = false;
+    updateSearchSuggestions();
+    renderAbout();
     renderState();
-    if (map.isStyleLoaded()) restoreCustomLayers();
-  } catch {
-    document.getElementById('stats').textContent =
-      'Map rendering is not available in this browser.';
-    document.getElementById('map').innerHTML =
-      '<div class="map-fallback">This interactive map requires WebGL.</div>';
-  }
-}).catch(() => {
-  document.getElementById('stats').textContent =
-    'The map data could not be loaded.';
-});
+
+    try {
+      map = new maplibregl.Map({
+        container: 'map',
+        style: basemaps[state.basemap].style(),
+        center: [121.597836, 31.2064028],
+        zoom: 10,
+      });
+      map.addControl(new maplibregl.NavigationControl(), 'bottom-right');
+      styleSwitch = new StyleSwitchCoordinator(
+        map,
+        state.basemap,
+        restoreCustomLayers,
+      );
+      if (map.isStyleLoaded()) restoreCustomLayers();
+    } catch (error) {
+      console.error('Map rendering failed', error);
+      setMapMessage(
+        'Map rendering is not available in this browser. The data and controls are still available.',
+        { error: true },
+      );
+    }
+  })
+  .catch(error => {
+    console.error('Jinke data load failed', error);
+    byId('summaryTitle').textContent = 'Map data unavailable';
+    byId('summaryCounts').textContent = 'Refresh the page to try again.';
+    setMapMessage(
+      'The map data could not be loaded. Check your connection and refresh the page.',
+      { error: true },
+    );
+  });
