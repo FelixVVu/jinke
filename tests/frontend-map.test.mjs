@@ -5,8 +5,13 @@ import {
   StyleSwitchCoordinator,
   bindLayerHandlerOnce,
   createRasterStyle,
+  enrichStationFeature,
+  findStationMatch,
+  matchingStations,
+  normalizeStationQuery,
   polygonPaintForState,
   selectedFeatureCollection,
+  stationFeatureCollection,
 } from '../web/src/map-utils.js';
 
 
@@ -156,5 +161,61 @@ test('limit selection updates both normal and inverse collections', () => {
   assert.equal(
     selectedFeatureCollection(collection, 20).features[0].properties.limit,
     20,
+  );
+});
+
+
+const station = (name, apple, isJinke = false) => ({
+  type: 'Feature',
+  properties: { station: name, apple, is_jinke: isJinke },
+  geometry: { type: 'Point', coordinates: [121.5, 31.2] },
+});
+
+
+test('station search supports normalized partial matching', () => {
+  const features = [
+    station('南京西路', 30),
+    station('静安寺', 30),
+    station('West Nanjing Road', 35),
+  ];
+
+  assert.equal(findStationMatch(features, '静安').properties.station, '静安寺');
+  assert.equal(
+    findStationMatch(features, 'NANJING').properties.station,
+    'West Nanjing Road',
+  );
+  assert.equal(normalizeStationQuery('  ＡBC '), 'abc');
+  assert.deepEqual(
+    matchingStations(features, '南京').map(value => value.properties.station),
+    ['南京西路'],
+  );
+  assert.equal(findStationMatch(features, 'not-a-station'), null);
+});
+
+
+test('relevant station display keeps origin, included, and boundary only', () => {
+  const collection = {
+    type: 'FeatureCollection',
+    features: [
+      station('金科路', 99, true),
+      station('Included', 29),
+      station('Boundary', 30),
+      station('Outside', 31),
+    ],
+  };
+
+  const relevant = stationFeatureCollection(collection, 30, 'relevant');
+  const all = stationFeatureCollection(collection, 30, 'all');
+
+  assert.deepEqual(
+    relevant.features.map(value => value.properties.station),
+    ['金科路', 'Included', 'Boundary'],
+  );
+  assert.equal(all.features.length, 4);
+  assert.equal(all.features[3].properties.status, 'excluded');
+  assert.equal(
+    enrichStationFeature(collection.features[1], 30).properties
+      .remaining_walk_minutes,
+    1,
   );
 });
