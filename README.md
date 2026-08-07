@@ -19,7 +19,7 @@ The frontend reads only static files and never calls ORS:
 - `web/public/data/reach-areas.geojson` — one reach feature for each 10/20/30/40/50 minute limit.
 - `web/public/data/stations.geojson` — stations with Apple time and coordinates.
 - `web/public/data/manifest.json` — data version, limits, source, and `production_data` flag.
-- `web/public/data/shanghai-boundary.geojson` — simplified Shanghai Municipality boundary used only for the inverse view.
+- `web/public/data/shanghai-boundary.geojson` — high-detail local Shanghai Municipality boundary used by inverse fill and location filtering.
 - `web/public/data/outside-reach-areas.geojson` — five precomputed Shanghai-minus-reach features for 10/20/30/40/50 minutes.
 - `web/public/data/shanghai-metro-lines.geojson` — 19 locally stored Shanghai Metro line features for the transit-focused basemap.
 - `web/public/data/shanghai-metro-stations.geojson` — locally stored station and interchange points for the transit-focused basemap.
@@ -29,11 +29,18 @@ When `manifest.production_data` is false, the frontend shows a non-dismissible w
 
 ## Shanghai boundary and inverse-area regeneration
 
-`shanghai-boundary.geojson` is the simplified **Shanghai Municipality** ADM1 feature from geoBoundaries gbOpen China ADM1, pinned to source revision `9469f09` (`boundaryID` `CHN-ADM1-43563684`, boundary year 2019). The geoBoundaries API identifies the source as geoBoundaries/Wikimedia Commons and the boundary license as **Public Domain**. Attribution is recorded in the GeoJSON as “geoBoundaries, William & Mary geoLab.” The complete source metadata is available at <https://www.geoboundaries.org/api/current/gbOpen/CHN/ADM1/>.
+`shanghai-boundary.geojson` is prepared from **OpenStreetMap administrative boundary relation 913067**, version 155 (`2026-03-27T14:36:13Z`). The pinned source snapshot was retrieved on **2026-08-07** as WGS84 GeoJSON with a `0.00001`-degree polygon threshold and is committed at `data/shanghai-boundary-osm-r913067-v155.geojson` with SHA-256 `055073cfdba9e1717cfc60626a24cfdd8f93cf0042ce173e97b8ad4b64742969`.
 
-The frontend never downloads the boundary from a remote service. After replacing production `reach-areas.geojson`, deterministically rebuild the five inverse features with Shapely:
+To avoid filling Shanghai's large offshore administrative-water polygon, the preparation step clips that administrative geometry to a pinned `water.class=ocean` mask from the keyless OpenFreeMap/OpenMapTiles vector tiles at zoom 10, tile revision `20260802_080001_pt`. The clipped ocean snapshot is committed at `data/shanghai-ocean-openfreemap-z10-20260802.geojson` with SHA-256 `9465528487f7b07b1782b1e794197ce34ed1366ebb111646f31fceaf28257506`.
+
+The result is deliberately land-focused: it keeps the detailed Shanghai-region component, coast, river mouths, Chongming and the local islands, while removing the visually misleading offshore wedge. Distant disconnected relation components far outside the local Shanghai map/search extent are also excluded so the location-search bounding box does not expand into Anhui or Jiangsu. A topology-preserving `0.00015`-degree display simplification (about 17 metres) removes sub-pixel noise without changing polygon structure. The resulting boundary contains 23 local polygon components and more than 3,500 vertices instead of the former 35-vertex approximation.
+
+OpenStreetMap data is © OpenStreetMap contributors and licensed under the **Open Data Commons Open Database License (ODbL) 1.0**. Attribution and provenance are recorded in the committed GeoJSON. See <https://www.openstreetmap.org/relation/913067> and <https://www.openstreetmap.org/copyright>.
+
+The frontend never downloads the boundary from a remote service. Rebuild the prepared boundary from the pinned source snapshot, then deterministically rebuild the five inverse features with Shapely:
 
 ```bash
+python scripts/prepare_shanghai_boundary.py
 python scripts/generate_outside_reach_areas.py
 ```
 

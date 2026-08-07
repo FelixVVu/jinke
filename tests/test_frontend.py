@@ -45,6 +45,10 @@ def test_inverse_checkbox_is_immediately_after_show_polygon_and_persisted():
     assert "invertFill: false" in MAIN
     assert "jinkeAppearance" in MAIN
     assert "outside-reach-areas.geojson" in MAIN
+    assert "OpenFreeMap</a> / " in MAIN
+    assert "OpenMapTiles</a> · © " in MAIN
+    assert "OpenStreetMap contributors</a> (ODbL)" in MAIN
+    assert MAIN.count("'fill-antialias': true") == 2
 
 
 def test_mobile_panel_is_a_collapsed_bottom_sheet_by_default():
