@@ -885,7 +885,10 @@ function highlightStation(feature) {
 }
 
 function restoreCustomLayers() {
-  if (!areas || !outsideAreas || !stations || !map.isStyleLoaded()) return;
+  // `style.load` means the new style is ready for custom sources and layers.
+  // Do not wait for `isStyleLoaded()`: it can remain false while basemap
+  // sources or tiles are still loading, and no second `style.load` is emitted.
+  if (!areas || !outsideAreas || !stations || !map?.getStyle()) return;
 
   addSourceOnce('areas', { type: 'geojson', data: selectedAreas() });
   addSourceOnce('outside-areas', {

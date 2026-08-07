@@ -100,6 +100,74 @@ test('rapid style changes restore only the latest style and its camera', () => {
 });
 
 
+test('style.load restores overlays before basemap sources finish loading', () => {
+  const listeners = [];
+  const ready = [];
+  let currentStyle = createRasterStyle(
+    'explore',
+    'explore-source',
+    ['https://example.test/{z}/{x}/{y}.png'],
+    '',
+  );
+
+  const map = {
+    on(eventName, listener) {
+      assert.equal(eventName, 'style.load');
+      listeners.push(listener);
+    },
+    getCenter: () => ({ toArray: () => [121.6, 31.2] }),
+    getZoom: () => 10,
+    getBearing: () => 0,
+    getPitch: () => 0,
+    getStyle: () => currentStyle,
+    isStyleLoaded: () => false,
+    jumpTo() {},
+    setStyle(style) {
+      currentStyle = style;
+    },
+  };
+
+  const coordinator = new StyleSwitchCoordinator(
+    map,
+    'explore',
+    event => ready.push(event),
+  );
+
+  listeners[0]();
+  assert.deepEqual(ready, [{ key: 'explore', requestId: 0 }]);
+
+  coordinator.switchTo(
+    'pastel',
+    createRasterStyle(
+      'pastel',
+      'pastel-source',
+      ['https://example.test/{z}/{x}/{y}.png'],
+      '',
+    ),
+  );
+  listeners[0]();
+  assert.deepEqual(ready, [
+    { key: 'explore', requestId: 0 },
+    { key: 'pastel', requestId: 1 },
+  ]);
+});
+
+
+test('overlay restoration does not wait for all basemap tiles', () => {
+  const mainSource = readFileSync(
+    new URL('../web/src/main.js', import.meta.url),
+    'utf8',
+  );
+  const restoreBody = mainSource.match(
+    /function restoreCustomLayers\(\) \{[\s\S]*?\n\}/,
+  )?.[0];
+
+  assert.ok(restoreBody);
+  assert.doesNotMatch(restoreBody, /!map\.isStyleLoaded\(\)/);
+  assert.match(restoreBody, /!map\?\.getStyle\(\)/);
+});
+
+
 test('station layer handlers bind once across repeated overlay restores', () => {
   const registrations = [];
   const map = {
