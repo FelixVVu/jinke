@@ -71,6 +71,7 @@ def build_inverse_collection(
     reach_payload: dict[str, Any],
 ) -> dict[str, Any]:
     boundary_features = _features(boundary_payload, "Shanghai boundary")
+    boundary_properties = boundary_features[0].get("properties") or {}
     boundary = _polygonal_part(
         unary_union(
             [
@@ -131,6 +132,13 @@ def build_inverse_collection(
 
     return {
         "type": "FeatureCollection",
+        "metadata": {
+            "boundarySource": boundary_properties.get("source"),
+            "boundarySourceURL": boundary_properties.get("sourceURL"),
+            "license": boundary_properties.get("license"),
+            "licenseURL": boundary_properties.get("licenseURL"),
+            "attribution": boundary_properties.get("attribution"),
+        },
         "features": output_features,
     }
 

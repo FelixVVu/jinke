@@ -894,7 +894,10 @@ function restoreCustomLayers() {
   addSourceOnce('outside-areas', {
     type: 'geojson',
     data: selectedOutsideAreas(),
-    attribution: 'Shanghai boundary: geoBoundaries (Public Domain)',
+    attribution:
+      'Shanghai boundary: <a href="https://openfreemap.org/">OpenFreeMap</a> / ' +
+      '<a href="https://openmaptiles.org/">OpenMapTiles</a> · © ' +
+      '<a href="https://www.openstreetmap.org/copyright">OpenStreetMap contributors</a> (ODbL)',
   });
   addSourceOnce('stations', { type: 'geojson', data: stationData() });
   addSourceOnce('station-highlight', {
@@ -906,13 +909,21 @@ function restoreCustomLayers() {
     id: 'outside-fill',
     type: 'fill',
     source: 'outside-areas',
-    paint: { 'fill-color': state.fill, 'fill-opacity': 0 },
+    paint: {
+      'fill-antialias': true,
+      'fill-color': state.fill,
+      'fill-opacity': 0,
+    },
   });
   addLayerOnce({
     id: 'reach-fill',
     type: 'fill',
     source: 'areas',
-    paint: { 'fill-color': state.fill, 'fill-opacity': state.opacity },
+    paint: {
+      'fill-antialias': true,
+      'fill-color': state.fill,
+      'fill-opacity': state.opacity,
+    },
   });
   addLayerOnce({
     id: 'reach-line',
