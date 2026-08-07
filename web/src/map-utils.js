@@ -654,7 +654,7 @@ export class StyleSwitchCoordinator {
   }
 
   handleStyleLoad() {
-    if (!this.pending || !this.map.isStyleLoaded()) return false;
+    if (!this.pending) return false;
 
     const loadedKey = this.map.getStyle()?.metadata?.[BASEMAP_METADATA_KEY];
     if (loadedKey !== this.pending.key) return false;
