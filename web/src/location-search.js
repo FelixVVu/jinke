@@ -322,7 +322,13 @@ export class AmapLocationSearch {
   }) {
     this.endpointProvider = endpointProvider;
     this.boundary = boundary;
-    this.fetchFn = fetchFn;
+    // Some browser/host wrappers require fetch to keep the Window receiver.
+    // Calling a raw native function through `this.fetchFn(...)` changes its
+    // receiver to the search instance and can fail before any HTTP request is
+    // sent. Bind once here so both native and injected fetch implementations
+    // use the browser global consistently.
+    this.fetchFn =
+      typeof fetchFn === 'function' ? fetchFn.bind(globalThis) : null;
     this.cacheTtlMs = cacheTtlMs;
     this.now = now;
     this.cache = new Map();
@@ -360,6 +366,9 @@ export class AmapLocationSearch {
     const fetchPayload = async url => {
       let response;
       try {
+        if (!this.fetchFn) {
+          throw new TypeError('Fetch is unavailable in this browser.');
+        }
         response = await this.fetchFn(String(url), {
           signal: controller.signal,
           headers: { Accept: 'application/json' },
