@@ -17,7 +17,8 @@ INDEX = (ROOT / "index.html").read_text(encoding="utf-8")
 
 def test_basemap_switching_uses_style_load_and_no_source_r_assumption():
     assert "style.load" in UTILS
-    assert "styledata" not in MAIN + UTILS
+    assert "styledata" in UTILS
+    assert "map.on('styledata'" in UTILS
     assert "sources.r" not in MAIN
     assert "styles[state.basemap].sources.r" not in MAIN
     assert "map.once(" not in MAIN
