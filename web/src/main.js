@@ -885,10 +885,7 @@ function highlightStation(feature) {
 }
 
 function restoreCustomLayers() {
-  // `style.load` means the new style is ready for custom sources and layers.
-  // Do not wait for `isStyleLoaded()`: it can remain false while basemap
-  // sources or tiles are still loading, and no second `style.load` is emitted.
-  if (!areas || !outsideAreas || !stations || !map?.getStyle()) return;
+  // Restore as soon as MapLibre exposes the new style. Do not wait for all\n  // remote basemap sources or tiles: overlays are local and independent.\n  if (!areas || !outsideAreas || !stations || !map?.getStyle()) return false;
 
   addSourceOnce('areas', { type: 'geojson', data: selectedAreas() });
   addSourceOnce('outside-areas', {
@@ -984,10 +981,7 @@ function restoreCustomLayers() {
   initializeLocationSelection();
   locationSelection?.ensure();
   byId('fit').disabled = false;
-  setMapMessage('', { hidden: true });
-}
-
-function extendBounds(bounds, coordinates) {
+  setMapMessage('', { hidden: true });\n  return true;\n}\n\nfunction extendBounds(bounds, coordinates) {
   if (
     Array.isArray(coordinates) &&
     coordinates.length >= 2 &&
