@@ -44,16 +44,14 @@ test('raster styles use explicit source IDs and carry basemap identity', () => {
 
 
 test('rapid style changes restore only the latest style and its camera', () => {
-  const listeners = [];
+  const listeners = new Map();
   const styles = [];
   const jumps = [];
   const ready = [];
   let currentStyle = createRasterStyle('explore', 'explore-source', [], '');
-  let loaded = true;
   const map = {
     on(eventName, listener) {
-      assert.equal(eventName, 'style.load');
-      listeners.push(listener);
+      listeners.set(eventName, listener);
     },
     getCenter: () => ({ toArray: () => [121.6, 31.2] }),
     getZoom: () => 10,
@@ -61,10 +59,8 @@ test('rapid style changes restore only the latest style and its camera', () => {
     getPitch: () => 25,
     setStyle(style) {
       styles.push(style);
-      loaded = false;
     },
     getStyle: () => currentStyle,
-    isStyleLoaded: () => loaded,
     jumpTo(camera) {
       jumps.push(camera);
     },
@@ -75,7 +71,7 @@ test('rapid style changes restore only the latest style and its camera', () => {
     'explore',
     value => ready.push(value),
   );
-  assert.equal(listeners.length, 1);
+  assert.deepEqual([...listeners.keys()].sort(), ['style.load', 'styledata']);
 
   const dark = createRasterStyle('dark', 'dark-source', [], '');
   const pastel = createRasterStyle('pastel', 'voyager-source', [], '');
@@ -84,24 +80,23 @@ test('rapid style changes restore only the latest style and its camera', () => {
   assert.equal(styles.length, 2);
 
   currentStyle = dark;
-  loaded = true;
-  listeners[0]();
+  listeners.get('styledata')();
   assert.equal(ready.length, 0);
 
   currentStyle = pastel;
-  listeners[0]();
+  listeners.get('styledata')();
   assert.deepEqual(ready, [{ key: 'pastel', requestId: 2 }]);
   assert.deepEqual(jumps, [
     { center: [121.6, 31.2], zoom: 10, bearing: 15, pitch: 25 },
   ]);
 
-  listeners[0]();
+  listeners.get('style.load')();
   assert.equal(ready.length, 1);
 });
 
 
 test('style.load restores overlays before basemap sources finish loading', () => {
-  const listeners = [];
+  const listeners = new Map();
   const ready = [];
   let currentStyle = createRasterStyle(
     'explore',
@@ -112,8 +107,7 @@ test('style.load restores overlays before basemap sources finish loading', () =>
 
   const map = {
     on(eventName, listener) {
-      assert.equal(eventName, 'style.load');
-      listeners.push(listener);
+      listeners.set(eventName, listener);
     },
     getCenter: () => ({ toArray: () => [121.6, 31.2] }),
     getZoom: () => 10,
@@ -133,7 +127,7 @@ test('style.load restores overlays before basemap sources finish loading', () =>
     event => ready.push(event),
   );
 
-  listeners[0]();
+  listeners.get('style.load')();
   assert.deepEqual(ready, [{ key: 'explore', requestId: 0 }]);
 
   coordinator.switchTo(
@@ -145,11 +139,60 @@ test('style.load restores overlays before basemap sources finish loading', () =>
       '',
     ),
   );
-  listeners[0]();
+  listeners.get('style.load')();
   assert.deepEqual(ready, [
     { key: 'explore', requestId: 0 },
     { key: 'pastel', requestId: 1 },
   ]);
+});
+
+
+test('styledata restores overlays when style.load never arrives', () => {
+  const listeners = new Map();
+  const ready = [];
+  let currentStyle = createRasterStyle(
+    'explore',
+    'explore-source',
+    ['https://example.test/{z}/{x}/{y}.png'],
+    '',
+  );
+
+  const map = {
+    on(eventName, listener) {
+      listeners.set(eventName, listener);
+    },
+    getCenter: () => ({ toArray: () => [121.6, 31.2] }),
+    getZoom: () => 10,
+    getBearing: () => 0,
+    getPitch: () => 0,
+    getStyle: () => currentStyle,
+    jumpTo() {},
+    setStyle(style) {
+      currentStyle = style;
+    },
+  };
+
+  const coordinator = new StyleSwitchCoordinator(
+    map,
+    'explore',
+    event => ready.push(event),
+  );
+
+  coordinator.switchTo(
+    'apple',
+    createRasterStyle(
+      'apple',
+      'apple-source',
+      ['https://example.test/{z}/{x}/{y}.png'],
+      '',
+    ),
+  );
+
+  listeners.get('styledata')();
+  assert.deepEqual(ready, [{ key: 'apple', requestId: 1 }]);
+
+  listeners.get('style.load')();
+  assert.equal(ready.length, 1);
 });
 
 
