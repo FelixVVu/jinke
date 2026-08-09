@@ -19,6 +19,7 @@ import {
   LocationSearchError,
   MapTilerLocationSearch,
   SingleLocationSelection,
+  buildLocationSearchUrl,
   buildMapTilerGeocodingUrl,
   filterShanghaiResults,
   geoJsonBounds,
@@ -454,15 +455,14 @@ test('static Shanghai metro GeoJSON is licensed, valid, and complete', () => {
 
 
 test('rapid warm-vector switching still restores only the newest request', () => {
-  const listeners = [];
+  const listeners = new Map();
   const ready = [];
   const jumps = [];
   let loaded = true;
   let style = createRasterStyle('explore', 'explore-source', [], '');
   const map = {
     on(eventName, handler) {
-      assert.equal(eventName, 'style.load');
-      listeners.push(handler);
+      listeners.set(eventName, handler);
     },
     getCenter: () => ({ toArray: () => [121.6, 31.2] }),
     getZoom: () => 10,
@@ -490,8 +490,8 @@ test('rapid warm-vector switching still restores only the newest request', () =>
   );
   style = createWarmVectorStyle('apple-transit');
   loaded = true;
-  listeners[0]();
-  listeners[0]();
+  listeners.get('styledata')();
+  listeners.get('style.load')();
 
   assert.deepEqual(ready, [{ key: 'apple-transit', requestId: 2 }]);
   assert.deepEqual(jumps, [
@@ -560,6 +560,32 @@ test('MapTiler URL reuses one supplied runtime key and applies Shanghai filters'
 });
 
 
+test('configured same-origin endpoint avoids a direct browser-to-MapTiler request', () => {
+  const url = buildLocationSearchUrl('wison', {
+    key: 'existing-browser-key',
+    endpoint: '/api/location-search',
+    origin: 'https://jinke.example',
+    bbox: geoJsonBounds(squareBoundary),
+    proximity: [121.48, 31.23],
+    limit: 8,
+  });
+
+  assert.equal(url.origin, 'https://jinke.example');
+  assert.equal(url.pathname, '/api/location-search');
+  assert.equal(url.searchParams.get('q'), 'wison');
+  assert.equal(url.searchParams.get('bbox'), '120.8,30.7,122.2,31.9');
+  assert.equal(url.searchParams.get('proximity'), '121.48,31.23');
+  assert.equal(url.searchParams.has('key'), false);
+  assert.throws(
+    () => buildLocationSearchUrl('wison', {
+      endpoint: 'https://other.example/search',
+      origin: 'https://jinke.example',
+    }),
+    error => error instanceof LocationSearchError && error.code === 'missing-config',
+  );
+});
+
+
 test('Shanghai filtering removes all nearby non-Shanghai results without reordering', () => {
   const features = [
     locationFeature('inside-1', 'First', [121.47, 31.23]),
@@ -619,6 +645,36 @@ test('stale MapTiler responses cannot overwrite a newer Chinese or English query
     }),
   });
   assert.equal((await older).status, 'stale');
+});
+
+
+test('location search uses the configured same-origin endpoint when provider CORS is unavailable', async () => {
+  const requested = [];
+  const search = new MapTilerLocationSearch({
+    keyProvider: () => 'existing-browser-key',
+    endpointProvider: () => '/api/location-search',
+    boundary: squareBoundary,
+    fetchFn: async url => {
+      requested.push(url);
+      return {
+        ok: true,
+        status: 200,
+        json: async () => ({
+          type: 'FeatureCollection',
+          features: [locationFeature('proxy-result', 'Wison', [121.5, 31.2])],
+        }),
+      };
+    },
+  });
+
+  const response = await search.search('wison', {
+    bbox: geoJsonBounds(squareBoundary),
+    proximity: [121.5, 31.2],
+  });
+  assert.deepEqual(response.results.map(result => result.id), ['proxy-result']);
+  assert.equal(requested[0].origin, 'http://localhost');
+  assert.equal(requested[0].pathname, '/api/location-search');
+  assert.equal(requested[0].searchParams.has('key'), false);
 });
 
 
@@ -691,7 +747,8 @@ test('missing, failed, rate-limited, and invalid search configuration degrade sa
 
   for (const [status, code] of [
     [429, 'rate-limit'],
-    [503, 'request-failed'],
+    [503, 'service-unavailable'],
+    [400, 'request-failed'],
   ]) {
     const search = new MapTilerLocationSearch({
       keyProvider: () => 'existing-browser-key',
@@ -721,7 +778,7 @@ test('missing, failed, rate-limited, and invalid search configuration degrade sa
 });
 
 
-test('runtime config has one empty assignment and the browser key is not duplicated', () => {
+test('runtime config has one key and one same-origin endpoint assignment', () => {
   const runtimeConfig = readFileSync(
     new URL('../runtime-config.js', import.meta.url),
     'utf8',
@@ -730,8 +787,13 @@ test('runtime config has one empty assignment and the browser key is not duplica
     new URL('../web/src/main.js', import.meta.url),
     'utf8',
   );
-  assert.equal(runtimeConfig.trim(), "window.JINKE_MAPTILER_KEY ??= '';");
+  assert.equal(
+    runtimeConfig.trim(),
+    "window.JINKE_MAPTILER_KEY ??= '';\nwindow.JINKE_LOCATION_SEARCH_ENDPOINT ??= '';",
+  );
   assert.equal((runtimeConfig.match(/JINKE_MAPTILER_KEY/g) || []).length, 1);
+  assert.equal((runtimeConfig.match(/JINKE_LOCATION_SEARCH_ENDPOINT/g) || []).length, 1);
   assert.match(mainSource, /window\.JINKE_MAPTILER_KEY/);
+  assert.match(mainSource, /window\.JINKE_LOCATION_SEARCH_ENDPOINT/);
   assert.equal(runtimeConfig.includes('existing-browser-key'), false);
 });

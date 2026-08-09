@@ -286,15 +286,74 @@ export function buildMapTilerGeocodingUrl(
   return url;
 }
 
+export function buildLocationSearchUrl(
+  query,
+  {
+    key,
+    endpoint,
+    bbox,
+    proximity,
+    limit = DEFAULT_LIMIT,
+    origin = globalThis.location?.origin || 'http://localhost',
+  } = {},
+) {
+  const configuredEndpoint = String(endpoint || '').trim();
+  if (!configuredEndpoint) {
+    return buildMapTilerGeocodingUrl(query, {
+      key,
+      bbox,
+      proximity,
+      limit,
+    });
+  }
+
+  const normalizedQuery = normalizeLocationQuery(query);
+  if (locationQueryLength(normalizedQuery) < 2) {
+    throw new LocationSearchError(
+      'query-too-short',
+      'Enter at least two characters.',
+    );
+  }
+
+  let url;
+  try {
+    url = new URL(configuredEndpoint, origin);
+  } catch (cause) {
+    throw new LocationSearchError(
+      'missing-config',
+      'Map search configuration is invalid.',
+      { cause },
+    );
+  }
+  if (url.origin !== new URL(origin).origin) {
+    throw new LocationSearchError(
+      'missing-config',
+      'Map search proxy must use the current Site origin.',
+    );
+  }
+
+  url.searchParams.set('q', normalizedQuery);
+  if (Array.isArray(bbox) && bbox.length === 4) {
+    url.searchParams.set('bbox', bbox.join(','));
+  }
+  if (validPosition(proximity)) {
+    url.searchParams.set('proximity', `${proximity[0]},${proximity[1]}`);
+  }
+  url.searchParams.set('limit', String(Math.min(10, Math.max(1, limit))));
+  return url;
+}
+
 export class MapTilerLocationSearch {
   constructor({
     keyProvider,
+    endpointProvider = () => '',
     boundary,
     fetchFn = globalThis.fetch,
     cacheTtlMs = DEFAULT_CACHE_TTL_MS,
     now = Date.now,
   }) {
     this.keyProvider = keyProvider;
+    this.endpointProvider = endpointProvider;
     this.boundary = boundary;
     this.fetchFn = fetchFn;
     this.cacheTtlMs = cacheTtlMs;
@@ -331,8 +390,9 @@ export class MapTilerLocationSearch {
 
     let response;
     try {
-      const url = buildMapTilerGeocodingUrl(normalizedQuery, {
+      const url = buildLocationSearchUrl(normalizedQuery, {
         key: this.keyProvider?.(),
+        endpoint: this.endpointProvider?.(),
         bbox,
         proximity,
         limit,
@@ -346,6 +406,13 @@ export class MapTilerLocationSearch {
         throw new LocationSearchError(
           'rate-limit',
           'Map search is temporarily rate-limited.',
+          { status: response.status },
+        );
+      }
+      if ([502, 503, 504].includes(response.status)) {
+        throw new LocationSearchError(
+          'service-unavailable',
+          'Map search service is temporarily unavailable.',
           { status: response.status },
         );
       }

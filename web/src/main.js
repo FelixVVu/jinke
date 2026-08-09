@@ -29,6 +29,10 @@ const runtimeMapTilerKey = () =>
   typeof window.JINKE_MAPTILER_KEY === 'string'
     ? window.JINKE_MAPTILER_KEY.trim()
     : '';
+const runtimeLocationSearchEndpoint = () =>
+  typeof window.JINKE_LOCATION_SEARCH_ENDPOINT === 'string'
+    ? window.JINKE_LOCATION_SEARCH_ENDPOINT.trim()
+    : '';
 
 const defaults = {
   limit: 50,
@@ -758,9 +762,14 @@ function showLocationSearchError(error) {
       'Location search returned an invalid response. Please try again.',
       { error: true },
     );
+  } else if (error instanceof LocationSearchError && error.code === 'service-unavailable') {
+    setLocationSearchStatus(
+      'Location search is temporarily unavailable. Please try again shortly.',
+      { error: true },
+    );
   } else {
     setLocationSearchStatus(
-      'Location search is unavailable right now. Check your connection and try again.',
+      'Location search could not be completed. Please try again.',
       { error: true },
     );
   }
@@ -828,9 +837,10 @@ async function initializeLocationSearch() {
     shanghaiSearchBounds = bounds;
     locationSearchService = new MapTilerLocationSearch({
       keyProvider: runtimeMapTilerKey,
+      endpointProvider: runtimeLocationSearchEndpoint,
       boundary: shanghaiBoundary,
     });
-    if (!runtimeMapTilerKey()) {
+    if (!runtimeMapTilerKey() && !runtimeLocationSearchEndpoint()) {
       setLocationSearchStatus(
         'Location search is unavailable because its configuration is missing.',
         { error: true },
