@@ -672,9 +672,48 @@ test('location search uses the configured same-origin endpoint when provider COR
     proximity: [121.5, 31.2],
   });
   assert.deepEqual(response.results.map(result => result.id), ['proxy-result']);
+  const proxyUrl = new URL(requested[0]);
+  assert.equal(proxyUrl.origin, 'http://localhost');
+  assert.equal(proxyUrl.pathname, '/api/location-search');
+  assert.equal(proxyUrl.searchParams.has('key'), false);
+});
+
+
+test('failed same-origin search falls back to MapTiler with the same runtime key', async () => {
+  const requested = [];
+  const search = new MapTilerLocationSearch({
+    keyProvider: () => 'existing-browser-key',
+    endpointProvider: () => '/api/location-search',
+    boundary: squareBoundary,
+    fetchFn: async value => {
+      const url = new URL(value);
+      requested.push(url);
+      if (url.origin === 'http://localhost') {
+        return { ok: false, status: 502 };
+      }
+      return {
+        ok: true,
+        status: 200,
+        json: async () => ({
+          type: 'FeatureCollection',
+          features: [locationFeature('direct-result', 'Wison', [121.5, 31.2])],
+        }),
+      };
+    },
+  });
+
+  const response = await search.search('wison', {
+    bbox: geoJsonBounds(squareBoundary),
+    proximity: [121.5, 31.2],
+  });
+
+  assert.deepEqual(response.results.map(result => result.id), ['direct-result']);
+  assert.equal(requested.length, 2);
   assert.equal(requested[0].origin, 'http://localhost');
-  assert.equal(requested[0].pathname, '/api/location-search');
   assert.equal(requested[0].searchParams.has('key'), false);
+  assert.equal(requested[1].origin, 'https://api.maptiler.com');
+  assert.equal(requested[1].searchParams.get('key'), 'existing-browser-key');
+  assert.equal(requested[1].searchParams.getAll('key').length, 1);
 });
 
 
