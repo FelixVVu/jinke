@@ -1,8 +1,7 @@
-export const MAPTILER_GEOCODING_ENDPOINT =
-  'https://api.maptiler.com/geocoding/';
-
 const DEFAULT_LIMIT = 8;
 const DEFAULT_CACHE_TTL_MS = 2 * 60 * 1000;
+const GCJ_A = 6378245;
+const GCJ_EE = 0.006693421622965943;
 
 export class LocationSearchError extends Error {
   constructor(code, message, { status, cause } = {}) {
@@ -142,18 +141,6 @@ export function geoJsonBounds(geojson) {
   return bounds.every(Number.isFinite) ? bounds : null;
 }
 
-function localizedText(value) {
-  if (typeof value === 'string') return value.trim();
-  if (!value || typeof value !== 'object') return '';
-  return String(value.zh ?? value.en ?? value.default ?? '').trim();
-}
-
-function contextText(context) {
-  return localizedText(
-    context?.text_zh ?? context?.text_en ?? context?.text ?? context?.name,
-  );
-}
-
 function titleCase(value) {
   return String(value || '')
     .replaceAll('_', ' ')
@@ -161,135 +148,119 @@ function titleCase(value) {
     .replace(/\b\w/g, character => character.toUpperCase());
 }
 
-export function normalizeMapTilerFeature(feature, index = 0) {
-  const coordinates = featureCoordinates(feature);
+function outsideChina(longitude, latitude) {
+  return longitude < 72.004 || longitude > 137.8347 || latitude < 0.8293 || latitude > 55.8271;
+}
+
+function transformLatitude(longitude, latitude) {
+  let result =
+    -100 + 2 * longitude + 3 * latitude + 0.2 * latitude ** 2 +
+    0.1 * longitude * latitude + 0.2 * Math.sqrt(Math.abs(longitude));
+  result +=
+    ((20 * Math.sin(6 * longitude * Math.PI) + 20 * Math.sin(2 * longitude * Math.PI)) * 2) / 3;
+  result +=
+    ((20 * Math.sin(latitude * Math.PI) + 40 * Math.sin((latitude / 3) * Math.PI)) * 2) / 3;
+  result +=
+    ((160 * Math.sin((latitude / 12) * Math.PI) + 320 * Math.sin((latitude * Math.PI) / 30)) * 2) / 3;
+  return result;
+}
+
+function transformLongitude(longitude, latitude) {
+  let result =
+    300 + longitude + 2 * latitude + 0.1 * longitude ** 2 +
+    0.1 * longitude * latitude + 0.1 * Math.sqrt(Math.abs(longitude));
+  result +=
+    ((20 * Math.sin(6 * longitude * Math.PI) + 20 * Math.sin(2 * longitude * Math.PI)) * 2) / 3;
+  result +=
+    ((20 * Math.sin(longitude * Math.PI) + 40 * Math.sin((longitude / 3) * Math.PI)) * 2) / 3;
+  result +=
+    ((150 * Math.sin((longitude / 12) * Math.PI) + 300 * Math.sin((longitude / 30) * Math.PI)) * 2) / 3;
+  return result;
+}
+
+export function wgs84ToGcj02(longitude, latitude) {
+  const lng = Number(longitude);
+  const lat = Number(latitude);
+  if (!Number.isFinite(lng) || !Number.isFinite(lat)) return null;
+  if (outsideChina(lng, lat)) return [lng, lat];
+
+  let latitudeDelta = transformLatitude(lng - 105, lat - 35);
+  let longitudeDelta = transformLongitude(lng - 105, lat - 35);
+  const radians = (lat / 180) * Math.PI;
+  let magic = Math.sin(radians);
+  magic = 1 - GCJ_EE * magic ** 2;
+  const squareRootMagic = Math.sqrt(magic);
+  latitudeDelta =
+    (latitudeDelta * 180) /
+    (((GCJ_A * (1 - GCJ_EE)) / (magic * squareRootMagic)) * Math.PI);
+  longitudeDelta =
+    (longitudeDelta * 180) /
+    ((GCJ_A / squareRootMagic) * Math.cos(radians) * Math.PI);
+  return [lng + longitudeDelta, lat + latitudeDelta];
+}
+
+export function gcj02ToWgs84(longitude, latitude) {
+  const lng = Number(longitude);
+  const lat = Number(latitude);
+  if (!Number.isFinite(lng) || !Number.isFinite(lat)) return null;
+  if (outsideChina(lng, lat)) return [lng, lat];
+
+  let wgsLongitude = lng;
+  let wgsLatitude = lat;
+  for (let iteration = 0; iteration < 10; iteration += 1) {
+    const converted = wgs84ToGcj02(wgsLongitude, wgsLatitude);
+    const longitudeError = converted[0] - lng;
+    const latitudeError = converted[1] - lat;
+    wgsLongitude -= longitudeError;
+    wgsLatitude -= latitudeError;
+    if (Math.abs(longitudeError) < 1e-8 && Math.abs(latitudeError) < 1e-8) break;
+  }
+  return [wgsLongitude, wgsLatitude];
+}
+
+function amapText(value) {
+  if (Array.isArray(value)) return value.map(amapText).find(Boolean) || '';
+  return typeof value === 'string' ? value.trim() : '';
+}
+
+export function amapFeatureCoordinates(poi) {
+  const location = amapText(poi?.location);
+  const parts = location.split(',').map(Number);
+  if (parts.length !== 2 || !parts.every(Number.isFinite)) return null;
+  return gcj02ToWgs84(parts[0], parts[1]);
+}
+
+export function normalizeAmapPoi(poi, index = 0) {
+  const coordinates = amapFeatureCoordinates(poi);
   if (!coordinates) return null;
-
-  const properties = feature?.properties || {};
-  const primaryName = localizedText(
-    feature.text_zh ??
-      feature.text_en ??
-      feature.text ??
-      properties.name ??
-      properties.name_zh ??
-      properties.name_en,
-  );
-  const placeName = localizedText(
-    feature.place_name_zh ??
-      feature.place_name_en ??
-      feature.place_name ??
-      properties.full_address,
-  );
-  const name = primaryName || placeName.split(',')[0]?.trim() || 'Unnamed place';
-  const placeTypes = Array.isArray(feature.place_type)
-    ? feature.place_type
-    : [properties.feature_type ?? properties.type].filter(Boolean);
-  const categoryValue =
-    (Array.isArray(feature.categories) && feature.categories[0]) ||
-    (Array.isArray(properties.categories) && properties.categories[0]) ||
-    properties.category ||
-    properties.place_designation ||
-    placeTypes[0] ||
-    'place';
-  const contexts = Array.isArray(feature.context) ? feature.context : [];
-  const contextKind = item =>
-    String(item?.id ?? item?.type ?? '').toLowerCase();
-  const districtContext =
-    contexts.find(item => /municipal_district|district|borough/.test(contextKind(item))) ||
-    contexts.find(item => /county/.test(contextKind(item))) ||
-    contexts.find(item =>
-      /locality|neighbourhood|municipality|place/.test(contextKind(item)),
-    );
-  const addressContext = contexts.find(item =>
-    /^address[.]/.test(contextKind(item)),
-  );
-  const district =
-    contextText(districtContext) ||
-    localizedText(
-      properties.district ??
-        properties.locality ??
-        properties.municipality ??
-        properties.place,
-    );
-  const placeRemainder = placeName
-    .replace(new RegExp(`^${name.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}\\s*,?\\s*`, 'i'), '')
-    .trim();
-  const secondary = localizedText(
-    properties.full_address ??
-      properties.address ??
-      feature.address ??
-      (contextText(addressContext) || placeRemainder),
-  );
-
+  const types = amapText(poi?.type).split(';').map(value => value.trim()).filter(Boolean);
+  const name = amapText(poi?.name) || 'Unnamed place';
   return {
-    id: String(feature.id ?? `maptiler-result-${index}`),
+    id: String(poi?.id || `amap-result-${index}`),
     name,
-    category: titleCase(categoryValue),
-    district,
-    secondary,
+    category: titleCase(types.at(-1) || 'place'),
+    district: amapText(poi?.adname) || amapText(poi?.cityname),
+    secondary: amapText(poi?.address),
     coordinates,
-    placeType: String(placeTypes[0] || 'place'),
-    providerFeature: feature,
+    placeType: 'poi',
+    provider: 'amap',
   };
 }
 
-export function filterShanghaiResults(features, boundary, maximum = DEFAULT_LIMIT) {
-  if (!Array.isArray(features)) return [];
+export function filterShanghaiAmapResults(pois, boundary, maximum = DEFAULT_LIMIT) {
+  if (!Array.isArray(pois)) return [];
   const results = [];
-  for (let index = 0; index < features.length; index += 1) {
-    const result = normalizeMapTilerFeature(features[index], index);
-    if (result && pointInGeoJson(result.coordinates, boundary)) {
-      results.push(result);
-    }
+  for (let index = 0; index < pois.length; index += 1) {
+    const result = normalizeAmapPoi(pois[index], index);
+    if (result && pointInGeoJson(result.coordinates, boundary)) results.push(result);
     if (results.length >= maximum) break;
   }
   return results;
 }
 
-export function buildMapTilerGeocodingUrl(
-  query,
-  { key, bbox, proximity, limit = DEFAULT_LIMIT } = {},
-) {
-  const normalizedQuery = normalizeLocationQuery(query);
-  if (!key || !String(key).trim()) {
-    throw new LocationSearchError(
-      'missing-config',
-      'Map search configuration is missing.',
-    );
-  }
-  if (locationQueryLength(normalizedQuery) < 2) {
-    throw new LocationSearchError(
-      'query-too-short',
-      'Enter at least two characters.',
-    );
-  }
-
-  const url = new URL(
-    `${MAPTILER_GEOCODING_ENDPOINT}${encodeURIComponent(normalizedQuery)}.json`,
-  );
-  url.searchParams.set('key', String(key).trim());
-  url.searchParams.set('country', 'cn');
-  if (Array.isArray(bbox) && bbox.length === 4) {
-    url.searchParams.set('bbox', bbox.join(','));
-  }
-  if (validPosition(proximity)) {
-    url.searchParams.set('proximity', `${proximity[0]},${proximity[1]}`);
-  }
-  url.searchParams.set('language', 'zh,en');
-  url.searchParams.set(
-    'types',
-    'poi,address,street,place,locality,neighbourhood,municipality',
-  );
-  url.searchParams.set('autocomplete', 'true');
-  url.searchParams.set('fuzzyMatch', 'true');
-  url.searchParams.set('limit', String(Math.min(10, Math.max(1, limit))));
-  return url;
-}
-
 export function buildLocationSearchUrl(
   query,
   {
-    key,
     endpoint,
     bbox,
     proximity,
@@ -299,12 +270,10 @@ export function buildLocationSearchUrl(
 ) {
   const configuredEndpoint = String(endpoint || '').trim();
   if (!configuredEndpoint) {
-    return buildMapTilerGeocodingUrl(query, {
-      key,
-      bbox,
-      proximity,
-      limit,
-    });
+    throw new LocationSearchError(
+      'missing-config',
+      'Map search configuration is missing.',
+    );
   }
 
   const normalizedQuery = normalizeLocationQuery(query);
@@ -343,16 +312,14 @@ export function buildLocationSearchUrl(
   return url;
 }
 
-export class MapTilerLocationSearch {
+export class AmapLocationSearch {
   constructor({
-    keyProvider,
     endpointProvider = () => '',
     boundary,
     fetchFn = globalThis.fetch,
     cacheTtlMs = DEFAULT_CACHE_TTL_MS,
     now = Date.now,
   }) {
-    this.keyProvider = keyProvider;
     this.endpointProvider = endpointProvider;
     this.boundary = boundary;
     this.fetchFn = fetchFn;
@@ -388,18 +355,7 @@ export class MapTilerLocationSearch {
       return { status: cached.results.length ? 'ok' : 'empty', results: cached.results, cached: true };
     }
 
-    const configuredKey = this.keyProvider?.();
     const configuredEndpoint = this.endpointProvider?.();
-    const canUseDirectFallback = Boolean(
-      String(configuredEndpoint || '').trim() && String(configuredKey || '').trim(),
-    );
-    const fallbackCodes = new Set([
-      'invalid-response',
-      'missing-config',
-      'network-error',
-      'request-failed',
-      'service-unavailable',
-    ]);
 
     const fetchPayload = async url => {
       let response;
@@ -455,7 +411,7 @@ export class MapTilerLocationSearch {
         );
       }
       if (requestId !== this.requestId) return null;
-      if (payload?.type !== 'FeatureCollection' || !Array.isArray(payload.features)) {
+      if (String(payload?.status) !== '1' || !Array.isArray(payload.pois)) {
         throw new LocationSearchError(
           'invalid-response',
           'Map search returned an invalid response.',
@@ -466,38 +422,17 @@ export class MapTilerLocationSearch {
 
     try {
       const primaryUrl = buildLocationSearchUrl(normalizedQuery, {
-        key: configuredKey,
         endpoint: configuredEndpoint,
         bbox,
         proximity,
         limit,
       });
-      let payload;
-      try {
-        payload = await fetchPayload(primaryUrl);
-      } catch (error) {
-        if (
-          !canUseDirectFallback ||
-          !(error instanceof LocationSearchError) ||
-          !fallbackCodes.has(error.code) ||
-          requestId !== this.requestId ||
-          controller.signal.aborted
-        ) {
-          throw error;
-        }
-        const directUrl = buildMapTilerGeocodingUrl(normalizedQuery, {
-          key: configuredKey,
-          bbox,
-          proximity,
-          limit,
-        });
-        payload = await fetchPayload(directUrl);
-      }
+      const payload = await fetchPayload(primaryUrl);
       if (!payload || requestId !== this.requestId) {
         return { status: 'stale', results: [] };
       }
 
-      const results = filterShanghaiResults(payload.features, this.boundary, limit);
+      const results = filterShanghaiAmapResults(payload.pois, this.boundary, limit);
       this.cache.set(cacheKey, {
         results,
         expiresAt: this.now() + this.cacheTtlMs,
