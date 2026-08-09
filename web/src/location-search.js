@@ -388,20 +388,40 @@ export class MapTilerLocationSearch {
       return { status: cached.results.length ? 'ok' : 'empty', results: cached.results, cached: true };
     }
 
-    let response;
-    try {
-      const url = buildLocationSearchUrl(normalizedQuery, {
-        key: this.keyProvider?.(),
-        endpoint: this.endpointProvider?.(),
-        bbox,
-        proximity,
-        limit,
-      });
-      response = await this.fetchFn(url, {
-        signal: controller.signal,
-        headers: { Accept: 'application/json' },
-      });
-      if (requestId !== this.requestId) return { status: 'stale', results: [] };
+    const configuredKey = this.keyProvider?.();
+    const configuredEndpoint = this.endpointProvider?.();
+    const canUseDirectFallback = Boolean(
+      String(configuredEndpoint || '').trim() && String(configuredKey || '').trim(),
+    );
+    const fallbackCodes = new Set([
+      'invalid-response',
+      'missing-config',
+      'network-error',
+      'request-failed',
+      'service-unavailable',
+    ]);
+
+    const fetchPayload = async url => {
+      let response;
+      try {
+        response = await this.fetchFn(String(url), {
+          signal: controller.signal,
+          headers: { Accept: 'application/json' },
+          credentials:
+            globalThis.location?.origin &&
+            url.origin === globalThis.location.origin
+              ? 'same-origin'
+              : 'omit',
+          cache: 'no-store',
+        });
+      } catch (cause) {
+        throw new LocationSearchError(
+          'network-error',
+          'Map search could not reach the network.',
+          { cause },
+        );
+      }
+      if (requestId !== this.requestId) return null;
       if (response.status === 429) {
         throw new LocationSearchError(
           'rate-limit',
@@ -434,12 +454,47 @@ export class MapTilerLocationSearch {
           { cause },
         );
       }
-      if (requestId !== this.requestId) return { status: 'stale', results: [] };
+      if (requestId !== this.requestId) return null;
       if (payload?.type !== 'FeatureCollection' || !Array.isArray(payload.features)) {
         throw new LocationSearchError(
           'invalid-response',
           'Map search returned an invalid response.',
         );
+      }
+      return payload;
+    };
+
+    try {
+      const primaryUrl = buildLocationSearchUrl(normalizedQuery, {
+        key: configuredKey,
+        endpoint: configuredEndpoint,
+        bbox,
+        proximity,
+        limit,
+      });
+      let payload;
+      try {
+        payload = await fetchPayload(primaryUrl);
+      } catch (error) {
+        if (
+          !canUseDirectFallback ||
+          !(error instanceof LocationSearchError) ||
+          !fallbackCodes.has(error.code) ||
+          requestId !== this.requestId ||
+          controller.signal.aborted
+        ) {
+          throw error;
+        }
+        const directUrl = buildMapTilerGeocodingUrl(normalizedQuery, {
+          key: configuredKey,
+          bbox,
+          proximity,
+          limit,
+        });
+        payload = await fetchPayload(directUrl);
+      }
+      if (!payload || requestId !== this.requestId) {
+        return { status: 'stale', results: [] };
       }
 
       const results = filterShanghaiResults(payload.features, this.boundary, limit);
