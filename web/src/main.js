@@ -12,8 +12,8 @@ import {
   stationFeatureCollection,
 } from './map-utils.js';
 import {
+  AmapLocationSearch,
   LocationSearchError,
-  MapTilerLocationSearch,
   SingleLocationSelection,
   geoJsonBounds,
   locationQueryLength,
@@ -25,10 +25,6 @@ const LIMITS = [10, 20, 30, 40, 50];
 const base = window.JINKE_BASE || '/';
 const assetUrl = path =>
   `${base}${path}`.replace(/\/+/g, '/').replace(':/', '://');
-const runtimeMapTilerKey = () =>
-  typeof window.JINKE_MAPTILER_KEY === 'string'
-    ? window.JINKE_MAPTILER_KEY.trim()
-    : '';
 const runtimeLocationSearchEndpoint = () =>
   typeof window.JINKE_LOCATION_SEARCH_ENDPOINT === 'string'
     ? window.JINKE_LOCATION_SEARCH_ENDPOINT.trim()
@@ -835,12 +831,11 @@ async function initializeLocationSearch() {
     if (!bounds) throw new Error('Invalid Shanghai boundary');
     shanghaiBoundary = boundary;
     shanghaiSearchBounds = bounds;
-    locationSearchService = new MapTilerLocationSearch({
-      keyProvider: runtimeMapTilerKey,
+    locationSearchService = new AmapLocationSearch({
       endpointProvider: runtimeLocationSearchEndpoint,
       boundary: shanghaiBoundary,
     });
-    if (!runtimeMapTilerKey() && !runtimeLocationSearchEndpoint()) {
+    if (!runtimeLocationSearchEndpoint()) {
       setLocationSearchStatus(
         'Location search is unavailable because its configuration is missing.',
         { error: true },

@@ -1,2 +1,2 @@
-window.JINKE_MAPTILER_KEY ??= '';
 window.JINKE_LOCATION_SEARCH_ENDPOINT ??= '';
+window.JINKE_LOCATION_SEARCH_PROVIDER ??= 'amap';

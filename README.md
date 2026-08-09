@@ -177,6 +177,8 @@ Rerun the dry-run estimate first. Boundary stations where `apple == limit` are k
 
 ## Shanghai location search configuration
 
-General place search is separate from station search and uses MapTiler Search/Geocoding only. The browser reads one runtime value, `window.JINKE_MAPTILER_KEY`, from `runtime-config.js`; the committed default is empty so deployments can supply their existing browser key without copying it into application or basemap code. The key is never written to localStorage or logs and is not used by any basemap.
+General place search remains separate from station search and uses the Gaode/Amap Web Service POI 2.0 text-search endpoint through the deployed Site's same-origin `/api/location-search` route. The Web Service key is stored once as the protected Site runtime value `JINKE_AMAP_KEY`; it is never committed, sent to the browser, written to localStorage, or used by any basemap.
 
-Requests use the China country filter, the locally computed Shanghai boundary bounding box, Chinese/English language preferences, and proximity to the current map center. Returned coordinates are then checked against the committed `shanghai-boundary.geojson`; results outside Shanghai Municipality are discarded even if the provider returned them.
+The server restricts provider results to Shanghai adcode `310000` with `city_limit=true` and preserves Gaode relevance order. Gaode returns GCJ-02 coordinates, so the frontend converts every POI to WGS-84 before applying the committed `shanghai-boundary.geojson` municipal-boundary check and placing the standalone MapLibre marker. Jiangsu, Zhejiang, and all other out-of-boundary results are discarded after conversion.
+
+See Gaode's [POI 2.0 documentation](https://lbs.amap.com/api/webservice/guide/api-advanced/newpoisearch) and [coordinate-system documentation](https://lbs.amap.com/api/webservice/guide/api/convert).

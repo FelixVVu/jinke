@@ -16,15 +16,13 @@ import {
   stationFeatureCollection,
 } from '../web/src/map-utils.js';
 import {
+  AmapLocationSearch,
   LocationSearchError,
-  MapTilerLocationSearch,
   SingleLocationSelection,
   buildLocationSearchUrl,
-  buildMapTilerGeocodingUrl,
-  filterShanghaiResults,
-  geoJsonBounds,
-  locationQueryLength,
-  pointInGeoJson,
+  filterShanghaiAmapResults,
+  gcj02ToWgs84,
+  wgs84ToGcj02,
 } from '../web/src/location-search.js';
 
 
@@ -501,83 +499,63 @@ test('rapid warm-vector switching still restores only the newest request', () =>
 
 
 const squareBoundary = {
-  type: 'FeatureCollection',
-  features: [
-    {
-      type: 'Feature',
-      properties: {},
-      geometry: {
-        type: 'Polygon',
-        coordinates: [
-          [
-            [120.8, 30.7],
-            [122.2, 30.7],
-            [122.2, 31.9],
-            [120.8, 31.9],
-            [120.8, 30.7],
-          ],
-        ],
-      },
-    },
-  ],
+  type: 'Feature',
+  geometry: {
+    type: 'Polygon',
+    coordinates: [[
+      [120.8, 30.7],
+      [122.2, 30.7],
+      [122.2, 31.9],
+      [120.8, 31.9],
+      [120.8, 30.7],
+    ]],
+  },
 };
 
-const locationFeature = (id, name, coordinates, placeType = 'poi') => ({
-  type: 'Feature',
-  id,
-  center: coordinates,
-  geometry: { type: 'Point', coordinates },
-  text: name,
-  text_zh: name,
-  place_name: `${name}, Shanghai, China`,
-  place_type: [placeType],
-  properties: { categories: ['landmark'] },
-  context: [
-    { id: 'municipal_district.1', text: 'Pudong', text_zh: '浦东新区' },
-  ],
+function poi(name, wgs84, overrides = {}) {
+  const gcj02 = wgs84ToGcj02(...wgs84);
+  return {
+    id: name,
+    name,
+    location: `${gcj02[0]},${gcj02[1]}`,
+    type: '商务住宅;楼宇;商务写字楼',
+    adname: '浦东新区',
+    address: '张江路1号',
+    ...overrides,
+  };
+}
+
+function response(pois) {
+  return {
+    ok: true,
+    status: 200,
+    json: async () => ({ status: '1', info: 'OK', infocode: '10000', pois }),
+  };
+}
+
+test('client routes Chinese and English searches through the current Site origin without a key', () => {
+  for (const query of ['惠生', 'Wison']) {
+    const url = buildLocationSearchUrl(query, {
+      endpoint: '/api/location-search',
+      origin: 'https://jinke.example',
+      bbox: [120.8, 30.7, 122.2, 31.9],
+      proximity: [121.6, 31.2],
+      limit: 8,
+    });
+    assert.equal(url.origin, 'https://jinke.example');
+    assert.equal(url.pathname, '/api/location-search');
+    assert.equal(url.searchParams.get('q'), query);
+    assert.equal(url.searchParams.has('key'), false);
+  }
 });
 
-
-test('MapTiler URL reuses one supplied runtime key and applies Shanghai filters', () => {
-  const url = buildMapTilerGeocodingUrl('上海博物馆', {
-    key: 'existing-browser-key',
-    bbox: geoJsonBounds(squareBoundary),
-    proximity: [121.48, 31.23],
-    limit: 8,
-  });
-
-  assert.equal(url.origin, 'https://api.maptiler.com');
-  assert.equal(url.searchParams.get('key'), 'existing-browser-key');
-  assert.equal(url.searchParams.getAll('key').length, 1);
-  assert.equal(url.searchParams.get('country'), 'cn');
-  assert.equal(url.searchParams.get('bbox'), '120.8,30.7,122.2,31.9');
-  assert.equal(url.searchParams.get('proximity'), '121.48,31.23');
-  assert.equal(url.searchParams.get('language'), 'zh,en');
-  assert.match(url.searchParams.get('types'), /poi/);
-  assert.equal(url.searchParams.get('limit'), '8');
-  assert.equal(locationQueryLength('中文'), 2);
-  assert.equal(locationQueryLength('EN'), 2);
-});
-
-
-test('configured same-origin endpoint avoids a direct browser-to-MapTiler request', () => {
-  const url = buildLocationSearchUrl('wison', {
-    key: 'existing-browser-key',
-    endpoint: '/api/location-search',
-    origin: 'https://jinke.example',
-    bbox: geoJsonBounds(squareBoundary),
-    proximity: [121.48, 31.23],
-    limit: 8,
-  });
-
-  assert.equal(url.origin, 'https://jinke.example');
-  assert.equal(url.pathname, '/api/location-search');
-  assert.equal(url.searchParams.get('q'), 'wison');
-  assert.equal(url.searchParams.get('bbox'), '120.8,30.7,122.2,31.9');
-  assert.equal(url.searchParams.get('proximity'), '121.48,31.23');
-  assert.equal(url.searchParams.has('key'), false);
+test('client rejects missing and cross-origin search configuration', () => {
   assert.throws(
-    () => buildLocationSearchUrl('wison', {
+    () => buildLocationSearchUrl('惠生'),
+    error => error instanceof LocationSearchError && error.code === 'missing-config',
+  );
+  assert.throws(
+    () => buildLocationSearchUrl('惠生', {
       endpoint: 'https://other.example/search',
       origin: 'https://jinke.example',
     }),
@@ -585,163 +563,108 @@ test('configured same-origin endpoint avoids a direct browser-to-MapTiler reques
   );
 });
 
-
-test('Shanghai filtering removes all nearby non-Shanghai results without reordering', () => {
-  const features = [
-    locationFeature('inside-1', 'First', [121.47, 31.23]),
-    locationFeature('outside-jiangsu', 'Suzhou', [120.58, 31.3]),
-    locationFeature('inside-2', 'Second', [121.6, 31.1]),
-    locationFeature('outside-zhejiang', 'Jiaxing', [120.75, 30.75]),
-    locationFeature('inside-3', 'Third', [121.8, 31.4]),
-  ];
-
-  const results = filterShanghaiResults(features, squareBoundary, 8);
-  assert.deepEqual(
-    results.map(result => result.id),
-    ['inside-1', 'inside-2', 'inside-3'],
-  );
-  assert.ok(results.every(result => pointInGeoJson(result.coordinates, squareBoundary)));
-  assert.equal(results[0].category, 'Landmark');
-  assert.equal(results[0].district, '浦东新区');
+test('GCJ-02 coordinates are converted back to WGS-84 before map placement', () => {
+  const original = [121.597836, 31.2064028];
+  const gcj02 = wgs84ToGcj02(...original);
+  const converted = gcj02ToWgs84(...gcj02);
+  assert.ok(Math.abs(gcj02[0] - original[0]) > 0.003);
+  assert.ok(Math.abs(converted[0] - original[0]) < 1e-7);
+  assert.ok(Math.abs(converted[1] - original[1]) < 1e-7);
 });
 
-
-test('stale MapTiler responses cannot overwrite a newer Chinese or English query', async () => {
-  const pending = [];
-  const fetchFn = url =>
-    new Promise(resolve => pending.push({ url, resolve }));
-  const search = new MapTilerLocationSearch({
-    keyProvider: () => 'existing-browser-key',
-    boundary: squareBoundary,
-    fetchFn,
-  });
-
-  const older = search.search('中文', {
-    bbox: geoJsonBounds(squareBoundary),
-    proximity: [121.5, 31.2],
-  });
-  const newer = search.search('English', {
-    bbox: geoJsonBounds(squareBoundary),
-    proximity: [121.5, 31.2],
-  });
-  assert.equal(pending.length, 2);
-
-  pending[1].resolve({
-    ok: true,
-    status: 200,
-    json: async () => ({
-      type: 'FeatureCollection',
-      features: [locationFeature('newer', 'Newer', [121.5, 31.2])],
-    }),
-  });
-  assert.deepEqual((await newer).results.map(result => result.id), ['newer']);
-
-  pending[0].resolve({
-    ok: true,
-    status: 200,
-    json: async () => ({
-      type: 'FeatureCollection',
-      features: [locationFeature('older', 'Older', [121.5, 31.2])],
-    }),
-  });
-  assert.equal((await older).status, 'stale');
+test('Shanghai filtering preserves Gaode relevance order and removes nearby non-Shanghai POIs', () => {
+  const results = filterShanghaiAmapResults([
+    poi('first-shanghai', [121.60, 31.20]),
+    poi('nearby-jiangsu', [120.70, 31.50], { adname: '昆山市' }),
+    poi('second-shanghai', [121.45, 31.24]),
+  ], squareBoundary, 8);
+  assert.deepEqual(results.map(result => result.name), [
+    'first-shanghai',
+    'second-shanghai',
+  ]);
+  assert.equal(results.every(result => result.provider === 'amap'), true);
 });
 
-
-test('location search uses the configured same-origin endpoint when provider CORS is unavailable', async () => {
-  const requested = [];
-  const search = new MapTilerLocationSearch({
-    keyProvider: () => 'existing-browser-key',
+test('Gaode client returns normalized Shanghai POIs through the same-origin endpoint', async () => {
+  const requests = [];
+  const search = new AmapLocationSearch({
     endpointProvider: () => '/api/location-search',
     boundary: squareBoundary,
     fetchFn: async url => {
-      requested.push(url);
-      return {
-        ok: true,
-        status: 200,
-        json: async () => ({
-          type: 'FeatureCollection',
-          features: [locationFeature('proxy-result', 'Wison', [121.5, 31.2])],
-        }),
-      };
+      requests.push(new URL(url));
+      return response([poi('惠生中心', [121.5959, 31.1821])]);
     },
   });
 
-  const response = await search.search('wison', {
-    bbox: geoJsonBounds(squareBoundary),
-    proximity: [121.5, 31.2],
+  const result = await search.search('Wison', {
+    bbox: [120.8, 30.7, 122.2, 31.9],
+    proximity: [121.6, 31.2],
   });
-  assert.deepEqual(response.results.map(result => result.id), ['proxy-result']);
-  const proxyUrl = new URL(requested[0]);
-  assert.equal(proxyUrl.origin, 'http://localhost');
-  assert.equal(proxyUrl.pathname, '/api/location-search');
-  assert.equal(proxyUrl.searchParams.has('key'), false);
+  assert.equal(result.status, 'ok');
+  assert.equal(result.results[0].name, '惠生中心');
+  assert.equal(requests.length, 1);
+  assert.equal(requests[0].origin, 'http://localhost');
+  assert.equal(requests[0].searchParams.has('key'), false);
 });
 
-
-test('failed same-origin search falls back to MapTiler with the same runtime key', async () => {
-  const requested = [];
-  const search = new MapTilerLocationSearch({
-    keyProvider: () => 'existing-browser-key',
+test('stale Gaode responses cannot overwrite a newer query', async () => {
+  let resolveOld;
+  const search = new AmapLocationSearch({
     endpointProvider: () => '/api/location-search',
     boundary: squareBoundary,
-    fetchFn: async value => {
-      const url = new URL(value);
-      requested.push(url);
-      if (url.origin === 'http://localhost') {
-        return { ok: false, status: 502 };
+    fetchFn: async url => {
+      const query = new URL(url).searchParams.get('q');
+      if (query === '旧地址') {
+        return new Promise(resolve => { resolveOld = resolve; });
       }
-      return {
-        ok: true,
-        status: 200,
-        json: async () => ({
-          type: 'FeatureCollection',
-          features: [locationFeature('direct-result', 'Wison', [121.5, 31.2])],
-        }),
-      };
+      return response([poi('新结果', [121.59, 31.21])]);
     },
   });
 
-  const response = await search.search('wison', {
-    bbox: geoJsonBounds(squareBoundary),
-    proximity: [121.5, 31.2],
-  });
-
-  assert.deepEqual(response.results.map(result => result.id), ['direct-result']);
-  assert.equal(requested.length, 2);
-  assert.equal(requested[0].origin, 'http://localhost');
-  assert.equal(requested[0].searchParams.has('key'), false);
-  assert.equal(requested[1].origin, 'https://api.maptiler.com');
-  assert.equal(requested[1].searchParams.get('key'), 'existing-browser-key');
-  assert.equal(requested[1].searchParams.getAll('key').length, 1);
+  const oldRequest = search.search('旧地址');
+  const newRequest = search.search('new address');
+  const latest = await newRequest;
+  resolveOld(response([poi('旧结果', [121.50, 31.20])]));
+  const stale = await oldRequest;
+  assert.equal(latest.results[0].name, '新结果');
+  assert.equal(stale.status, 'stale');
 });
 
-
-test('single location selection replaces markers and clearing removes only its visuals', () => {
-  const created = [];
-  const removed = [];
+test('selection creates exactly one marker, replaces it, and clears only its visuals', () => {
+  const markers = [];
+  const popups = [];
   const selection = new SingleLocationSelection({
-    createVisual(result) {
-      created.push(result.id);
-      return {
-        marker: { remove: () => removed.push(`marker:${result.id}`) },
-        popup: { remove: () => removed.push(`popup:${result.id}`) },
-      };
+    createVisual: result => {
+      const marker = { result, removed: false, remove() { this.removed = true; } };
+      const popup = { result, removed: false, remove() { this.removed = true; } };
+      markers.push(marker);
+      popups.push(popup);
+      return { marker, popup };
     },
   });
 
-  selection.select({ id: 'first' });
-  assert.equal(selection.activeResult.id, 'first');
-  selection.select({ id: 'second' });
-  assert.equal(selection.activeResult.id, 'second');
-  assert.deepEqual(created, ['first', 'second']);
-  assert.deepEqual(removed, ['marker:first', 'popup:first']);
-
-  const unrelatedMapState = { limit: 30, inverse: true, labels: false };
+  selection.select({ name: 'A' });
+  selection.select({ name: 'B' });
+  assert.equal(markers.length, 2);
+  assert.equal(markers[0].removed, true);
+  assert.equal(popups[0].removed, true);
+  assert.equal(selection.marker.result.name, 'B');
   selection.clear();
+  assert.equal(markers[1].removed, true);
+  assert.equal(popups[1].removed, true);
   assert.equal(selection.activeResult, null);
-  assert.deepEqual(removed.slice(-2), ['marker:second', 'popup:second']);
-  assert.deepEqual(unrelatedMapState, { limit: 30, inverse: true, labels: false });
+});
+
+test('failed search configuration degrades without changing map state', async () => {
+  const search = new AmapLocationSearch({
+    endpointProvider: () => '',
+    boundary: squareBoundary,
+    fetchFn: async () => { throw new Error('should not run'); },
+  });
+  await assert.rejects(
+    search.search('惠生'),
+    error => error instanceof LocationSearchError && error.code === 'missing-config',
+  );
 });
 
 
@@ -756,13 +679,7 @@ test('location selection survives overlay updates and restores only when absent'
     isPresent: () => present,
   });
   selection.select({ id: 'selected' });
-
-  polygonPaintForState({
-    showPoly: true,
-    invertFill: true,
-    opacity: 0.4,
-    width: 2,
-  });
+  polygonPaintForState({ showPoly: true, invertFill: true, opacity: 0.4, width: 2 });
   stationFeatureCollection(
     { type: 'FeatureCollection', features: [station('A', 20)] },
     30,
@@ -770,7 +687,6 @@ test('location selection survives overlay updates and restores only when absent'
   );
   selection.ensure();
   assert.equal(creates, 1);
-
   present = false;
   selection.ensure();
   assert.equal(creates, 2);
@@ -778,61 +694,44 @@ test('location selection survives overlay updates and restores only when absent'
 });
 
 
-test('missing, failed, rate-limited, and invalid search configuration degrade safely', async () => {
-  assert.throws(
-    () => buildMapTilerGeocodingUrl('上海', { key: '' }),
-    error => error instanceof LocationSearchError && error.code === 'missing-config',
-  );
-
-  for (const [status, code] of [
-    [429, 'rate-limit'],
-    [503, 'service-unavailable'],
-    [400, 'request-failed'],
-  ]) {
-    const search = new MapTilerLocationSearch({
-      keyProvider: () => 'existing-browser-key',
+test('rate-limited, failed, and invalid Gaode responses degrade safely', async () => {
+  for (const [status, code] of [[429, 'rate-limit'], [503, 'service-unavailable'], [400, 'request-failed']]) {
+    const search = new AmapLocationSearch({
+      endpointProvider: () => '/api/location-search',
       boundary: squareBoundary,
       fetchFn: async () => ({ ok: false, status }),
     });
     await assert.rejects(
-      search.search('上海', { bbox: geoJsonBounds(squareBoundary) }),
+      search.search('上海'),
       error => error instanceof LocationSearchError && error.code === code,
     );
   }
-
-  const invalid = new MapTilerLocationSearch({
-    keyProvider: () => 'existing-browser-key',
+  const invalid = new AmapLocationSearch({
+    endpointProvider: () => '/api/location-search',
     boundary: squareBoundary,
     fetchFn: async () => ({
       ok: true,
       status: 200,
-      json: async () => ({ features: 'not-an-array' }),
+      json: async () => ({ status: '1', pois: 'not-an-array' }),
     }),
   });
   await assert.rejects(
-    invalid.search('上海', { bbox: geoJsonBounds(squareBoundary) }),
-    error =>
-      error instanceof LocationSearchError && error.code === 'invalid-response',
+    invalid.search('上海'),
+    error => error instanceof LocationSearchError && error.code === 'invalid-response',
   );
 });
 
 
-test('runtime config has one key and one same-origin endpoint assignment', () => {
-  const runtimeConfig = readFileSync(
-    new URL('../runtime-config.js', import.meta.url),
-    'utf8',
-  );
-  const mainSource = readFileSync(
-    new URL('../web/src/main.js', import.meta.url),
-    'utf8',
-  );
+test('runtime config declares one same-origin endpoint and no browser API key', () => {
+  const runtimeConfig = readFileSync(new URL('../runtime-config.js', import.meta.url), 'utf8');
+  const mainSource = readFileSync(new URL('../web/src/main.js', import.meta.url), 'utf8');
   assert.equal(
     runtimeConfig.trim(),
-    "window.JINKE_MAPTILER_KEY ??= '';\nwindow.JINKE_LOCATION_SEARCH_ENDPOINT ??= '';",
+    "window.JINKE_LOCATION_SEARCH_ENDPOINT ??= '';\nwindow.JINKE_LOCATION_SEARCH_PROVIDER ??= 'amap';",
   );
-  assert.equal((runtimeConfig.match(/JINKE_MAPTILER_KEY/g) || []).length, 1);
   assert.equal((runtimeConfig.match(/JINKE_LOCATION_SEARCH_ENDPOINT/g) || []).length, 1);
-  assert.match(mainSource, /window\.JINKE_MAPTILER_KEY/);
-  assert.match(mainSource, /window\.JINKE_LOCATION_SEARCH_ENDPOINT/);
-  assert.equal(runtimeConfig.includes('existing-browser-key'), false);
+  assert.equal((runtimeConfig.match(/JINKE_LOCATION_SEARCH_PROVIDER/g) || []).length, 1);
+  assert.doesNotMatch(runtimeConfig, /KEY|maptiler/i);
+  assert.doesNotMatch(mainSource, /JINKE_MAPTILER_KEY|MapTilerLocationSearch/);
+  assert.match(mainSource, /AmapLocationSearch/);
 });
