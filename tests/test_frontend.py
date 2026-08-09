@@ -185,33 +185,29 @@ def test_static_shanghai_metro_geojson_source_license_and_geometry():
     )
 
 
-def test_location_search_is_separate_and_uses_one_runtime_maptiler_key():
+def test_location_search_is_separate_and_uses_same_origin_gaode_endpoint():
     assert '<label for="search">Station search</label>' in MAIN
     assert '<label for="locationSearch">Location search</label>' in MAIN
     assert MAIN.index("Station search") < MAIN.index("Location search")
-    assert "window.JINKE_MAPTILER_KEY" in MAIN
+    assert "AmapLocationSearch" in MAIN
     assert RUNTIME_CONFIG.strip() == (
-        "window.JINKE_MAPTILER_KEY ??= '';\n"
-        "window.JINKE_LOCATION_SEARCH_ENDPOINT ??= '';"
+        "window.JINKE_LOCATION_SEARCH_ENDPOINT ??= '';\n"
+        "window.JINKE_LOCATION_SEARCH_PROVIDER ??= 'amap';"
     )
     assert "%BASE%runtime-config.js" in INDEX
-    assert "api.maptiler.com/geocoding/" in LOCATION
-    assert "api.maptiler.com" not in UTILS
-    assert "JINKE_MAPTILER_KEY" not in UTILS
-    assert "JINKE_MAPTILER_KEY = '" not in MAIN + LOCATION + RUNTIME_CONFIG
     assert "window.JINKE_LOCATION_SEARCH_ENDPOINT" in MAIN
+    assert "JINKE_MAPTILER_KEY" not in MAIN + LOCATION + RUNTIME_CONFIG
+    assert "api.maptiler.com" not in MAIN + LOCATION + UTILS
+    assert "restapi.amap.com" not in MAIN + LOCATION + UTILS
     assert "/api/location-search" not in LOCATION
 
 
-def test_location_search_has_shanghai_filters_and_no_query_persistence():
+def test_location_search_has_gcj_conversion_shanghai_filtering_and_no_query_persistence():
     for value in [
-        "country', 'cn'",
-        "bbox",
-        "proximity",
-        "language', 'zh,en'",
-        "poi,address,street,place,locality,neighbourhood,municipality",
-        "shanghai-boundary.geojson",
+        "gcj02ToWgs84",
+        "filterShanghaiAmapResults",
         "pointInGeoJson",
+        "shanghai-boundary.geojson",
         "No matching place found in Shanghai.",
     ]:
         assert value in MAIN + LOCATION
