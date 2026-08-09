@@ -607,6 +607,27 @@ test('Gaode client returns normalized Shanghai POIs through the same-origin endp
   assert.equal(requests[0].searchParams.has('key'), false);
 });
 
+test('browser fetch keeps the global receiver and sends the same-origin request', async () => {
+  let requestedUrl;
+  function browserFetch(url) {
+    assert.equal(this, globalThis);
+    requestedUrl = new URL(url);
+    return Promise.resolve(response([poi('东郊宾馆', [121.62, 31.22])]));
+  }
+
+  const search = new AmapLocationSearch({
+    endpointProvider: () => '/api/location-search',
+    boundary: squareBoundary,
+    fetchFn: browserFetch,
+  });
+
+  const result = await search.search('东郊宾馆');
+  assert.equal(result.status, 'ok');
+  assert.equal(result.results[0].name, '东郊宾馆');
+  assert.equal(requestedUrl.pathname, '/api/location-search');
+  assert.equal(requestedUrl.searchParams.get('q'), '东郊宾馆');
+});
+
 test('stale Gaode responses cannot overwrite a newer query', async () => {
   let resolveOld;
   const search = new AmapLocationSearch({
