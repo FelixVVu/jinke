@@ -589,7 +589,7 @@ test('Gaode client returns normalized Shanghai POIs through the same-origin endp
   const requests = [];
   const search = new AmapLocationSearch({
     endpointProvider: () => '/api/location-search',
-    squareBoundary,
+    boundary: squareBoundary,
     fetchFn: async url => {
       requests.push(new URL(url));
       return response([poi('惠生中心', [121.5959, 31.1821])]);
@@ -611,7 +611,7 @@ test('stale Gaode responses cannot overwrite a newer query', async () => {
   let resolveOld;
   const search = new AmapLocationSearch({
     endpointProvider: () => '/api/location-search',
-    squareBoundary,
+    boundary: squareBoundary,
     fetchFn: async url => {
       const query = new URL(url).searchParams.get('q');
       if (query === '旧地址') {
@@ -658,7 +658,7 @@ test('selection creates exactly one marker, replaces it, and clears only its vis
 test('failed search configuration degrades without changing map state', async () => {
   const search = new AmapLocationSearch({
     endpointProvider: () => '',
-    squareBoundary,
+    boundary: squareBoundary,
     fetchFn: async () => { throw new Error('should not run'); },
   });
   await assert.rejects(
