@@ -639,7 +639,12 @@ export class StyleSwitchCoordinator {
     this.requestId = 0;
     this.lastHandledRequestId = -1;
     this.pending = { key: initialKey, requestId: 0, camera: null };
-    this.handleStyleLoad = this.handleStyleLoad.bind(this);\n    // Restore on styledata so broken or slow remote tiles cannot hold local\n    // overlays hostage. style.load remains as a safe, idempotent fallback.\n    this.map.on('styledata', this.handleStyleLoad);\n    this.map.on('style.load', this.handleStyleLoad);
+    this.handleStyleLoad = this.handleStyleLoad.bind(this);
+    // `styledata` is emitted as soon as the new style is usable. Waiting only
+    // for `style.load` can deadlock overlays when a remote basemap source keeps
+    // the style in a loading state indefinitely.
+    this.map.on('styledata', this.handleStyleLoad);
+    this.map.on('style.load', this.handleStyleLoad);
   }
 
   switchTo(key, style) {
@@ -661,6 +666,9 @@ export class StyleSwitchCoordinator {
 
     const { camera, key, requestId } = this.pending;
     if (camera) this.map.jumpTo(camera);
-    const restored = this.onStyleReady({ key, requestId });\n    if (restored === false) return false;\n    this.lastHandledRequestId = requestId;\n    return true;
+    const restored = this.onStyleReady({ key, requestId });
+    if (restored === false) return false;
+    this.lastHandledRequestId = requestId;
+    return true;
   }
 }

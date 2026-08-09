@@ -190,12 +190,17 @@ def test_location_search_is_separate_and_uses_one_runtime_maptiler_key():
     assert '<label for="locationSearch">Location search</label>' in MAIN
     assert MAIN.index("Station search") < MAIN.index("Location search")
     assert "window.JINKE_MAPTILER_KEY" in MAIN
-    assert RUNTIME_CONFIG.strip() == "window.JINKE_MAPTILER_KEY ??= '';"
+    assert RUNTIME_CONFIG.strip() == (
+        "window.JINKE_MAPTILER_KEY ??= '';\n"
+        "window.JINKE_LOCATION_SEARCH_ENDPOINT ??= '';"
+    )
     assert "%BASE%runtime-config.js" in INDEX
     assert "api.maptiler.com/geocoding/" in LOCATION
     assert "api.maptiler.com" not in UTILS
     assert "JINKE_MAPTILER_KEY" not in UTILS
     assert "JINKE_MAPTILER_KEY = '" not in MAIN + LOCATION + RUNTIME_CONFIG
+    assert "window.JINKE_LOCATION_SEARCH_ENDPOINT" in MAIN
+    assert "/api/location-search" not in LOCATION
 
 
 def test_location_search_has_shanghai_filters_and_no_query_persistence():
