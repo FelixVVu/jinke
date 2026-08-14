@@ -6,6 +6,9 @@ This repository uses one architecture: `pipeline/generate.py` for data generatio
 
 - `pipeline/generate.py` — strict cache validation, rate-limited ORS generation, and Shapely production export.
 - `jinke_colab_generation.ipynb` — fresh-runtime Colab runner with five separately runnable stages.
+- `jinke_gdp_estimation.ipynb` — separate 11-stage Colab workflow for audited Shanghai GDP estimation; it reads the production reach polygons without modifying them.
+- `gdp_pipeline/` — source download, 100 m proxy-grid, GDP calibration, reach-intersection, validation, and export helpers used by the GDP notebook.
+- `data/economy/` — pinned 16-district open boundary and official common-year district/city GDP source tables.
 - `archive/jinke_50min_google_sheet_colab.ipynb` — restored historical 50-minute notebook from commit `1f8a0726af83c81f681f2664088c9d4ccaed4f7a`.
 - `web/src/main.js` and `web/src/style.css` — MapLibre app.
 - `web/public/data/` — static frontend data.
@@ -140,7 +143,34 @@ web/public/data/manifest.json
 python -m pytest -q
 npm ci
 npm run build
+npm run test:frontend
 ```
+
+## Separate Shanghai GDP estimation workflow
+
+Open `jinke_gdp_estimation.ipynb` in a fresh Google Colab runtime and run its 11
+numbered stages in order. The workflow mounts Drive and persists source data and
+intermediates under `MyDrive/JinkeGDP/`. It uses only:
+
+- JRC `GHS-BUILT-V_NRES_GLOBE_R2023A`, 2020 epoch, 100 m, non-residential built-up volume;
+- NASA Black Marble `VNP46A4`, 2025, Version 2 annual numerical HDF5 radiance with quality filtering;
+- the latest Overture Maps Places release resolved by the official client; and
+- official 2025 district and Shanghai GDP values in `data/economy/`.
+
+All area work uses EPSG:32651. Native 15-arc-second VIIRS observations are
+assigned to analysis-cell centres and are explicitly not represented as new
+100 m nighttime-light detail. Proxy weights are normalized within district and
+combined as central (50% building, 25% lights, 25% POI), building-heavy (60/20/20),
+and activity-heavy (40/35/25) scenarios. The latter two are sensitivity scenarios,
+not confidence intervals.
+
+The 16 raw district values sum to 56,468.79 亿元 while official 2025 Shanghai GDP
+is 56,708.71 亿元. The notebook records the 239.92 亿元 difference and applies one
+proportional reconciliation factor before spatial allocation. Detailed outputs go
+to `MyDrive/JinkeGDP/audit_outputs/`; `gdp-web-data.zip` contains only
+`reach-economy.json` and `gdp-methodology.json`. The notebook does not call ORS or
+Gaode/Amap, change production reach/station/search data, copy results into the UI,
+or deploy the site.
 
 ## Deploying GitHub Pages
 
