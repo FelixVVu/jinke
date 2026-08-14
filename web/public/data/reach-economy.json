@@ -1,0 +1,42 @@
+[
+  {
+    "limit_minutes": 10,
+    "estimated_gdp_100m_cny": 60.743671049561655,
+    "percentage_of_shanghai_gdp": 0.10711524040938625,
+    "incremental_gdp_100m_cny": 60.743671049561655,
+    "building_heavy_gdp_100m_cny": 68.17669554145938,
+    "activity_heavy_gdp_100m_cny": 51.48769258146608
+  },
+  {
+    "limit_minutes": 20,
+    "estimated_gdp_100m_cny": 318.93884875564106,
+    "percentage_of_shanghai_gdp": 0.5624159829339109,
+    "incremental_gdp_100m_cny": 258.1951777060794,
+    "building_heavy_gdp_100m_cny": 338.60897330181143,
+    "activity_heavy_gdp_100m_cny": 294.49183594431713
+  },
+  {
+    "limit_minutes": 30,
+    "estimated_gdp_100m_cny": 1263.1331009723322,
+    "percentage_of_shanghai_gdp": 2.227405809393887,
+    "incremental_gdp_100m_cny": 944.1942522166911,
+    "building_heavy_gdp_100m_cny": 1303.3843202646306,
+    "activity_heavy_gdp_100m_cny": 1202.699434324555
+  },
+  {
+    "limit_minutes": 40,
+    "estimated_gdp_100m_cny": 5341.189232794328,
+    "percentage_of_shanghai_gdp": 9.418639981044056,
+    "incremental_gdp_100m_cny": 4078.0561318219957,
+    "building_heavy_gdp_100m_cny": 5382.231308962701,
+    "activity_heavy_gdp_100m_cny": 5244.643200444321
+  },
+  {
+    "limit_minutes": 50,
+    "estimated_gdp_100m_cny": 12261.363726469364,
+    "percentage_of_shanghai_gdp": 21.621658694880143,
+    "incremental_gdp_100m_cny": 6920.1744936750365,
+    "building_heavy_gdp_100m_cny": 12313.375119302116,
+    "activity_heavy_gdp_100m_cny": 12132.881727784124
+  }
+]

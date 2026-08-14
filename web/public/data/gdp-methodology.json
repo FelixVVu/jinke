@@ -1,0 +1,397 @@
+{
+  "methodology_version": "jinke-gdp-v1",
+  "generated_at_utc": "2026-08-14T11:47:53.484528+00:00",
+  "purpose": "Spatially allocate official Shanghai GDP and estimate the share inside the existing Jinke 10/20/30/40/50-minute production reach polygons.",
+  "analysis_grid": {
+    "cell_size_metres": 100,
+    "crs": "EPSG:32651",
+    "district_boundary_clipping": true,
+    "partial_reach_cells": "GDP multiplied by intersection area / clipped cell area"
+  },
+  "district_boundaries": {
+    "dataset": "geoBoundaries gbOpen CHN ADM3, filtered to Shanghai",
+    "source_url": "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/CHN/ADM3/geoBoundaries-CHN-ADM3-all.zip",
+    "metadata_url": "https://www.geoboundaries.org/api/current/gbOpen/CHN/ADM3/",
+    "pinned_commit": "9469f09",
+    "boundary_year": 2017,
+    "license": "Open Data Commons Open Database License 1.0",
+    "file_sha256": "279b11087234db63728b35c9970174f7f536505763401127e4eed3b7e0e7340e",
+    "district_count": 16
+  },
+  "sources": {
+    "jrc": {
+      "dataset": "GHS-BUILT-V_NRES_GLOBE_R2023A",
+      "epoch": 2020,
+      "resolution_metres": 100,
+      "crs": "ESRI:54009",
+      "variable": "non-residential built-up volume (cubic metres)",
+      "product_url": "https://human-settlement.emergency.copernicus.eu/ghs_buV2023.php",
+      "doi": "https://doi.org/10.2905/AB2F107A-03CD-47A3-85E5-139D8EC63283",
+      "tile_schema_url": "https://human-settlement.emergency.copernicus.eu/download/GHSL_data_54009_shapefile.zip",
+      "license": "European Commission reuse notice (Decision 2011/833/EU)",
+      "tiles": [
+        {
+          "tile_id": "R6_C30",
+          "url": "https://jeodpp.jrc.ec.europa.eu/ftp/jrc-opendata/GHSL/GHS_BUILT_V_GLOBE_R2023A/GHS_BUILT_V_NRES_E2020_GLOBE_R2023A_54009_100/V1-0/tiles/GHS_BUILT_V_NRES_E2020_GLOBE_R2023A_54009_100_V1_0_R6_C30.zip",
+          "archive_sha256": "7aaa3c63832bccd88ba23f926a81b635f3da8ef7345546abbcf6af7232e3d34d",
+          "raster_file": "GHS_BUILT_V_NRES_E2020_GLOBE_R2023A_54009_100_V1_0_R6_C30.tif"
+        }
+      ]
+    },
+    "viirs": {
+      "dataset": "VNP46A4",
+      "year": 2025,
+      "version": "2",
+      "product_type": "annual numerical nighttime-light science product",
+      "native_resolution": "15 arc seconds (about 400-500 m at Shanghai latitude)",
+      "native_crs": "geographic latitude/longitude",
+      "radiance_variable": "NearNadir_Composite_Snow_Free",
+      "radiance_units": "nW cm^-2 sr^-1",
+      "quality_variable": "NearNadir_Composite_Snow_Free_Quality",
+      "quality_rule": "quality == 0 (NASA good-quality flag; 1, 2, and 255 excluded)",
+      "resampling_disclosure": "Native 15-arc-second radiance is assigned by nearest native-pixel centre to 100 m analysis-cell centres; this does not create 100 m VIIRS detail.",
+      "cmr_discovery_url": "https://cmr.earthdata.nasa.gov/search/granules.json",
+      "product_url": "https://www.earthdata.nasa.gov/data/catalog/lpcloud-vnp46a4-002",
+      "doi": "https://doi.org/10.5067/VIIRS/VNP46A4.002",
+      "user_guide_url": "https://www.earthdata.nasa.gov/s3fs-public/2025-05/BlackMarbleUserGuide_Collection2.0.pdf",
+      "license": "NASA Earth Science data are openly available under NASA data policy",
+      "granules": [
+        {
+          "url": "https://data.laadsdaac.earthdatacloud.nasa.gov/prod-lads/VNP46A4/VNP46A4.A2025001.h30v05.002.2026077004206.h5",
+          "file": "VNP46A4.A2025001.h30v05.002.2026077004206.h5",
+          "sha256": "d5c698a559bba79087c636a3b621c9afc3daaa159f84f105cfd124593a31525d"
+        }
+      ]
+    },
+    "overture": {
+      "dataset": "Overture Maps Places",
+      "release": "2026-07-22.0",
+      "feature_type": "place",
+      "download_scope": {
+        "query_bbox_wgs84": [
+          120.85201709980936,
+          30.690569620791393,
+          122.00715979958511,
+          31.866060099693925
+        ],
+        "cached_filter": "geometry intersects the pinned 16-district Shanghai union"
+      },
+      "official_client": "overturemaps==1.0.1",
+      "catalog_url": "https://stac.overturemaps.org/catalog.json",
+      "documentation_url": "https://docs.overturemaps.org/getting-data/overturemaps-py/",
+      "license_url": "https://docs.overturemaps.org/attribution/",
+      "license_summary": "Places combines sources under CDLA Permissive 2.0, Apache 2.0, and CC0; see the release attribution page.",
+      "file": "places-2026-07-22.0.parquet",
+      "sha256": "d2e7d18dd7594e440baeaeb5f25540be6d647bb1a955e61016a99264599c4797",
+      "rows_intersecting_shanghai": 20738
+    },
+    "repository": {
+      "url": "https://github.com/FelixVVu/jinke.git",
+      "commit": "f2b191bc0c41a42cc723a6ee76a943b6fa56ac14"
+    }
+  },
+  "poi_classification": {
+    "rule": "Lower-case categories.primary is assigned to the first group with a matching substring. Nonmatching places are excluded. Included POIs are weighted by confidence (0.5 only when confidence is unavailable); no category-specific multiplier is used.",
+    "groups": {
+      "retail_commerce": [
+        "shop",
+        "store",
+        "market",
+        "mall",
+        "retail",
+        "supermarket",
+        "convenience",
+        "department_store",
+        "wholesale",
+        "car_dealer"
+      ],
+      "food_hospitality": [
+        "restaurant",
+        "cafe",
+        "coffee",
+        "bar",
+        "pub",
+        "bakery",
+        "hotel",
+        "hostel",
+        "lodging",
+        "food",
+        "fast_food"
+      ],
+      "business_finance": [
+        "office",
+        "bank",
+        "finance",
+        "insurance",
+        "business",
+        "company",
+        "cowork",
+        "real_estate",
+        "professional_service"
+      ],
+      "industry_logistics": [
+        "factory",
+        "industrial",
+        "warehouse",
+        "logistics",
+        "freight",
+        "manufactur",
+        "distribution",
+        "port"
+      ],
+      "transport": [
+        "station",
+        "airport",
+        "terminal",
+        "transport",
+        "parking",
+        "metro",
+        "subway",
+        "railway",
+        "bus"
+      ],
+      "health": [
+        "hospital",
+        "clinic",
+        "medical",
+        "dentist",
+        "pharmacy",
+        "health",
+        "veterinary"
+      ],
+      "education_research": [
+        "school",
+        "college",
+        "university",
+        "education",
+        "research",
+        "laboratory",
+        "training"
+      ],
+      "culture_recreation": [
+        "museum",
+        "theatre",
+        "theater",
+        "cinema",
+        "stadium",
+        "sports",
+        "gym",
+        "attraction",
+        "gallery",
+        "amusement",
+        "recreation"
+      ],
+      "public_services": [
+        "government",
+        "courthouse",
+        "police",
+        "fire_station",
+        "post_office",
+        "library",
+        "community_centre",
+        "community_center"
+      ]
+    },
+    "gaode_amap_used": false
+  },
+  "normalization": {
+    "scope": "separately within each district",
+    "steps": [
+      "replace missing/negative proxy values with zero",
+      "log1p transform",
+      "winsorize positive values at district 1st and 99th percentiles",
+      "min-max scale to [0, 1] with zeros retained as zero"
+    ],
+    "viirs_note": "Radiance remains a native 15-arc-second observation. It is assigned to 100 m cell centres and multiplied by clipped-cell area fraction only for the extensive activity proxy; this is not a claim of 100 m VIIRS detail."
+  },
+  "scenarios": {
+    "central": {
+      "building": 0.5,
+      "lights": 0.25,
+      "poi": 0.25,
+      "label": "central scenario"
+    },
+    "building_heavy": {
+      "building": 0.6,
+      "lights": 0.2,
+      "poi": 0.2,
+      "label": "sensitivity scenario"
+    },
+    "activity_heavy": {
+      "building": 0.4,
+      "lights": 0.35,
+      "poi": 0.25,
+      "label": "sensitivity scenario"
+    }
+  },
+  "sensitivity_disclosure": "Building-heavy and activity-heavy results are sensitivity scenarios, not confidence intervals.",
+  "official_gdp": {
+    "year": 2025,
+    "unit": "100 million current CNY (亿元)",
+    "district_source_rows": [
+      {
+        "district": "浦东新区",
+        "year": 2025,
+        "gdp_100m_cny": 18769.12,
+        "source_url": "https://www.pudong.gov.cn/zwgk/tjj_gkml_ywl_tjsj_gb/2026/135/355149.html",
+        "source_title": "2025年上海市浦东新区国民经济和社会发展统计公报",
+        "retrieved_date": "2026-08-13"
+      },
+      {
+        "district": "黄浦区",
+        "year": 2025,
+        "gdp_100m_cny": 3615.72,
+        "source_url": "https://www.shhuangpu.gov.cn/zw/009002/009002032/009002032004/009002032004003/20260624/8ec0493d-c140-4dc7-b833-e942c4340922.html",
+        "source_title": "2025年上海市黄浦区国民经济和社会发展统计公报",
+        "retrieved_date": "2026-08-13"
+      },
+      {
+        "district": "徐汇区",
+        "year": 2025,
+        "gdp_100m_cny": 4153.08,
+        "source_url": "https://www.xuhui.gov.cn/zfjg_qzfbm_tjj_tjgb/20260608/574052.html",
+        "source_title": "2025年上海市徐汇区国民经济和社会发展统计公报",
+        "retrieved_date": "2026-08-13"
+      },
+      {
+        "district": "长宁区",
+        "year": 2025,
+        "gdp_100m_cny": 2897.67,
+        "source_url": "https://zwgk.shcn.gov.cn/xxgk/gmjjhshfztjgb-tjsj/2026/201/81949.html",
+        "source_title": "2025年上海市长宁区国民经济和社会发展统计公报",
+        "retrieved_date": "2026-08-13"
+      },
+      {
+        "district": "静安区",
+        "year": 2025,
+        "gdp_100m_cny": 3535.16,
+        "source_url": "https://www.jingan.gov.cn/govxxgk/JC5/2026-04-29/eee7f706-aa43-4b4e-9985-da8e9d0ec836.html",
+        "source_title": "2025年上海市静安区国民经济和社会发展统计公报",
+        "retrieved_date": "2026-08-13"
+      },
+      {
+        "district": "普陀区",
+        "year": 2025,
+        "gdp_100m_cny": 1778.78,
+        "source_url": "https://www.shpt.gov.cn/zhengwu/tjgb-tjjzdgz/2026/110/203309/743a454dd3234e9ba420370c34fb71f9.pdf",
+        "source_title": "2025年普陀区国民经济和社会发展统计公报",
+        "retrieved_date": "2026-08-13"
+      },
+      {
+        "district": "虹口区",
+        "year": 2025,
+        "gdp_100m_cny": 1607.78,
+        "source_url": "https://www.shhk.gov.cn/shhk-zwgk/rest/frame/base/attach/attachAction/getContent?attachGuid=85db4ed9-df05-41d0-99de-f88b93f54352&isCommondto=true",
+        "source_title": "2025年虹口区国民经济和社会发展统计公报",
+        "retrieved_date": "2026-08-13"
+      },
+      {
+        "district": "杨浦区",
+        "year": 2025,
+        "gdp_100m_cny": 2805.51,
+        "source_url": "https://www.shyp.gov.cn/zhengwu/ndjh-fgw/2026/28/1345.html",
+        "source_title": "关于上海市杨浦区2025年国民经济和社会发展计划执行情况与2026年国民经济和社会发展计划草案的报告",
+        "retrieved_date": "2026-08-13"
+      },
+      {
+        "district": "闵行区",
+        "year": 2025,
+        "gdp_100m_cny": 4268.99,
+        "source_url": "https://www.fengxian.gov.cn/tjj/tjsj/tjyb/20260324/104653/9060374a5e5a4d2bbe2fbb5b92be3022.pdf",
+        "source_title": "奉贤统计月报2026年第3期各区交流资料（一）",
+        "retrieved_date": "2026-08-13"
+      },
+      {
+        "district": "宝山区",
+        "year": 2025,
+        "gdp_100m_cny": 2162.55,
+        "source_url": "https://xxgk.shbsq.gov.cn/article.html?infoid=b6b18e3f-568a-46b4-9002-b346fca448c2",
+        "source_title": "2025年上海市宝山区国民经济和社会发展统计公报",
+        "retrieved_date": "2026-08-13"
+      },
+      {
+        "district": "嘉定区",
+        "year": 2025,
+        "gdp_100m_cny": 3075.6,
+        "source_url": "https://www.jiading.gov.cn/publicity/jggk/tjsj2__publicity/fdzdgknr/tjsj97/tjgb97/196605",
+        "source_title": "2025年上海市嘉定区国民经济和社会发展统计公报",
+        "retrieved_date": "2026-08-13"
+      },
+      {
+        "district": "金山区",
+        "year": 2025,
+        "gdp_100m_cny": 1283.94,
+        "source_url": "https://www.jinshan.gov.cn/zhengwu/zwgk-jstj/2026/97/8075.html",
+        "source_title": "2025年金山区国民经济和社会发展统计公报",
+        "retrieved_date": "2026-08-13"
+      },
+      {
+        "district": "松江区",
+        "year": 2025,
+        "gdp_100m_cny": 2375.42,
+        "source_url": "https://www.songjiang.gov.cn/shsj_main/4fad82e7-2223-4bfe-93c0-eefc0a606535/a9519508-886b-406f-b92b-de99075fa598/2025%E5%B9%B4%E4%B8%8A%E6%B5%B7%E5%B8%82%E6%9D%BE%E6%B1%9F%E5%8C%BA%E5%9B%BD%E6%B0%91%E7%BB%8F%E6%B5%8E%E5%92%8C%E7%A4%BE%E4%BC%9A%E5%8F%91%E5%B1%95%E7%BB%9F%E8%AE%A1%E5%85%AC%E6%8A%A5.pdf",
+        "source_title": "2025年上海市松江区国民经济和社会发展统计公报",
+        "retrieved_date": "2026-08-13"
+      },
+      {
+        "district": "青浦区",
+        "year": 2025,
+        "gdp_100m_cny": 1953.42,
+        "source_url": "https://www.shqp.gov.cn/stat/stat/upload/202604/0410_090155_617.pdf",
+        "source_title": "2025年上海市青浦区国民经济和社会发展统计公报",
+        "retrieved_date": "2026-08-13"
+      },
+      {
+        "district": "奉贤区",
+        "year": 2025,
+        "gdp_100m_cny": 1724.9,
+        "source_url": "https://www.fengxian.gov.cn/tjj/tjsj/tjgb/20260508/106719.html",
+        "source_title": "2025年上海市奉贤区国民经济和社会发展统计公报",
+        "retrieved_date": "2026-08-13"
+      },
+      {
+        "district": "崇明区",
+        "year": 2025,
+        "gdp_100m_cny": 461.15,
+        "source_url": "https://www.shcm.gov.cn/govxxgk/qtjj/2026-08-07/a36aa3c7-c4e0-4bad-8835-317974330fe6.html",
+        "source_title": "2025年上海市崇明区国民经济和社会发展统计公报",
+        "retrieved_date": "2026-08-13"
+      }
+    ],
+    "city_source_row": {
+      "district": "上海市",
+      "year": 2025,
+      "gdp_100m_cny": 56708.71,
+      "source_url": "https://tjj.sh.gov.cn/tjgb/20260330/e0772941e8e041eaaad2df850b44ef98.html",
+      "source_title": "2025年上海市国民经济和社会发展统计公报",
+      "retrieved_date": "2026-08-13"
+    },
+    "raw_district_sum_100m_cny": 56468.78999999999,
+    "official_city_gdp_100m_cny": 56708.71,
+    "difference_100m_cny": 239.92000000000553,
+    "proportional_reconciliation_factor": 1.0042487186284672,
+    "rule": "Each raw district value remains unchanged in the source table. One common factor rescales district targets so the final grid equals official city GDP."
+  },
+  "reach_polygons": {
+    "path": "web/public/data/reach-areas.geojson",
+    "sha256": "6f039b0661f63c1017a2c4a3bc8f5c4d8fdef207ca10afe987f160642fb5656b",
+    "modified_by_workflow": false,
+    "limits_minutes": [
+      10,
+      20,
+      30,
+      40,
+      50
+    ]
+  },
+  "prohibited_services": {
+    "openrouteservice_called": false,
+    "gaode_amap_called": false
+  },
+  "limitations": [
+    "This is a modelled spatial allocation of official GDP, not measured cell GDP.",
+    "Proxy relationships may vary within districts despite district-level normalization.",
+    "Boundary, building, lights, POI, and GDP reference dates are not identical.",
+    "Reach results inherit the geometry and assumptions of the existing production polygons."
+  ]
+}
