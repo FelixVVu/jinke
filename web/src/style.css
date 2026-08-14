@@ -420,6 +420,42 @@ output {
   background: rgba(255, 255, 255, 0.58);
 }
 
+.economic-summary {
+  display: grid;
+  gap: 3px;
+  margin-top: 10px;
+  padding: 9px 10px;
+  border: 1px solid rgba(22, 135, 127, 0.2);
+  border-radius: 11px;
+  background: rgba(236, 249, 247, 0.72);
+  color: #26443f;
+}
+
+.economic-summary.is-unavailable {
+  border-color: rgba(82, 97, 108, 0.14);
+  background: rgba(245, 247, 248, 0.76);
+  color: var(--muted);
+}
+
+.economic-estimate {
+  font-size: 12px;
+  font-weight: 780;
+  line-height: 1.35;
+}
+
+.economic-share {
+  color: #315e5a;
+  font-size: 11px;
+  font-weight: 720;
+}
+
+.economic-detail {
+  color: #607078;
+  font-size: 10px;
+  font-weight: 620;
+  line-height: 1.35;
+}
+
 .control-section summary {
   display: flex;
   min-height: 44px;
@@ -548,6 +584,19 @@ output {
   color: #52616c;
   font-size: 11px;
   line-height: 1.45;
+}
+
+.economic-method {
+  margin-top: 12px;
+  padding-top: 2px;
+  border-top: 1px solid var(--line);
+}
+
+.economic-method h3 {
+  margin: 10px 0 6px;
+  color: #26343e;
+  font-size: 12px;
+  font-weight: 780;
 }
 
 .status-value.is-production {

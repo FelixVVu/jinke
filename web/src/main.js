@@ -20,6 +20,13 @@ import {
   normalizeLocationQuery,
   pointInGeoJson,
 } from './location-search.js';
+import {
+  formatSensitivityRange,
+  formatShanghaiShare,
+  formatTrillionCny,
+  methodologyText,
+  validateEconomyPayload,
+} from './economy.js';
 
 const LIMITS = [10, 20, 30, 40, 50];
 const base = window.JINKE_BASE || '/';
@@ -183,6 +190,18 @@ document.querySelector('#app').innerHTML = `
           <span id="summaryTitle" class="stats-title">Loading map data…</span>
           <span id="summaryCounts" class="stats-counts">Please wait.</span>
         </p>
+        <div
+          id="economicSummary"
+          class="economic-summary"
+          role="status"
+          aria-live="polite"
+          aria-atomic="true"
+        >
+          <span id="economicEstimate" class="economic-estimate">Loading economic estimate…</span>
+          <span id="economicShare" class="economic-share" hidden></span>
+          <span id="economicIncrement" class="economic-detail" hidden></span>
+          <span id="economicSensitivity" class="economic-detail" hidden></span>
+        </div>
       </header>
       <div class="segments" role="group" aria-label="Total time limit">
         ${LIMITS.map(
@@ -326,6 +345,19 @@ document.querySelector('#app').innerHTML = `
             </dl>
             <p id="transitMethod"></p>
             <p id="walkingMethod"></p>
+            <section id="economicMethod" class="economic-method" hidden>
+              <h3>Economic estimate</h3>
+              <p>
+                This is a spatial model estimate, not an officially published GDP
+                value for the reach polygon.
+              </p>
+              <p id="gdpCalibrationControl"></p>
+              <p id="gdpProxySources"></p>
+              <p id="gdpSensitivityMethod"></p>
+              <a id="gdpMethodologyLink" class="source-link" target="_blank" rel="noopener noreferrer">
+                View full GDP methodology
+              </a>
+            </section>
             <a id="sourceSheet" class="source-link" target="_blank" rel="noopener noreferrer" hidden>
               Transit source sheet
             </a>
@@ -362,6 +394,9 @@ let activeLocationIndex = -1;
 let locationSearchComposing = false;
 let locationSelection;
 let selectedLocationResult;
+let economyData;
+let gdpMethodology;
+let economyLoadState = 'loading';
 
 const mobileQuery = window.matchMedia('(max-width: 760px)');
 const byId = id => document.getElementById(id);
@@ -400,6 +435,68 @@ function setMapMessage(message, { error = false, hidden = false } = {}) {
   notice.hidden = hidden;
   notice.classList.toggle('is-error', error);
   shell.setAttribute('aria-busy', String(!hidden && !error));
+}
+
+function hideEconomicDetails() {
+  ['economicShare', 'economicIncrement', 'economicSensitivity'].forEach(id => {
+    byId(id).hidden = true;
+  });
+}
+
+function renderEconomy() {
+  const estimate = byId('economicEstimate');
+  const summary = byId('economicSummary');
+  const record = economyData?.recordsByLimit?.get(Number(state.limit));
+  summary.classList.toggle('is-unavailable', economyLoadState === 'unavailable');
+
+  if (economyLoadState === 'loading') {
+    estimate.textContent = 'Loading economic estimate…';
+    hideEconomicDetails();
+    return;
+  }
+  if (economyLoadState !== 'ready' || !record) {
+    estimate.textContent = 'Economic estimate unavailable.';
+    hideEconomicDetails();
+    return;
+  }
+
+  estimate.textContent =
+    `Estimated GDP within reach: ${formatTrillionCny(
+      record.estimated_gdp_100m_cny,
+    )}`;
+  const share = byId('economicShare');
+  share.textContent =
+    `${formatShanghaiShare(record.percentage_of_shanghai_gdp)} of Shanghai GDP`;
+  share.hidden = false;
+
+  const increment = byId('economicIncrement');
+  if (Number(state.limit) === LIMITS[0]) {
+    increment.hidden = true;
+  } else {
+    increment.textContent =
+      `Added vs ${Number(state.limit) - 10} minutes: ` +
+      `+${formatTrillionCny(record.incremental_gdp_100m_cny)}`;
+    increment.hidden = false;
+  }
+
+  const sensitivity = byId('economicSensitivity');
+  sensitivity.textContent =
+    `Sensitivity scenarios: ${formatSensitivityRange(record)}`;
+  sensitivity.hidden = false;
+}
+
+function renderEconomicMethodology() {
+  const section = byId('economicMethod');
+  if (economyLoadState !== 'ready' || !gdpMethodology) {
+    section.hidden = true;
+    return;
+  }
+  const copy = methodologyText(gdpMethodology);
+  byId('gdpCalibrationControl').textContent = copy.calibration;
+  byId('gdpProxySources').textContent = copy.proxies;
+  byId('gdpSensitivityMethod').textContent = copy.sensitivity;
+  byId('gdpMethodologyLink').href = assetUrl('data/gdp-methodology.json');
+  section.hidden = false;
 }
 
 function renderAbout() {
@@ -443,6 +540,7 @@ function renderAbout() {
     sourceLink.href = manifest.source_sheet;
     sourceLink.hidden = false;
   }
+  renderEconomicMethodology();
 }
 
 function renderState() {
@@ -466,6 +564,7 @@ function renderState() {
         `${feature.properties.boundary_stations} boundary stations`;
     }
   }
+  renderEconomy();
 
   save();
 }
@@ -890,7 +989,9 @@ function highlightStation(feature) {
 }
 
 function restoreCustomLayers() {
-  // Restore as soon as MapLibre exposes the new style. Do not wait for all\n  // remote basemap sources or tiles: overlays are local and independent.\n  if (!areas || !outsideAreas || !stations || !map?.getStyle()) return false;
+  // Restore as soon as MapLibre exposes the new style. Do not wait for all
+  // remote basemap sources or tiles: overlays are local and independent.
+  if (!areas || !outsideAreas || !stations || !map?.getStyle()) return false;
 
   addSourceOnce('areas', { type: 'geojson', data: selectedAreas() });
   addSourceOnce('outside-areas', {
@@ -986,7 +1087,11 @@ function restoreCustomLayers() {
   initializeLocationSelection();
   locationSelection?.ensure();
   byId('fit').disabled = false;
-  setMapMessage('', { hidden: true });\n  return true;\n}\n\nfunction extendBounds(bounds, coordinates) {
+  setMapMessage('', { hidden: true });
+  return true;
+}
+
+function extendBounds(bounds, coordinates) {
   if (
     Array.isArray(coordinates) &&
     coordinates.length >= 2 &&
@@ -1254,8 +1359,28 @@ async function fetchJson(filename) {
   return response.json();
 }
 
+async function loadEconomicData() {
+  try {
+    const [records, methodology] = await Promise.all([
+      fetchJson('reach-economy.json'),
+      fetchJson('gdp-methodology.json'),
+    ]);
+    economyData = validateEconomyPayload(records, methodology, LIMITS);
+    gdpMethodology = methodology;
+    economyLoadState = 'ready';
+  } catch (error) {
+    console.warn('Economic estimate load failed', error);
+    economyData = undefined;
+    gdpMethodology = undefined;
+    economyLoadState = 'unavailable';
+  }
+  renderEconomy();
+  renderEconomicMethodology();
+}
+
 wireControls();
 initializeLocationSearch();
+void loadEconomicData();
 
 Promise.all([
   fetchJson('reach-areas.geojson'),

@@ -24,6 +24,66 @@ import {
   gcj02ToWgs84,
   wgs84ToGcj02,
 } from '../web/src/location-search.js';
+import {
+  formatSensitivityRange,
+  formatShanghaiShare,
+  formatTrillionCny,
+  methodologyText,
+  validateEconomyPayload,
+} from '../web/src/economy.js';
+
+const reachEconomy = JSON.parse(
+  readFileSync(
+    new URL('../web/public/data/reach-economy.json', import.meta.url),
+    'utf8',
+  ),
+);
+const gdpMethodology = JSON.parse(
+  readFileSync(
+    new URL('../web/public/data/gdp-methodology.json', import.meta.url),
+    'utf8',
+  ),
+);
+
+
+test('economic data validates, formats and exposes dynamic methodology versions', () => {
+  const validated = validateEconomyPayload(reachEconomy, gdpMethodology);
+  assert.equal(validated.recordsByLimit.size, 5);
+  assert.equal(validated.cityGdp100mCny, 56708.71);
+  assert.equal(
+    formatTrillionCny(
+      validated.recordsByLimit.get(50).estimated_gdp_100m_cny,
+    ),
+    '¥1.23 tn',
+  );
+  assert.equal(
+    formatShanghaiShare(
+      validated.recordsByLimit.get(50).percentage_of_shanghai_gdp,
+    ),
+    '21.6%',
+  );
+  assert.equal(
+    formatSensitivityRange(validated.recordsByLimit.get(50)),
+    '¥1.213–1.231 tn',
+  );
+
+  const copy = methodologyText(gdpMethodology);
+  assert.match(copy.calibration, /2025 district GDP/);
+  assert.match(copy.proxies, /GHS-BUILT-V_NRES_GLOBE_R2023A \(2020 epoch\)/);
+  assert.match(copy.proxies, /VNP46A4 \(2025, Version 2\)/);
+  assert.match(copy.proxies, /Overture Maps Places \(release 2026-07-22\.0\)/);
+  assert.match(copy.sensitivity, /not confidence intervals/);
+});
+
+
+test('economic data rejects a percentage with the wrong Shanghai denominator', () => {
+  const invalid = structuredClone(reachEconomy);
+  invalid[0].percentage_of_shanghai_gdp += 0.1;
+  assert.throws(
+    () => validateEconomyPayload(invalid, gdpMethodology),
+    /wrong denominator/,
+  );
+});
 
 
 test('raster styles use explicit source IDs and carry basemap identity', () => {

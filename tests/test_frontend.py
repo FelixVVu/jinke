@@ -8,6 +8,7 @@ ROOT = Path(__file__).resolve().parents[1]
 MAIN = (ROOT / "web" / "src" / "main.js").read_text(encoding="utf-8")
 UTILS = (ROOT / "web" / "src" / "map-utils.js").read_text(encoding="utf-8")
 STYLE = (ROOT / "web" / "src" / "style.css").read_text(encoding="utf-8")
+ECONOMY = (ROOT / "web" / "src" / "economy.js").read_text(encoding="utf-8")
 LOCATION = (ROOT / "web" / "src" / "location-search.js").read_text(
     encoding="utf-8"
 )
@@ -22,6 +23,7 @@ def test_basemap_switching_uses_style_load_and_no_source_r_assumption():
     assert "sources.r" not in MAIN
     assert "styles[state.basemap].sources.r" not in MAIN
     assert "map.once(" not in MAIN
+    assert "\\n" not in MAIN
 
 
 def test_pastel_is_keyless_carto_voyager_with_correct_attribution():
@@ -69,6 +71,11 @@ def test_summary_legend_and_journey_explanation_are_clear():
         "Total time = transit time from 金科路 + remaining walking time."
         in MAIN
     )
+    assert "Estimated GDP within reach:" in MAIN
+    assert "of Shanghai GDP" in MAIN
+    assert "Added vs ${Number(state.limit) - 10} minutes:" in MAIN
+    assert "Number(state.limit) === LIMITS[0]" in MAIN
+    assert "Sensitivity scenarios:" in MAIN
     for label in [
         "Orange</strong> — 金科路 origin",
         "Green</strong> — reachable station",
@@ -102,6 +109,33 @@ def test_appearance_and_about_sections_use_manifest_values():
     assert "manifest.production_data" in MAIN
     assert "manifest.geometry_union" in MAIN
     assert "ORS walking-time areas" in MAIN
+    assert "not an officially published GDP" in MAIN
+    assert "gdpCalibrationControl" in MAIN
+    assert "gdpProxySources" in MAIN
+    assert "gdpSensitivityMethod" in MAIN
+    assert "View full GDP methodology" in MAIN
+    assert "official.year" in ECONOMY
+    assert "jrc.epoch" in ECONOMY
+    assert "viirs.year" in ECONOMY
+    assert "viirs.version" in ECONOMY
+    assert "overture.release" in ECONOMY
+    assert "sensitivity_disclosure" in ECONOMY
+
+
+def test_economic_data_loading_is_isolated_and_has_exact_fallback():
+    assert "Economic estimate unavailable." in MAIN
+    assert "void loadEconomicData();" in MAIN
+    assert "fetchJson('reach-economy.json')" in MAIN
+    assert "fetchJson('gdp-methodology.json')" in MAIN
+    assert "console.warn('Economic estimate load failed'" in MAIN
+
+    after_economic_call = MAIN[MAIN.index("void loadEconomicData();") :]
+    core_start = after_economic_call.index("Promise.all([")
+    core_end = after_economic_call.index("]).then", core_start) if "]).then" in after_economic_call[core_start:] else -1
+    core_load = after_economic_call[core_start:] if core_end == -1 else after_economic_call[core_start:core_end]
+    assert "reach-economy.json" not in core_load
+    assert "gdp-methodology.json" not in core_load
+    assert "reach-areas.geojson" in core_load
 
 
 def test_loading_error_and_focus_states_are_present():
@@ -255,7 +289,10 @@ def test_location_marker_is_standalone_and_search_does_not_mutate_map_layers():
 
 
 def test_location_failure_is_isolated_from_core_map_data_loading():
-    assert "initializeLocationSearch();\n\nPromise.all([" in MAIN
+    assert (
+        "initializeLocationSearch();\nvoid loadEconomicData();\n\nPromise.all(["
+        in MAIN
+    )
     assert "fetchJson('shanghai-boundary.geojson')" in MAIN
     core_load = MAIN[MAIN.index("Promise.all([") :]
     assert "shanghai-boundary.geojson" not in core_load
