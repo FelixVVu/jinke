@@ -1,0 +1,82 @@
+{
+  "status": "passed",
+  "checks": {
+    "district_totals": {
+      "district_count": 16,
+      "sum": 13099795,
+      "expected": 13099795,
+      "individual_business_included": false
+    },
+    "accounting_controls": {
+      "fine_control_count": 116,
+      "fine_employment": 7114511,
+      "residual_stratum_count": 8,
+      "residual_employment": 526062,
+      "pudong_subtotals": {
+        "Pudong functional zones": 821000,
+        "Pudong streets": 695000,
+        "Pudong towns": 1099000
+      },
+      "no_duplicate_accounting_strata": true,
+      "rounding_intervals_satisfied": true
+    },
+    "geometry": {
+      "analysis_crs": "EPSG:32651",
+      "support_count": 116,
+      "all_approximate": true,
+      "all_valid_nonempty": true
+    },
+    "control_allocation": {
+      "grid_rows_local_full_support": 188102,
+      "max_abs_error_people": {
+        "uniform": 5.820766091346741e-11,
+        "building_volume": 2.9103830456733704e-11,
+        "calibrated_workplace": 2.9103830456733704e-11
+      },
+      "no_negative_employment": true
+    },
+    "residual_allocation": {
+      "centrally_located_residual_people": 149463.99999999997,
+      "max_abs_error_people": 1.8189894035458565e-12,
+      "unlocated_residuals_remain_in_ledger": true
+    },
+    "reach": {
+      "source_sha256": "6f039b0661f63c1017a2c4a3bc8f5c4d8fdef207ca10afe987f160642fb5656b",
+      "limits": [
+        10,
+        20,
+        30,
+        40,
+        50
+      ],
+      "monotonic": true,
+      "bounds_ordered": true,
+      "denominator": 13099795,
+      "partial_cell_rule": "area(cell intersection reach) / clipped cell_area_m2"
+    },
+    "calibrated_model": {
+      "cross_validation_design": "four within-district geographic-block folds defined by control-centroid quadrants; the same quadrant is held out across all eight districts; predictions are evaluated before within-control normalization",
+      "all_control_metrics": {
+        "mae_people": 28863.14025954726,
+        "mean_absolute_percentage_error": 62.24435113276251,
+        "weighted_absolute_percentage_error": 47.06049748334751,
+        "spearman_rank_correlation": 0.7042661249804988
+      },
+      "top_employment_control_metrics": {
+        "mae_people": 60143.57337136795,
+        "mean_absolute_percentage_error": 37.91039075955587,
+        "weighted_absolute_percentage_error": 42.91379019363451,
+        "spearman_rank_correlation": 0.3151022514942737
+      },
+      "high_employment_underprediction_count": 9,
+      "final_fit_converged": true
+    },
+    "official_map_review": {
+      "reviewed_controls": 82,
+      "passed": 80,
+      "failed": 2
+    },
+    "prohibited_sources_absent": true,
+    "osm_attribution": "OpenStreetMap contributors, Open Database License 1.0"
+  }
+}

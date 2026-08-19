@@ -1,0 +1,4 @@
+accounting_stratum_id,control_name,attributed_place_count,attribution_rule,sufficient_for_central_support,decision
+310115501000,中国（上海）自由贸易试验区（保税片区）,9,外高桥保税|Waigaoqiao Free Trade|Waigaoqiao Bonded|浦东机场综合保税|洋山港保税,False,insufficient coverage and no employment-by-establishment weights; use the separately acquired 2020 statistical support
+310115502000,金桥经济技术开发区,0,金桥经济技术开发区|金桥开发区|Jinqiao Economic|Jinqiao Development,False,insufficient coverage and no employment-by-establishment weights; use the separately acquired 2020 statistical support
+310115503000,张江高科技园区,16,张江高科技园区|张江高新区|Zhangjiang Hi-?Tech Park|Zhangjiang High-?Tech Park,False,insufficient coverage and no employment-by-establishment weights; use the separately acquired 2020 statistical support

@@ -1,0 +1,276 @@
+{
+  "model": "non-negative ridge-regularized Poisson pseudo-maximum likelihood count model",
+  "formula": "E[control employment] = exp(intercept + district effect + control-type effect + sum(beta_k × standardized log1p(control proxy total)))",
+  "cell_weight_formula": "clipped area fraction × exp(sum(beta_k × standardized log1p(cell proxy / clipped area fraction))); equivalently an uncapped multiplicative power surface using the fitted log-total slopes",
+  "ecological_transfer_disclosure": "coefficients are identified from control-level totals and transferred to 100 m proxy densities; this is evaluated by geographic control holdout, then every surface is normalized to the observed control total",
+  "coefficient_constraint": "all spatial predictor coefficients are non-negative; district and control-type calibration effects are unconstrained and cancel during within-control normalization",
+  "upper_tail_treatment": "no cap, winsorization, log1p target, district min-max, or GDP weights",
+  "cross_validation_design": "four within-district geographic-block folds defined by control-centroid quadrants; the same quadrant is held out across all eight districts; predictions are evaluated before within-control normalization",
+  "alpha_selection": "minimum geographic-CV weighted absolute percentage error",
+  "candidate_alpha_metrics": [
+    {
+      "alpha": 0.001,
+      "mae_people": 28872.956942305387,
+      "mean_absolute_percentage_error": 61.947663265561324,
+      "weighted_absolute_percentage_error": 47.07650329456831,
+      "spearman_rank_correlation": 0.702224751607255
+    },
+    {
+      "alpha": 0.01,
+      "mae_people": 28863.14025954726,
+      "mean_absolute_percentage_error": 62.24435113276251,
+      "weighted_absolute_percentage_error": 47.06049748334751,
+      "spearman_rank_correlation": 0.7042661249804988
+    },
+    {
+      "alpha": 0.1,
+      "mae_people": 29292.500234011066,
+      "mean_absolute_percentage_error": 64.90192678374306,
+      "weighted_absolute_percentage_error": 47.76055623703841,
+      "spearman_rank_correlation": 0.7012444310607819
+    },
+    {
+      "alpha": 1.0,
+      "mae_people": 32953.083720459355,
+      "mean_absolute_percentage_error": 82.19765246376241,
+      "weighted_absolute_percentage_error": 53.72902946630184,
+      "spearman_rank_correlation": 0.5633267855520814
+    },
+    {
+      "alpha": 10.0,
+      "mae_people": 39609.733132493915,
+      "mean_absolute_percentage_error": 116.8776007176008,
+      "weighted_absolute_percentage_error": 64.58249967382571,
+      "spearman_rank_correlation": 0.08978967326832644
+    }
+  ],
+  "selected_alpha": 0.01,
+  "all_control_metrics": {
+    "mae_people": 28863.14025954726,
+    "mean_absolute_percentage_error": 62.24435113276251,
+    "weighted_absolute_percentage_error": 47.06049748334751,
+    "spearman_rank_correlation": 0.7042661249804988
+  },
+  "top_employment_control_definition": "observed employment >= 75th percentile (80390)",
+  "top_employment_control_metrics": {
+    "mae_people": 60143.57337136795,
+    "mean_absolute_percentage_error": 37.91039075955587,
+    "weighted_absolute_percentage_error": 42.91379019363451,
+    "spearman_rank_correlation": 0.3151022514942737
+  },
+  "obvious_high_employment_underprediction_rule": "top-quartile control predicted below 50% of observed employment",
+  "obvious_high_employment_underprediction": [
+    {
+      "district": "黄浦区",
+      "accounting_control": "310101017000",
+      "control_name": "小东门街道",
+      "control_employment": 126442,
+      "geographic_holdout_prediction": 30534.448707903117,
+      "prediction_as_pct_of_actual": 24.148976374862087
+    },
+    {
+      "district": "徐汇区",
+      "accounting_control": "310104012000",
+      "control_name": "虹梅路街道",
+      "control_employment": 262100,
+      "geographic_holdout_prediction": 58626.44154238732,
+      "prediction_as_pct_of_actual": 22.36796701350146
+    },
+    {
+      "district": "徐汇区",
+      "accounting_control": "310104014000",
+      "control_name": "徐家汇街道",
+      "control_employment": 216300,
+      "geographic_holdout_prediction": 88033.6429899584,
+      "prediction_as_pct_of_actual": 40.699788714728804
+    },
+    {
+      "district": "长宁区",
+      "accounting_control": "310105010000",
+      "control_name": "程家桥街道",
+      "control_employment": 101760,
+      "geographic_holdout_prediction": 31229.89218217929,
+      "prediction_as_pct_of_actual": 30.689752537518956
+    },
+    {
+      "district": "浦东新区",
+      "accounting_control": "310115004000",
+      "control_name": "潍坊新村街道",
+      "control_employment": 153750,
+      "geographic_holdout_prediction": 51711.46484059548,
+      "prediction_as_pct_of_actual": 33.63347306705397
+    },
+    {
+      "district": "浦东新区",
+      "accounting_control": "310115005000",
+      "control_name": "陆家嘴街道",
+      "control_employment": 200750,
+      "geographic_holdout_prediction": 81183.33052245887,
+      "prediction_as_pct_of_actual": 40.44001520421364
+    },
+    {
+      "district": "浦东新区",
+      "accounting_control": "310115103000",
+      "control_name": "川沙新镇",
+      "control_employment": 89000,
+      "geographic_holdout_prediction": 43509.383784697435,
+      "prediction_as_pct_of_actual": 48.88694807269375
+    },
+    {
+      "district": "浦东新区",
+      "accounting_control": "310115145000",
+      "control_name": "南汇新城镇",
+      "control_employment": 138000,
+      "geographic_holdout_prediction": 43089.24820611206,
+      "prediction_as_pct_of_actual": 31.224092902979756
+    },
+    {
+      "district": "浦东新区",
+      "accounting_control": "310115503000",
+      "control_name": "张江高科技园区",
+      "control_employment": 469000,
+      "geographic_holdout_prediction": 226617.24759672277,
+      "prediction_as_pct_of_actual": 48.319242557936626
+    }
+  ],
+  "geographic_folds": [
+    {
+      "held_out_spatial_quadrant": 0,
+      "test_controls": 25,
+      "test_districts": [
+        "徐汇区",
+        "普陀区",
+        "杨浦区",
+        "浦东新区",
+        "虹口区",
+        "长宁区",
+        "静安区",
+        "黄浦区"
+      ],
+      "mae_people": 20998.186582635673,
+      "weighted_absolute_percentage_error": 37.37579765529503,
+      "converged": true
+    },
+    {
+      "held_out_spatial_quadrant": 1,
+      "test_controls": 32,
+      "test_districts": [
+        "徐汇区",
+        "普陀区",
+        "杨浦区",
+        "浦东新区",
+        "虹口区",
+        "长宁区",
+        "静安区",
+        "黄浦区"
+      ],
+      "mae_people": 20710.832206051564,
+      "weighted_absolute_percentage_error": 37.35671663898037,
+      "converged": true
+    },
+    {
+      "held_out_spatial_quadrant": 2,
+      "test_controls": 32,
+      "test_districts": [
+        "徐汇区",
+        "普陀区",
+        "杨浦区",
+        "浦东新区",
+        "虹口区",
+        "长宁区",
+        "静安区",
+        "黄浦区"
+      ],
+      "mae_people": 36830.54822704164,
+      "weighted_absolute_percentage_error": 42.870600533231254,
+      "converged": true
+    },
+    {
+      "held_out_spatial_quadrant": 3,
+      "test_controls": 27,
+      "test_districts": [
+        "徐汇区",
+        "普陀区",
+        "杨浦区",
+        "浦东新区",
+        "虹口区",
+        "长宁区",
+        "静安区",
+        "黄浦区"
+      ],
+      "mae_people": 36364.64561787434,
+      "weighted_absolute_percentage_error": 82.73564678641972,
+      "converged": true
+    }
+  ],
+  "final_fit": {
+    "converged": true,
+    "iterations": 51,
+    "objective": -10.271218053437412,
+    "intercept": 12.171705705005566,
+    "standardized_spatial_coefficients": {
+      "log1p_jrc_nres_volume_total": 0.30612161112079644,
+      "log1p_poi_business_finance_total": 0.23058019738120747,
+      "log1p_poi_industry_logistics_total": 0.0,
+      "log1p_poi_education_research_total": 0.037770631426812785,
+      "log1p_poi_retail_hospitality_total": 0.2894301889942037,
+      "log1p_poi_health_public_total": 0.0,
+      "log1p_poi_other_economic_total": 0.0
+    },
+    "unstandardized_log_total_slopes": {
+      "log1p_jrc_nres_volume_total": 0.1989033231975916,
+      "log1p_poi_business_finance_total": 0.2309189623261856,
+      "log1p_poi_industry_logistics_total": 0.0,
+      "log1p_poi_education_research_total": 0.04967364221879021,
+      "log1p_poi_retail_hospitality_total": 0.22347561711984293,
+      "log1p_poi_health_public_total": 0.0,
+      "log1p_poi_other_economic_total": 0.0
+    },
+    "feature_means": {
+      "log1p_jrc_nres_volume_total": 14.568945511861571,
+      "log1p_poi_business_finance_total": 1.4632721412869198,
+      "log1p_poi_industry_logistics_total": 0.9898842318548773,
+      "log1p_poi_education_research_total": 1.1687073468917486,
+      "log1p_poi_retail_hospitality_total": 3.5093107566928152,
+      "log1p_poi_health_public_total": 0.9159609449434631,
+      "log1p_poi_other_economic_total": 1.5947874303405727
+    },
+    "feature_scales": {
+      "log1p_jrc_nres_volume_total": 1.5390472426480961,
+      "log1p_poi_business_finance_total": 0.9985329704344521,
+      "log1p_poi_industry_logistics_total": 0.7372769686423692,
+      "log1p_poi_education_research_total": 0.7603757191882572,
+      "log1p_poi_retail_hospitality_total": 1.2951309530962898,
+      "log1p_poi_health_public_total": 0.7079338793763271,
+      "log1p_poi_other_economic_total": 0.9293776474418676
+    },
+    "calibration_effects": {
+      "district=普陀区": -0.11214291753811413,
+      "district=杨浦区": -0.12110109825642475,
+      "district=浦东新区": -0.5109653647523649,
+      "district=虹口区": 0.018296126385259227,
+      "district=长宁区": -0.28722823015408466,
+      "district=静安区": -0.06656574550781426,
+      "district=黄浦区": -0.3796141684478051,
+      "control_type=street": -1.196775486546924,
+      "control_type=town": -1.0527180671400058
+    },
+    "nuisance_penalty": 0.0001
+  },
+  "poi_diagnostics": {
+    "input_places": 20738,
+    "workplace_relevant_places": 16077,
+    "control_place_matches": 13428,
+    "ordinary_matches_after_edge_deduplication": 13039,
+    "functional_zone_overlap_matches": 389,
+    "positive_cells_by_category": {
+      "poi_business_finance": 870,
+      "poi_industry_logistics": 383,
+      "poi_education_research": 491,
+      "poi_retail_hospitality": 5472,
+      "poi_health_public": 339,
+      "poi_other_economic": 948
+    },
+    "poi_weighting": "sum of source confidence; no category multiplier"
+  }
+}
