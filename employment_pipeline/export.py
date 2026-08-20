@@ -198,16 +198,17 @@ not added together.
 |---|---:|---:|
 | Uniform within control | {fifty['uniform_allocation_employment']:,.0f} | {fifty['uniform_allocation_percentage']:.3f}% |
 | Raw JRC non-residential building volume | {fifty['building_volume_employment']:,.0f} | {fifty['building_volume_percentage']:.3f}% |
-| Calibrated workplace PPML (preferred) | {fifty['calibrated_workplace_model_employment']:,.0f} | {fifty['calibrated_workplace_model_percentage']:.3f}% |
+| Calibrated workplace PPML (model-contingent central) | {fifty['calibrated_workplace_model_employment']:,.0f} | {fifty['calibrated_workplace_model_percentage']:.3f}% |
 
 The raw-building surface is highest because the reach captures a disproportionate
 share of dense non-residential built volume. Uniform allocation spreads employment
 into peripheral portions of partially intersected controls. The calibrated surface
 uses uncapped building volume plus interpretable workplace POI categories and lands
 between them. Every final surface is normalized within each census accounting
-control, so published high-employment controls are preserved exactly.
+control, so published control totals are preserved exactly. That reconciliation does
+not validate the within-control surface.
 
-Four within-district quadrant holdouts give MAE {all_metrics['mae_people']:,.0f},
+Six contiguous citywide spatial-block holdouts give MAE {all_metrics['mae_people']:,.0f},
 WAPE {all_metrics['weighted_absolute_percentage_error']:.1f}%, MAPE
 {all_metrics['mean_absolute_percentage_error']:.1f}%, and Spearman rank correlation
 {all_metrics['spearman_rank_correlation']:.3f}. For top-quartile controls, MAE is
@@ -215,6 +216,15 @@ WAPE {all_metrics['weighted_absolute_percentage_error']:.1f}%, MAPE
 and rank correlation {top_metrics['spearman_rank_correlation']:.3f}. The audit records
 {len(model['obvious_high_employment_underprediction'])} obvious top-control
 underpredictions rather than concealing them.
+
+The nonlinear Poisson boosting alternative gives top-control WAPE
+{model['nonlinear_alternative']['top_employment_control_metrics']['weighted_absolute_percentage_error']:.1f}%
+with rank correlation
+{model['nonlinear_alternative']['top_employment_control_metrics']['spearman_rank_correlation']:.3f}
+and {model['nonlinear_alternative']['obvious_high_employment_underprediction_count']}
+severe misses. It does not improve the aggregate high-control diagnostics and fails
+the same scientific acceptance gate, so it is retained as a diagnostic and is not
+silently substituted as the 100 m allocation surface.
 
 ## 50-minute district contributions
 
@@ -247,10 +257,10 @@ causal productivity estimate. The GDP pipeline and result were not changed or re
 
 **{methodology['benchmark_classification']}**
 
-The benchmark has exact census accounting controls, a fixed city denominator, and a
-narrow three-model comparison, but the open boundary vintage, Pudong functional-zone
-scope, 47% control-level CV WAPE, and unresolved residual locations prevent a
-`STRONG BENCHMARK` classification.
+The accounting benchmark is complete, but the calibrated spatial surface is not.
+High-employment controls remain poorly ranked and materially underpredicted under
+both PPML and a nonlinear Poisson alternative. The open boundary vintage, Pudong
+functional-zone scope, and unresolved residual locations add further uncertainty.
 """
     path.write_text(text, encoding="utf-8")
 

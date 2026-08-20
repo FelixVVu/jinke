@@ -25,23 +25,33 @@ not added together.
 |---|---:|---:|
 | Uniform within control | 3,634,010 | 27.741% |
 | Raw JRC non-residential building volume | 3,755,130 | 28.666% |
-| Calibrated workplace PPML (preferred) | 3,691,258 | 28.178% |
+| Calibrated workplace PPML (model-contingent central) | 3,691,258 | 28.178% |
 
 The raw-building surface is highest because the reach captures a disproportionate
 share of dense non-residential built volume. Uniform allocation spreads employment
 into peripheral portions of partially intersected controls. The calibrated surface
 uses uncapped building volume plus interpretable workplace POI categories and lands
 between them. Every final surface is normalized within each census accounting
-control, so published high-employment controls are preserved exactly.
+control, so published control totals are preserved exactly. That reconciliation does
+not validate the within-control surface.
 
-Four within-district quadrant holdouts give MAE 28,863,
-WAPE 47.1%, MAPE
-62.2%, and Spearman rank correlation
-0.704. For top-quartile controls, MAE is
-60,144, WAPE 42.9%,
-and rank correlation 0.315. The audit records
+Six contiguous citywide spatial-block holdouts give MAE 27,522,
+WAPE 44.9%, MAPE
+56.1%, and Spearman rank correlation
+0.706. For top-quartile controls, MAE is
+63,123, WAPE 45.0%,
+and rank correlation 0.199. The audit records
 9 obvious top-control
 underpredictions rather than concealing them.
+
+The nonlinear Poisson boosting alternative gives top-control WAPE
+46.1%
+with rank correlation
+-0.172
+and 12
+severe misses. It does not improve the aggregate high-control diagnostics and fails
+the same scientific acceptance gate, so it is retained as a diagnostic and is not
+silently substituted as the 100 m allocation surface.
 
 ## 50-minute district contributions
 
@@ -83,9 +93,9 @@ causal productivity estimate. The GDP pipeline and result were not changed or re
 
 ## Classification
 
-**USABLE WITH CAUTION**
+**NOT YET RELIABLE**
 
-The benchmark has exact census accounting controls, a fixed city denominator, and a
-narrow three-model comparison, but the open boundary vintage, Pudong functional-zone
-scope, 47% control-level CV WAPE, and unresolved residual locations prevent a
-`STRONG BENCHMARK` classification.
+The accounting benchmark is complete, but the calibrated spatial surface is not.
+High-employment controls remain poorly ranked and materially underpredicted under
+both PPML and a nonlinear Poisson alternative. The open boundary vintage, Pudong
+functional-zone scope, and unresolved residual locations add further uncertainty.

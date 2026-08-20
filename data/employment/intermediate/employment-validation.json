@@ -1,5 +1,5 @@
 {
-  "status": "passed",
+  "status": "hard_checks_passed_model_gate_failed",
   "checks": {
     "district_totals": {
       "district_count": 16,
@@ -55,21 +55,94 @@
       "partial_cell_rule": "area(cell intersection reach) / clipped cell_area_m2"
     },
     "calibrated_model": {
-      "cross_validation_design": "four within-district geographic-block folds defined by control-centroid quadrants; the same quadrant is held out across all eight districts; predictions are evaluated before within-control normalization",
+      "cross_validation_design": "six contiguous citywide geographic-block folds formed by control-centroid longitude tertiles crossed with the latitude median; each complete block is held out and predictions are evaluated before within-control normalization",
       "all_control_metrics": {
-        "mae_people": 28863.14025954726,
-        "mean_absolute_percentage_error": 62.24435113276251,
-        "weighted_absolute_percentage_error": 47.06049748334751,
-        "spearman_rank_correlation": 0.7042661249804988
+        "mae_people": 27522.407771981372,
+        "mean_absolute_percentage_error": 56.106411184661276,
+        "weighted_absolute_percentage_error": 44.87447277191418,
+        "spearman_rank_correlation": 0.7064997180687371
       },
       "top_employment_control_metrics": {
-        "mae_people": 60143.57337136795,
-        "mean_absolute_percentage_error": 37.91039075955587,
-        "weighted_absolute_percentage_error": 42.91379019363451,
-        "spearman_rank_correlation": 0.3151022514942737
+        "mae_people": 63122.75253966335,
+        "mean_absolute_percentage_error": 37.72198848639419,
+        "weighted_absolute_percentage_error": 45.039501431110445,
+        "spearman_rank_correlation": 0.1990638148611205
       },
       "high_employment_underprediction_count": 9,
-      "final_fit_converged": true
+      "final_fit_converged": true,
+      "nonlinear_alternative": {
+        "model": "histogram gradient-boosted Poisson count model",
+        "role": "scientifically justified nonlinear diagnostic; not used for cell allocation",
+        "reason_not_selected_for_allocation": "tree response surfaces do not yield stable, interpretable elasticities for ecological transfer from control totals to 100 m cell densities",
+        "all_control_metrics": {
+          "mae_people": 30488.670852565403,
+          "mean_absolute_percentage_error": 66.49766867730801,
+          "weighted_absolute_percentage_error": 49.71087709187022,
+          "spearman_rank_correlation": 0.6555849659403329
+        },
+        "top_employment_control_metrics": {
+          "mae_people": 64546.63832988607,
+          "mean_absolute_percentage_error": 38.196867652781776,
+          "weighted_absolute_percentage_error": 46.05547591742862,
+          "spearman_rank_correlation": -0.1719847247251579
+        },
+        "obvious_high_employment_underprediction_count": 12,
+        "geographic_folds": [
+          {
+            "held_out_contiguous_block": 0,
+            "test_controls": 25,
+            "mae_people": 54162.52936938092,
+            "mean_absolute_percentage_error": 59.3807869462467,
+            "weighted_absolute_percentage_error": 57.303300339678565,
+            "spearman_rank_correlation": 0.6139642352464664
+          },
+          {
+            "held_out_contiguous_block": 1,
+            "test_controls": 14,
+            "mae_people": 31214.685367617934,
+            "mean_absolute_percentage_error": 119.60424235279781,
+            "weighted_absolute_percentage_error": 63.62969956779695,
+            "spearman_rank_correlation": 0.3802197802197802
+          },
+          {
+            "held_out_contiguous_block": 2,
+            "test_controls": 19,
+            "mae_people": 27594.166154053117,
+            "mean_absolute_percentage_error": 70.69289954980306,
+            "weighted_absolute_percentage_error": 50.063419138411,
+            "spearman_rank_correlation": 0.6610893785857566
+          },
+          {
+            "held_out_contiguous_block": 3,
+            "test_controls": 14,
+            "mae_people": 18339.045076351213,
+            "mean_absolute_percentage_error": 48.97466200743733,
+            "weighted_absolute_percentage_error": 35.462241860347646,
+            "spearman_rank_correlation": 0.7731296287783735
+          },
+          {
+            "held_out_contiguous_block": 4,
+            "test_controls": 24,
+            "mae_people": 24213.175836948092,
+            "mean_absolute_percentage_error": 43.811806250230816,
+            "weighted_absolute_percentage_error": 35.27151633465393,
+            "spearman_rank_correlation": 0.7913043478260868
+          },
+          {
+            "held_out_contiguous_block": 5,
+            "test_controls": 20,
+            "mae_people": 19173.24907168661,
+            "mean_absolute_percentage_error": 73.72283952082361,
+            "weighted_absolute_percentage_error": 59.36550996823728,
+            "spearman_rank_correlation": 0.5844302782612387
+          }
+        ]
+      },
+      "acceptance_gate": {
+        "status": "failed",
+        "reason": "PPML and the nonlinear Poisson alternative both retain large high-employment-control errors and weak top-control rank ordering",
+        "result_use": "reach estimates remain model-contingent sensitivity results, not an accepted calibrated benchmark"
+      }
     },
     "official_map_review": {
       "reviewed_controls": 82,
@@ -78,5 +151,6 @@
     },
     "prohibited_sources_absent": true,
     "osm_attribution": "OpenStreetMap contributors, Open Database License 1.0"
-  }
+  },
+  "interpretation": "Accounting, geometry, reach, and reproducibility checks pass, but the calibrated workplace model is not accepted because high-employment spatial holdout performance remains poor."
 }

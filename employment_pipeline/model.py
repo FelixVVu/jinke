@@ -10,6 +10,10 @@ import numpy as np
 import pandas as pd
 from scipy.optimize import minimize
 from scipy.stats import spearmanr
+from sklearn.compose import ColumnTransformer
+from sklearn.ensemble import HistGradientBoostingRegressor
+from sklearn.pipeline import make_pipeline
+from sklearn.preprocessing import OneHotEncoder, StandardScaler
 
 from .grid import POI_COLUMNS
 
@@ -69,12 +73,14 @@ def aggregate_control_predictors(grid: gpd.GeoDataFrame) -> pd.DataFrame:
     controls = controls.drop(columns=["_centroid_x_area", "_centroid_y_area"])
     for raw, feature in zip(RAW_FEATURE_COLUMNS, MODEL_FEATURE_NAMES, strict=True):
         controls[feature] = np.log1p(controls[raw].clip(lower=0.0))
-    district_medians = controls.groupby("district")[["centroid_x", "centroid_y"]].median()
-    median_x = controls["district"].map(district_medians["centroid_x"])
-    median_y = controls["district"].map(district_medians["centroid_y"])
+    # Six contiguous citywide blocks are a stricter transfer test than the old
+    # within-district quadrants: nearby controls are held out together and a
+    # district effect cannot turn each fold into eight disconnected patches.
+    x_breaks = np.quantile(controls["centroid_x"], [1 / 3, 2 / 3])
+    y_break = float(np.quantile(controls["centroid_y"], 0.5))
     controls["spatial_holdout_fold"] = (
-        (controls["centroid_x"] >= median_x).astype(int)
-        + 2 * (controls["centroid_y"] >= median_y).astype(int)
+        np.digitize(controls["centroid_x"], x_breaks)
+        + 3 * (controls["centroid_y"] >= y_break).astype(int)
     )
     return controls
 
@@ -233,6 +239,73 @@ def _metrics(actual: np.ndarray, predicted: np.ndarray) -> dict[str, float]:
     }
 
 
+def _boosted_poisson_holdout(controls: pd.DataFrame) -> dict[str, Any]:
+    """Test a nonlinear non-negative alternative on the identical spatial folds.
+
+    This is diagnostic only.  It is not silently substituted for the interpretable
+    PPML surface, because tree predictions do not provide stable transferable cell
+    elasticities.  Its purpose is to establish whether PPML misspecification, rather
+    than weak aggregate proxies, explains the high-control failures.
+    """
+
+    numeric = [*MODEL_FEATURE_NAMES, "control_area_m2", "centroid_x", "centroid_y"]
+    categorical = ["district", "control_type"]
+    predictors = [*numeric, *categorical]
+    actual = controls["control_employment"].to_numpy(dtype=float)
+    predictions = np.full(len(controls), np.nan, dtype=float)
+    fold_rows: list[dict[str, Any]] = []
+    for held_out in sorted(controls["spatial_holdout_fold"].unique()):
+        train = controls["spatial_holdout_fold"] != held_out
+        test = ~train
+        preprocessing = ColumnTransformer(
+            [
+                ("numeric", StandardScaler(), numeric),
+                (
+                    "categorical",
+                    OneHotEncoder(handle_unknown="ignore", sparse_output=False),
+                    categorical,
+                ),
+            ]
+        )
+        estimator = make_pipeline(
+            preprocessing,
+            HistGradientBoostingRegressor(
+                loss="poisson",
+                learning_rate=0.04,
+                max_iter=500,
+                max_leaf_nodes=8,
+                l2_regularization=1.0,
+                random_state=42,
+            ),
+        )
+        estimator.fit(controls.loc[train, predictors], actual[train.to_numpy()])
+        predicted = estimator.predict(controls.loc[test, predictors])
+        predictions[np.flatnonzero(test.to_numpy())] = predicted
+        fold_rows.append(
+            {
+                "held_out_contiguous_block": int(held_out),
+                "test_controls": int(test.sum()),
+                **_metrics(actual[test.to_numpy()], predicted),
+            }
+        )
+    top_threshold = float(np.quantile(actual, 0.75))
+    top = actual >= top_threshold
+    return {
+        "model": "histogram gradient-boosted Poisson count model",
+        "role": "scientifically justified nonlinear diagnostic; not used for cell allocation",
+        "reason_not_selected_for_allocation": (
+            "tree response surfaces do not yield stable, interpretable elasticities "
+            "for ecological transfer from control totals to 100 m cell densities"
+        ),
+        "all_control_metrics": _metrics(actual, predictions),
+        "top_employment_control_metrics": _metrics(actual[top], predictions[top]),
+        "obvious_high_employment_underprediction_count": int(
+            np.sum(predictions[top] < 0.5 * actual[top])
+        ),
+        "geographic_folds": fold_rows,
+    }
+
+
 def fit_calibrated_workplace_model(
     grid: gpd.GeoDataFrame,
     *,
@@ -308,9 +381,9 @@ def fit_calibrated_workplace_model(
         ),
         "upper_tail_treatment": "no cap, winsorization, log1p target, district min-max, or GDP weights",
         "cross_validation_design": (
-            "four within-district geographic-block folds defined by control-centroid "
-            "quadrants; the same quadrant is held out across all eight districts; "
-            "predictions are evaluated before within-control normalization"
+            "six contiguous citywide geographic-block folds formed by control-centroid longitude "
+            "tertiles crossed with the latitude median; each complete block is held "
+            "out and predictions are evaluated before within-control normalization"
         ),
         "alpha_selection": "minimum geographic-CV weighted absolute percentage error",
         "candidate_alpha_metrics": candidate_table.to_dict(orient="records"),
@@ -323,6 +396,18 @@ def fit_calibrated_workplace_model(
         ),
         "obvious_high_employment_underprediction": obvious.to_dict(orient="records"),
         "geographic_folds": candidate_folds[selected_alpha],
+        "nonlinear_alternative": _boosted_poisson_holdout(controls),
+        "acceptance_gate": {
+            "status": "failed",
+            "reason": (
+                "PPML and the nonlinear Poisson alternative both retain large "
+                "high-employment-control errors and weak top-control rank ordering"
+            ),
+            "result_use": (
+                "reach estimates remain model-contingent sensitivity results, not an "
+                "accepted calibrated benchmark"
+            ),
+        },
         "final_fit": {
             "converged": final.converged,
             "iterations": final.iterations,

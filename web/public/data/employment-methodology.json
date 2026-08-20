@@ -126,58 +126,58 @@
       "ecological_transfer_disclosure": "coefficients are identified from control-level totals and transferred to 100 m proxy densities; this is evaluated by geographic control holdout, then every surface is normalized to the observed control total",
       "coefficient_constraint": "all spatial predictor coefficients are non-negative; district and control-type calibration effects are unconstrained and cancel during within-control normalization",
       "upper_tail_treatment": "no cap, winsorization, log1p target, district min-max, or GDP weights",
-      "cross_validation_design": "four within-district geographic-block folds defined by control-centroid quadrants; the same quadrant is held out across all eight districts; predictions are evaluated before within-control normalization",
+      "cross_validation_design": "six contiguous citywide geographic-block folds formed by control-centroid longitude tertiles crossed with the latitude median; each complete block is held out and predictions are evaluated before within-control normalization",
       "alpha_selection": "minimum geographic-CV weighted absolute percentage error",
       "candidate_alpha_metrics": [
         {
           "alpha": 0.001,
-          "mae_people": 28872.956942305387,
-          "mean_absolute_percentage_error": 61.947663265561324,
-          "weighted_absolute_percentage_error": 47.07650329456831,
-          "spearman_rank_correlation": 0.702224751607255
+          "mae_people": 27558.412997184256,
+          "mean_absolute_percentage_error": 55.94018152832736,
+          "weighted_absolute_percentage_error": 44.933178227897514,
+          "spearman_rank_correlation": 0.7020748202295591
         },
         {
           "alpha": 0.01,
-          "mae_people": 28863.14025954726,
-          "mean_absolute_percentage_error": 62.24435113276251,
-          "weighted_absolute_percentage_error": 47.06049748334751,
-          "spearman_rank_correlation": 0.7042661249804988
+          "mae_people": 27522.407771981372,
+          "mean_absolute_percentage_error": 56.106411184661276,
+          "weighted_absolute_percentage_error": 44.87447277191418,
+          "spearman_rank_correlation": 0.7064997180687371
         },
         {
           "alpha": 0.1,
-          "mae_people": 29292.500234011066,
-          "mean_absolute_percentage_error": 64.90192678374306,
-          "weighted_absolute_percentage_error": 47.76055623703841,
-          "spearman_rank_correlation": 0.7012444310607819
+          "mae_people": 28136.258388686532,
+          "mean_absolute_percentage_error": 58.819830418920894,
+          "weighted_absolute_percentage_error": 45.87533806733362,
+          "spearman_rank_correlation": 0.7122470875470788
         },
         {
           "alpha": 1.0,
-          "mae_people": 32953.083720459355,
-          "mean_absolute_percentage_error": 82.19765246376241,
-          "weighted_absolute_percentage_error": 53.72902946630184,
-          "spearman_rank_correlation": 0.5633267855520814
+          "mae_people": 32307.14019124941,
+          "mean_absolute_percentage_error": 77.51055216854338,
+          "weighted_absolute_percentage_error": 52.67583762517103,
+          "spearman_rank_correlation": 0.6467462974654833
         },
         {
           "alpha": 10.0,
-          "mae_people": 39609.733132493915,
-          "mean_absolute_percentage_error": 116.8776007176008,
-          "weighted_absolute_percentage_error": 64.58249967382571,
-          "spearman_rank_correlation": 0.08978967326832644
+          "mae_people": 40287.8226618056,
+          "mean_absolute_percentage_error": 112.29304953476856,
+          "weighted_absolute_percentage_error": 65.68810461842634,
+          "spearman_rank_correlation": 0.07657649005959044
         }
       ],
       "selected_alpha": 0.01,
       "all_control_metrics": {
-        "mae_people": 28863.14025954726,
-        "mean_absolute_percentage_error": 62.24435113276251,
-        "weighted_absolute_percentage_error": 47.06049748334751,
-        "spearman_rank_correlation": 0.7042661249804988
+        "mae_people": 27522.407771981372,
+        "mean_absolute_percentage_error": 56.106411184661276,
+        "weighted_absolute_percentage_error": 44.87447277191418,
+        "spearman_rank_correlation": 0.7064997180687371
       },
       "top_employment_control_definition": "observed employment >= 75th percentile (80390)",
       "top_employment_control_metrics": {
-        "mae_people": 60143.57337136795,
-        "mean_absolute_percentage_error": 37.91039075955587,
-        "weighted_absolute_percentage_error": 42.91379019363451,
-        "spearman_rank_correlation": 0.3151022514942737
+        "mae_people": 63122.75253966335,
+        "mean_absolute_percentage_error": 37.72198848639419,
+        "weighted_absolute_percentage_error": 45.039501431110445,
+        "spearman_rank_correlation": 0.1990638148611205
       },
       "obvious_high_employment_underprediction_rule": "top-quartile control predicted below 50% of observed employment",
       "obvious_high_employment_underprediction": [
@@ -186,72 +186,72 @@
           "accounting_control": "310101017000",
           "control_name": "小东门街道",
           "control_employment": 126442,
-          "geographic_holdout_prediction": 30534.448707903117,
-          "prediction_as_pct_of_actual": 24.148976374862087
+          "geographic_holdout_prediction": 38671.32480096116,
+          "prediction_as_pct_of_actual": 30.584240047580046
         },
         {
           "district": "徐汇区",
           "accounting_control": "310104012000",
           "control_name": "虹梅路街道",
           "control_employment": 262100,
-          "geographic_holdout_prediction": 58626.44154238732,
-          "prediction_as_pct_of_actual": 22.36796701350146
-        },
-        {
-          "district": "徐汇区",
-          "accounting_control": "310104014000",
-          "control_name": "徐家汇街道",
-          "control_employment": 216300,
-          "geographic_holdout_prediction": 88033.6429899584,
-          "prediction_as_pct_of_actual": 40.699788714728804
+          "geographic_holdout_prediction": 66063.73947096635,
+          "prediction_as_pct_of_actual": 25.205547299109632
         },
         {
           "district": "长宁区",
           "accounting_control": "310105010000",
           "control_name": "程家桥街道",
           "control_employment": 101760,
-          "geographic_holdout_prediction": 31229.89218217929,
-          "prediction_as_pct_of_actual": 30.689752537518956
+          "geographic_holdout_prediction": 38889.60500326858,
+          "prediction_as_pct_of_actual": 38.21698604880953
+        },
+        {
+          "district": "静安区",
+          "accounting_control": "310106015000",
+          "control_name": "天目西路街道",
+          "control_employment": 161000,
+          "geographic_holdout_prediction": 70163.07795703984,
+          "prediction_as_pct_of_actual": 43.5795515261117
         },
         {
           "district": "浦东新区",
           "accounting_control": "310115004000",
           "control_name": "潍坊新村街道",
           "control_employment": 153750,
-          "geographic_holdout_prediction": 51711.46484059548,
-          "prediction_as_pct_of_actual": 33.63347306705397
-        },
-        {
-          "district": "浦东新区",
-          "accounting_control": "310115005000",
-          "control_name": "陆家嘴街道",
-          "control_employment": 200750,
-          "geographic_holdout_prediction": 81183.33052245887,
-          "prediction_as_pct_of_actual": 40.44001520421364
-        },
-        {
-          "district": "浦东新区",
-          "accounting_control": "310115103000",
-          "control_name": "川沙新镇",
-          "control_employment": 89000,
-          "geographic_holdout_prediction": 43509.383784697435,
-          "prediction_as_pct_of_actual": 48.88694807269375
+          "geographic_holdout_prediction": 67028.29849640152,
+          "prediction_as_pct_of_actual": 43.59564129847253
         },
         {
           "district": "浦东新区",
           "accounting_control": "310115145000",
           "control_name": "南汇新城镇",
           "control_employment": 138000,
-          "geographic_holdout_prediction": 43089.24820611206,
-          "prediction_as_pct_of_actual": 31.224092902979756
+          "geographic_holdout_prediction": 47722.596522700864,
+          "prediction_as_pct_of_actual": 34.58159168311657
+        },
+        {
+          "district": "浦东新区",
+          "accounting_control": "310115501000",
+          "control_name": "中国（上海）自由贸易试验区（保税片区）",
+          "control_employment": 149000,
+          "geographic_holdout_prediction": 50699.0320905533,
+          "prediction_as_pct_of_actual": 34.02619603392839
+        },
+        {
+          "district": "浦东新区",
+          "accounting_control": "310115502000",
+          "control_name": "金桥经济技术开发区",
+          "control_employment": 203000,
+          "geographic_holdout_prediction": 79174.58831142541,
+          "prediction_as_pct_of_actual": 39.0022602519337
         },
         {
           "district": "浦东新区",
           "accounting_control": "310115503000",
           "control_name": "张江高科技园区",
           "control_employment": 469000,
-          "geographic_holdout_prediction": 226617.24759672277,
-          "prediction_as_pct_of_actual": 48.319242557936626
+          "geographic_holdout_prediction": 99780.2162113379,
+          "prediction_as_pct_of_actual": 21.275099405402536
         }
       ],
       "geographic_folds": [
@@ -260,90 +260,166 @@
           "test_controls": 25,
           "test_districts": [
             "徐汇区",
-            "普陀区",
-            "杨浦区",
             "浦东新区",
-            "虹口区",
             "长宁区",
-            "静安区",
-            "黄浦区"
+            "静安区"
           ],
-          "mae_people": 20998.186582635673,
-          "weighted_absolute_percentage_error": 37.37579765529503,
+          "mae_people": 52829.9961056574,
+          "weighted_absolute_percentage_error": 55.893496279328915,
           "converged": true
         },
         {
           "held_out_spatial_quadrant": 1,
-          "test_controls": 32,
+          "test_controls": 14,
           "test_districts": [
             "徐汇区",
-            "普陀区",
-            "杨浦区",
             "浦东新区",
-            "虹口区",
-            "长宁区",
-            "静安区",
             "黄浦区"
           ],
-          "mae_people": 20710.832206051564,
-          "weighted_absolute_percentage_error": 37.35671663898037,
+          "mae_people": 19389.97540262921,
+          "weighted_absolute_percentage_error": 39.525572497879125,
           "converged": true
         },
         {
           "held_out_spatial_quadrant": 2,
-          "test_controls": 32,
+          "test_controls": 19,
           "test_districts": [
-            "徐汇区",
-            "普陀区",
-            "杨浦区",
-            "浦东新区",
-            "虹口区",
-            "长宁区",
-            "静安区",
-            "黄浦区"
+            "浦东新区"
           ],
-          "mae_people": 36830.54822704164,
-          "weighted_absolute_percentage_error": 42.870600533231254,
+          "mae_people": 25973.001978005497,
+          "weighted_absolute_percentage_error": 47.12218071922697,
           "converged": true
         },
         {
           "held_out_spatial_quadrant": 3,
-          "test_controls": 27,
+          "test_controls": 14,
           "test_districts": [
-            "徐汇区",
             "普陀区",
+            "静安区"
+          ],
+          "mae_people": 19082.78258628064,
+          "weighted_absolute_percentage_error": 36.90040831601228,
+          "converged": true
+        },
+        {
+          "held_out_spatial_quadrant": 4,
+          "test_controls": 24,
+          "test_districts": [
             "杨浦区",
             "浦东新区",
             "虹口区",
-            "长宁区",
             "静安区",
             "黄浦区"
           ],
-          "mae_people": 36364.64561787434,
-          "weighted_absolute_percentage_error": 82.73564678641972,
+          "mae_people": 20194.665162825713,
+          "weighted_absolute_percentage_error": 29.417721448854522,
+          "converged": true
+        },
+        {
+          "held_out_spatial_quadrant": 5,
+          "test_controls": 20,
+          "test_districts": [
+            "杨浦区",
+            "浦东新区"
+          ],
+          "mae_people": 17753.58927868722,
+          "weighted_absolute_percentage_error": 54.96986334216458,
           "converged": true
         }
       ],
+      "nonlinear_alternative": {
+        "model": "histogram gradient-boosted Poisson count model",
+        "role": "scientifically justified nonlinear diagnostic; not used for cell allocation",
+        "reason_not_selected_for_allocation": "tree response surfaces do not yield stable, interpretable elasticities for ecological transfer from control totals to 100 m cell densities",
+        "all_control_metrics": {
+          "mae_people": 30488.670852565403,
+          "mean_absolute_percentage_error": 66.49766867730801,
+          "weighted_absolute_percentage_error": 49.71087709187022,
+          "spearman_rank_correlation": 0.6555849659403329
+        },
+        "top_employment_control_metrics": {
+          "mae_people": 64546.63832988607,
+          "mean_absolute_percentage_error": 38.196867652781776,
+          "weighted_absolute_percentage_error": 46.05547591742862,
+          "spearman_rank_correlation": -0.1719847247251579
+        },
+        "obvious_high_employment_underprediction_count": 12,
+        "geographic_folds": [
+          {
+            "held_out_contiguous_block": 0,
+            "test_controls": 25,
+            "mae_people": 54162.52936938092,
+            "mean_absolute_percentage_error": 59.3807869462467,
+            "weighted_absolute_percentage_error": 57.303300339678565,
+            "spearman_rank_correlation": 0.6139642352464664
+          },
+          {
+            "held_out_contiguous_block": 1,
+            "test_controls": 14,
+            "mae_people": 31214.685367617934,
+            "mean_absolute_percentage_error": 119.60424235279781,
+            "weighted_absolute_percentage_error": 63.62969956779695,
+            "spearman_rank_correlation": 0.3802197802197802
+          },
+          {
+            "held_out_contiguous_block": 2,
+            "test_controls": 19,
+            "mae_people": 27594.166154053117,
+            "mean_absolute_percentage_error": 70.69289954980306,
+            "weighted_absolute_percentage_error": 50.063419138411,
+            "spearman_rank_correlation": 0.6610893785857566
+          },
+          {
+            "held_out_contiguous_block": 3,
+            "test_controls": 14,
+            "mae_people": 18339.045076351213,
+            "mean_absolute_percentage_error": 48.97466200743733,
+            "weighted_absolute_percentage_error": 35.462241860347646,
+            "spearman_rank_correlation": 0.7731296287783735
+          },
+          {
+            "held_out_contiguous_block": 4,
+            "test_controls": 24,
+            "mae_people": 24213.175836948092,
+            "mean_absolute_percentage_error": 43.811806250230816,
+            "weighted_absolute_percentage_error": 35.27151633465393,
+            "spearman_rank_correlation": 0.7913043478260868
+          },
+          {
+            "held_out_contiguous_block": 5,
+            "test_controls": 20,
+            "mae_people": 19173.24907168661,
+            "mean_absolute_percentage_error": 73.72283952082361,
+            "weighted_absolute_percentage_error": 59.36550996823728,
+            "spearman_rank_correlation": 0.5844302782612387
+          }
+        ]
+      },
+      "acceptance_gate": {
+        "status": "failed",
+        "reason": "PPML and the nonlinear Poisson alternative both retain large high-employment-control errors and weak top-control rank ordering",
+        "result_use": "reach estimates remain model-contingent sensitivity results, not an accepted calibrated benchmark"
+      },
       "final_fit": {
         "converged": true,
         "iterations": 51,
-        "objective": -10.271218053437412,
-        "intercept": 12.171705705005566,
+        "objective": -10.271218053437414,
+        "intercept": 12.17170570603938,
         "standardized_spatial_coefficients": {
-          "log1p_jrc_nres_volume_total": 0.30612161112079644,
-          "log1p_poi_business_finance_total": 0.23058019738120747,
+          "log1p_jrc_nres_volume_total": 0.3061216109073598,
+          "log1p_poi_business_finance_total": 0.2305801986134947,
           "log1p_poi_industry_logistics_total": 0.0,
-          "log1p_poi_education_research_total": 0.037770631426812785,
-          "log1p_poi_retail_hospitality_total": 0.2894301889942037,
+          "log1p_poi_education_research_total": 0.037770630988877646,
+          "log1p_poi_retail_hospitality_total": 0.2894301894472558,
           "log1p_poi_health_public_total": 0.0,
           "log1p_poi_other_economic_total": 0.0
         },
         "unstandardized_log_total_slopes": {
-          "log1p_jrc_nres_volume_total": 0.1989033231975916,
-          "log1p_poi_business_finance_total": 0.2309189623261856,
+          "log1p_jrc_nres_volume_total": 0.19890332305891056,
+          "log1p_poi_business_finance_total": 0.23091896356028332,
           "log1p_poi_industry_logistics_total": 0.0,
-          "log1p_poi_education_research_total": 0.04967364221879021,
-          "log1p_poi_retail_hospitality_total": 0.22347561711984293,
+          "log1p_poi_education_research_total": 0.0496736416428445,
+          "log1p_poi_retail_hospitality_total": 0.22347561746965472,
           "log1p_poi_health_public_total": 0.0,
           "log1p_poi_other_economic_total": 0.0
         },
@@ -366,15 +442,15 @@
           "log1p_poi_other_economic_total": 0.9293776474418676
         },
         "calibration_effects": {
-          "district=普陀区": -0.11214291753811413,
-          "district=杨浦区": -0.12110109825642475,
-          "district=浦东新区": -0.5109653647523649,
-          "district=虹口区": 0.018296126385259227,
-          "district=长宁区": -0.28722823015408466,
-          "district=静安区": -0.06656574550781426,
-          "district=黄浦区": -0.3796141684478051,
-          "control_type=street": -1.196775486546924,
-          "control_type=town": -1.0527180671400058
+          "district=普陀区": -0.11214291829752401,
+          "district=杨浦区": -0.12110109852171395,
+          "district=浦东新区": -0.5109653657017007,
+          "district=虹口区": 0.018296127083664057,
+          "district=长宁区": -0.28722823053578495,
+          "district=静安区": -0.06656574523206465,
+          "district=黄浦区": -0.37961416843378765,
+          "control_type=street": -1.1967754881711528,
+          "control_type=town": -1.0527180679198955
         },
         "nuisance_penalty": 0.0001
       },
@@ -433,13 +509,14 @@
     "source_path": "web/public/data/reach-economy.json",
     "source_sha256": "4054f47f07afa1e53612b50d965b3094161f43d94e8420a96911d6ac3c5731ca",
     "existing_50min_gdp_share_percentage": 21.621658694880143,
-    "employment_share_source": "50-minute preferred employment result",
+    "employment_share_source": "50-minute model-contingent central result",
     "interpretation": "GDP share divided by employment share is relative GDP per worker inside the reach versus Shanghai overall; no GDP result was rerun",
     "employment_share_percentage": 28.177982379536193,
     "gdp_share_divided_by_employment_share": 0.7673245871067946
   },
-  "benchmark_classification": "USABLE WITH CAUTION",
+  "benchmark_classification": "NOT YET RELIABLE",
   "limitations": [
+    "The calibrated model fails its high-employment-control spatial-holdout acceptance gate; reach estimates are model-contingent sensitivity results.",
     "All street/town geometries are approximate rather than official 2023 accounting boundaries.",
     "The three Pudong zone supports fail official-scope equivalence and dominate boundary uncertainty.",
     "The calibrated surface is constrained by aggregate controls and cannot identify establishment headcounts.",

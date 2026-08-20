@@ -7,5 +7,6 @@ pyproj==3.7.2
 rasterio==1.5.1
 requests==2.32.4
 scipy==1.16.1
+scikit-learn==1.8.0
 shapely==2.1.2
 pytest==8.4.1

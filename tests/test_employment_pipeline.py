@@ -263,6 +263,8 @@ def test_model_diagnostics_rounding_and_district_contributions_are_complete():
     )
     assert "no cap" in diagnostics["upper_tail_treatment"]
     assert isinstance(diagnostics["obvious_high_employment_underprediction"], list)
+    assert diagnostics["acceptance_gate"]["status"] == "failed"
+    assert diagnostics["nonlinear_alternative"]["model"].endswith("Poisson count model")
 
     rounding = pd.read_csv(EMPLOYMENT / "intermediate/rounding-sensitivity.csv")
     assert (

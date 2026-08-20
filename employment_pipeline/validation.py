@@ -263,6 +263,8 @@ def validate_benchmark(
             model_diagnostics["obvious_high_employment_underprediction"]
         ),
         "final_fit_converged": True,
+        "nonlinear_alternative": model_diagnostics["nonlinear_alternative"],
+        "acceptance_gate": model_diagnostics["acceptance_gate"],
     }
 
     if not boundary_review.empty:
@@ -289,4 +291,12 @@ def validate_benchmark(
     _assert("51job" not in metadata_text, "A prohibited vacancy source appears.")
     checks["prohibited_sources_absent"] = True
     checks["osm_attribution"] = OSM_LICENSE
-    return {"status": "passed", "checks": checks}
+    return {
+        "status": "hard_checks_passed_model_gate_failed",
+        "checks": checks,
+        "interpretation": (
+            "Accounting, geometry, reach, and reproducibility checks pass, but the "
+            "calibrated workplace model is not accepted because high-employment "
+            "spatial holdout performance remains poor."
+        ),
+    }

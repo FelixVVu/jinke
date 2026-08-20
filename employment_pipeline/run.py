@@ -274,13 +274,13 @@ def _methodology(
             "source_path": "web/public/data/reach-economy.json",
             "source_sha256": gdp_result_sha256,
             "existing_50min_gdp_share_percentage": gdp_share_50min,
-            "employment_share_source": "50-minute preferred employment result",
+            "employment_share_source": "50-minute model-contingent central result",
             "interpretation": (
                 "GDP share divided by employment share is relative GDP per worker "
                 "inside the reach versus Shanghai overall; no GDP result was rerun"
             ),
         },
-        "benchmark_classification": "USABLE WITH CAUTION",
+        "benchmark_classification": "NOT YET RELIABLE",
         "limitations": [
             "All street/town geometries are approximate rather than official 2023 accounting boundaries.",
             "The three Pudong zone supports fail official-scope equivalence and dominate boundary uncertainty.",
