@@ -22,6 +22,20 @@ python scripts/run_employment_benchmark.py \
   --source-cache /absolute/path/to/employment-source-cache
 ```
 
+After the benchmark outputs exist, reproduce the allocation-free 50-minute
+structural-certainty audit without the external source cache and without refitting
+PPML:
+
+```bash
+python scripts/run_employment_structural_certainty.py --repository-root .
+```
+
+The structural audit classifies all 116 selected supports against the pinned
+production 50-minute polygon, reports fine-control geometric bounds, decomposes
+partial-control model spread, and keeps residual-location and Pudong zone-boundary
+uncertainty in separate ledgers. Its report and CSV/JSON evidence are written under
+`data/employment/outputs/structural-certainty-*`.
+
 The preparation step verifies every frozen source hash, extracts exactly 113 OSM
 relations, rejects non-exact name matches, and rebuilds the manifests. The model
 step reads the production reaches but cannot write or regenerate them; it fails if
