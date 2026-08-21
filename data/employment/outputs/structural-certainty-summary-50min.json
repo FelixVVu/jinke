@@ -1,0 +1,146 @@
+{
+  "schema_version": 1,
+  "analysis": "50-minute structural certainty decomposition",
+  "does_not_refit_calibrated_model": true,
+  "current_50min_result_unchanged": {
+    "employment": 3691257.9268553634,
+    "percentage": 28.177982379536193
+  },
+  "denominator": 13099795,
+  "fine_control_employment": 7114511,
+  "residual_employment_kept_separate": 526062,
+  "classification_tolerance": {
+    "relative_support_area_fraction": 1e-06,
+    "percentage_of_support_area": 9.999999999999999e-05,
+    "effectively_fully_outside_rule": "fraction <= 1e-06",
+    "effectively_fully_inside_rule": "fraction >= 0.999999",
+    "partial_rule": "1e-06 < fraction < 0.999999",
+    "reason": "strict numerical/geometric tolerance; it is not a workplace-density assumption"
+  },
+  "source_hashes": {
+    "reach_sha256": "6f039b0661f63c1017a2c4a3bc8f5c4d8fdef207ca10afe987f160642fb5656b",
+    "current_reach_employment_sha256": "7f4a7447e52f70c595e3be9d0b38e1fc3ec06e9c8c3e3350a095b997cc87b105",
+    "control_crosswalk_sha256": "154e1d50ba04e31c17aa63a62eb69e54c9c6f7d7334a7b8574ff86242d783a59",
+    "boundary_manifest_sha256": "880eea2ebc9b1c2bf990d5f07e04477c5b4c7e9f5ed8dc34c68f591e49a1df81",
+    "ordinary_support_sha256": "d94b7fc3800e8c6bbe3c8b2f376f541b7887f6690a71cee103d53840bdf1a9a9",
+    "public_grid_sha256": "12de4bd6c3f8df26c7702f1a4ff0f6aed797068d3f571a6ccabdd6b5f6f8c1b7",
+    "zone_sensitivity_sha256": "0f6cf891fdf1839103e052c9edc227ecf4bb8fd937610c6a2713d3e07999e902"
+  },
+  "classification": [
+    {
+      "support_classification": "effectively_fully_inside",
+      "control_count": 13,
+      "official_control_employment": 959621,
+      "uniform_jobs_inside": 959621.0,
+      "building_jobs_inside": 959621.0,
+      "ppml_jobs_inside": 959621.0,
+      "summed_local_model_spread_jobs": 8.185452315956354e-11,
+      "share_of_shanghai_denominator_percentage": 7.32546578018969,
+      "ppml_share_of_current_50min_numerator_percentage": 25.997126698147454,
+      "aggregate_model_spread_jobs": 0.0,
+      "aggregate_model_spread_shanghai_percentage_points": 0.0
+    },
+    {
+      "support_classification": "effectively_fully_outside",
+      "control_count": 34,
+      "official_control_employment": 1786761,
+      "uniform_jobs_inside": 0.0,
+      "building_jobs_inside": 0.0,
+      "ppml_jobs_inside": 0.0,
+      "summed_local_model_spread_jobs": 0.0,
+      "share_of_shanghai_denominator_percentage": 13.639610390849628,
+      "ppml_share_of_current_50min_numerator_percentage": 0.0,
+      "aggregate_model_spread_jobs": 0.0,
+      "aggregate_model_spread_shanghai_percentage_points": 0.0
+    },
+    {
+      "support_classification": "materially_partially_intersected",
+      "control_count": 69,
+      "official_control_employment": 4368129,
+      "uniform_jobs_inside": 2541615.3571029375,
+      "building_jobs_inside": 2662734.9264484104,
+      "ppml_jobs_inside": 2598863.0724222064,
+      "summed_local_model_spread_jobs": 332028.57901849697,
+      "share_of_shanghai_denominator_percentage": 33.3450179945564,
+      "ppml_share_of_current_50min_numerator_percentage": 70.40589208124548,
+      "aggregate_model_spread_jobs": 121119.56934547285,
+      "aggregate_model_spread_shanghai_percentage_points": 0.9245913340283024
+    }
+  ],
+  "allocation_free_fine_control_bound": {
+    "lower_employment": 959621.0,
+    "upper_employment": 5327750.0,
+    "width_employment": 4368129.0,
+    "lower_shanghai_percentage": 7.32546578018969,
+    "upper_shanghai_percentage": 40.67048377474609,
+    "width_percentage_points": 33.3450179945564,
+    "residual_workers_included": 0,
+    "pudong_functional_zone_boundary_perturbation_included": false
+  },
+  "current_numerator_components": {
+    "fully_inside_official_controls": 959621.0,
+    "partial_controls_ppml_jobs_inside": 2598863.0724222064,
+    "fully_outside_controls_ppml_jobs_inside": 0.0,
+    "central_residual_jobs_inside": 132773.85443315748
+  },
+  "answers": {
+    "A_official_census_determined_percentage_of_current_numerator": 25.997126698147454,
+    "A_official_census_determined_percentage_of_fine_control_numerator": 26.96712927386522,
+    "B_partial_spatial_allocation_percentage_of_current_numerator": 70.40589208124548,
+    "B_partial_spatial_allocation_percentage_of_fine_control_numerator": 73.03287072613479,
+    "central_residual_percentage_of_current_numerator": 3.5969812206070753,
+    "C_selected_support_fine_bound_can_exceed_40_percent": true,
+    "C_required_share_of_partial_employment_inside_for_40_percent": 0.9798925352250357,
+    "C_selected_support_fine_upper_percentage": 40.67048377474609,
+    "C_upper_with_all_residual_inside_percentage": 44.68628707548477,
+    "C_extreme_ceiling_with_all_residual_and_pudong_zone_boundary_upper_percentage": 45.82370945499529,
+    "C_can_exceed_50_percent_under_explicit_extremes": false,
+    "C_interpretation": "The accounting/geometric bound barely permits more than 40%, but only near its adversarial upper edge; the three retained allocation models do not make more than 40% plausible. Even all residual workers and the separate functional-zone boundary upper cannot reach 50%."
+  },
+  "model_spread_concentration": {
+    "sum_of_partial_control_max_minus_min_jobs": 332028.57901849697,
+    "sum_of_partial_control_spreads_shanghai_percentage_points": 2.5346089692128535,
+    "aggregate_partial_uniform_building_ppml_spread_jobs": 121119.56934547238,
+    "aggregate_partial_spread_shanghai_percentage_points": 0.9245913340282987,
+    "coverage_target": 0.8,
+    "smallest_control_set_count": 28,
+    "smallest_control_set_coverage": 0.8034610645531526,
+    "smallest_control_set_ids": [
+      "310115502000",
+      "310109011000",
+      "310115130000",
+      "310115503000",
+      "310104014000",
+      "310106015000",
+      "310115132000",
+      "310110019000",
+      "310105008000",
+      "310106017000",
+      "310106018000",
+      "310110009000",
+      "310107020000",
+      "310115009000",
+      "310104007000",
+      "310115105000",
+      "310105006000",
+      "310110018000",
+      "310115125000",
+      "310101020000",
+      "310115005000",
+      "310105004000",
+      "310115136000",
+      "310115103000",
+      "310115120000",
+      "310115010000",
+      "310104004000",
+      "310115114000"
+    ]
+  },
+  "separate_uncertainty_ledgers": {
+    "residual_location_workers": 526062,
+    "pudong_zone_boundary_additional_upper_workers": 149000.0,
+    "selected_support_structural_upper_plus_all_residual_employment": 5853812.0,
+    "extreme_ceiling_employment": 6002812.0,
+    "uncertainty_sources_are_not_added_to_the_structural_bound": true
+  }
+}

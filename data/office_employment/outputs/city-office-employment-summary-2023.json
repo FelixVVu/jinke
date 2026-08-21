@@ -1,0 +1,32 @@
+{
+  "schema_version": 1,
+  "reference_date": "2023-12-31",
+  "employment_universe": "people employed by Shanghai legal entities at 2023-12-31; individual-business employment excluded",
+  "official_all_industry_employment": 13099795,
+  "core_office_employment": 2477585,
+  "core_share_of_shanghai_all_industry_percentage": 18.913158564695095,
+  "broad_office_employment": 6374547,
+  "broad_share_of_shanghai_all_industry_percentage": 48.66142561772913,
+  "district_count": 16,
+  "selected_industry_row_count": 9,
+  "core_industry_rows": [
+    "I",
+    "J",
+    "M"
+  ],
+  "broad_industry_rows": [
+    "I",
+    "J",
+    "72",
+    "M",
+    "K",
+    "P",
+    "Q",
+    "R",
+    "S"
+  ],
+  "source_url": "https://tjj.sh.gov.cn/tjnj/jjpcnj2023/zk/html/A1-09.xls",
+  "source_sha256": "b217fb6d1fdacf06cfd68e46b93c9f50536e566a3575581add57393a1c9b3d7a",
+  "sufficiency_decision": "PROCEED",
+  "sufficiency_scope": "sufficient as official district calibration controls for an industry-based office-oriented benchmark; not occupation-level or fine-geographic observed employment"
+}
