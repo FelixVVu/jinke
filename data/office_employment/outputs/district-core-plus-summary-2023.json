@@ -1,0 +1,31 @@
+{
+  "schema_version": 1,
+  "reference_date": "2023-12-31",
+  "employment_universe": "people employed by Shanghai legal entities at 2023-12-31; individual-business employment excluded",
+  "official_all_industry_employment": 13099795,
+  "core_office_employment_official": 2477585,
+  "core_share_of_shanghai_all_industry_percentage": 18.913158564695095,
+  "core_plus_office_employment": 3220710,
+  "core_plus_share_of_shanghai_all_industry_percentage": 24.585957261163248,
+  "core_plus_selected_72_employment": 743125,
+  "core_plus_selected_72_codes": [
+    "721",
+    "723",
+    "724",
+    "725"
+  ],
+  "core_plus_721_excluded_office_employment": 2992422,
+  "core_plus_721_excluded_share_of_shanghai_all_industry_percentage": 22.84327350160823,
+  "core_plus_721_excluded_selected_72_employment": 514837,
+  "core_plus_721_sensitivity_employment": 228288,
+  "core_plus_721_sensitivity_shanghai_percentage_points": 1.7426837595550158,
+  "broad_professional_institutional_employment_official": 6374547,
+  "broad_share_of_shanghai_all_industry_percentage": 48.66142561772913,
+  "district_count": 16,
+  "allocation_method": "maximum-entropy independence allocation proportional to official district division-72 employment, with largest-remainder reconciliation to each official Shanghai subgroup total",
+  "district_core_and_full_72_are_official": true,
+  "district_core_plus_72_is_modelled": true,
+  "spatial_allocation_performed": false,
+  "grid_created": false,
+  "reach_percentage_calculated": false
+}
