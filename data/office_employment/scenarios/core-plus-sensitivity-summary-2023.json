@@ -1,0 +1,62 @@
+{
+  "schema_version": 1,
+  "reference_date": "2023-12-31",
+  "employment_universe": "people employed by Shanghai legal entities at 2023-12-31; individual-business employment excluded",
+  "official_all_industry_employment": 13099795,
+  "core_is_hard_control": true,
+  "core_plus_city_employment_fixed_in_all_scenarios": 3220710,
+  "selected_72_city_employment_fixed_in_all_scenarios": 743125,
+  "base_selected_72_share_percentage": 39.02307487914334,
+  "scenarios": [
+    "low_office_intensity",
+    "base",
+    "high_office_intensity"
+  ],
+  "scenario_labels": {
+    "low_office_intensity": "Low office intensity",
+    "base": "Base",
+    "high_office_intensity": "High office intensity"
+  },
+  "scenario_method": "subgroup-conserving targeted composition sensitivity: Base preserves the current maximum-entropy allocation; Low transfers 20% of Baoshan's Base selected-72 allocation from Huangpu/Jing'an/Changning/Putuo to Baoshan; High reverses the same transfer. Each 721/723/724/725 Shanghai total is preserved exactly.",
+  "transfer_fraction_of_baoshan_base_selected_72": 0.2,
+  "transfer_employment_total": 12983,
+  "transfer_employment_by_subgroup": {
+    "721": 3988,
+    "723": 879,
+    "724": 6357,
+    "725": 1759
+  },
+  "priority_office_centres": [
+    "黄浦区",
+    "静安区",
+    "长宁区",
+    "普陀区"
+  ],
+  "composition_risk_district": "宝山区",
+  "neutral_district_count": 11,
+  "changed_rank_row_count": 9,
+  "maximum_absolute_district_employment_change_from_base": 12983,
+  "selected_72_share_range_by_scenario_percentage": {
+    "low_office_intensity": {
+      "minimum": 36.908599709407916,
+      "maximum": 46.82801613494683
+    },
+    "base": {
+      "minimum": 39.02055369127517,
+      "maximum": 39.02394733855408
+    },
+    "high_office_intensity": {
+      "minimum": 31.218477038960728,
+      "maximum": 41.1366881639442
+    }
+  },
+  "base_matches_current_core_plus_exactly": true,
+  "official_subgroup_totals_preserved_in_all_scenarios": true,
+  "spatial_allocation_performed": false,
+  "grid_created": false,
+  "reach_percentage_calculated": false,
+  "unchanged_input_sha256": {
+    "data/office_employment/intermediate/district-business-services-subgroup-allocation-2023.csv": "9a045cf0f655a268b35d63d0379fed02b1982964d53c07d31d87e6876cdc4a66",
+    "data/office_employment/outputs/district-core-plus-controls-2023.csv": "ba20d46e2afe336d334513c8ff12686027f3362d23f2a7a488072345d7023eb2"
+  }
+}
