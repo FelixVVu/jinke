@@ -1,0 +1,40 @@
+{
+  "raw_multipolygon_features_in_bbox": 150496,
+  "building_or_office_candidates": 119191,
+  "classified_workplace_buildings_before_scope_filter": 12968,
+  "invalid_or_empty_classified_geometries_before_repair": 72,
+  "invalid_or_empty_classified_geometries_after_repair": 0,
+  "classified_workplace_buildings_in_priority_scope": 9730,
+  "classified_building_cell_intersections": 23536,
+  "cells_with_building_function_evidence": 13522,
+  "office_establishment_anchors_in_source_bbox": 512,
+  "office_establishment_anchors_matched_to_grid": 397,
+  "cells_with_office_establishment_anchors": 344,
+  "known_building_levels_share_of_classified_features": 0.07266187050359713,
+  "building_levels_used_in_allocation": false,
+  "building_function_counts": {
+    "office_business": 3070,
+    "research_technical": 2593,
+    "industrial_logistics": 1356,
+    "retail_hospitality": 1873,
+    "health_public": 487,
+    "other_nonres": 351
+  },
+  "building_function_footprint_m2": {
+    "office_business": 7605665.926222404,
+    "research_technical": 3868688.4964616895,
+    "industrial_logistics": 6327379.332682085,
+    "retail_hospitality": 5048795.845629555,
+    "health_public": 922141.4423888233,
+    "other_nonres": 1376446.514823289
+  },
+  "osm_source_sha256": "3b6e8bb207db37e6d86546c8e73fcfb3a68b8b6c744f74ed1d5d645bc7873099",
+  "osm_source_snapshot_date": "2026-08-23",
+  "priority_grid_cell_count": 172233,
+  "cells_with_positive_jrc_nonresidential_volume": 40161,
+  "positive_jrc_cell_share": 0.23317831077668041,
+  "total_jrc_nonresidential_volume_m3": 544149771.6406815,
+  "cells_with_any_overture_workplace_poi": 6848,
+  "positive_overture_cell_share": 0.039760092432925165,
+  "total_overture_workplace_intensity": 9744.416581734651
+}

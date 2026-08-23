@@ -1,0 +1,220 @@
+{
+  "schema_version": 1,
+  "reference_date": "2023-12-31",
+  "employment_universe": "people employed by Shanghai legal entities at 2023-12-31; individual-business employment excluded",
+  "spatial_scope": "eight audited reach-relevant districts",
+  "spatial_scope_districts": [
+    "黄浦区",
+    "徐汇区",
+    "长宁区",
+    "静安区",
+    "普陀区",
+    "虹口区",
+    "杨浦区",
+    "浦东新区"
+  ],
+  "city_core_hard_control": 2477585,
+  "city_core_plus_control_each_scenario": 3220710,
+  "priority_grid_cell_count": 172233,
+  "priority_core_allocated_employment": 1852975,
+  "priority_core_plus_allocated_employment": {
+    "low_office_intensity": 2323401,
+    "base": 2336384,
+    "high_office_intensity": 2349367
+  },
+  "component_shares": {
+    "jrc_nonresidential_volume": 0.6,
+    "osm_building_function_footprint": 0.25,
+    "osm_office_establishments": 0.1,
+    "overture_poi_supplement": 0.05
+  },
+  "building_function_relevance": {
+    "I": {
+      "office_business": 1.0,
+      "research_technical": 1.0,
+      "industrial_logistics": 0.35,
+      "retail_hospitality": 0.1,
+      "health_public": 0.1,
+      "other_nonres": 0.25
+    },
+    "J": {
+      "office_business": 1.0,
+      "research_technical": 0.1,
+      "industrial_logistics": 0.05,
+      "retail_hospitality": 0.25,
+      "health_public": 0.1,
+      "other_nonres": 0.1
+    },
+    "M": {
+      "office_business": 0.7,
+      "research_technical": 1.0,
+      "industrial_logistics": 0.45,
+      "retail_hospitality": 0.1,
+      "health_public": 0.2,
+      "other_nonres": 0.25
+    },
+    "721": {
+      "office_business": 1.0,
+      "research_technical": 0.35,
+      "industrial_logistics": 0.15,
+      "retail_hospitality": 0.25,
+      "health_public": 0.1,
+      "other_nonres": 0.2
+    },
+    "723": {
+      "office_business": 1.0,
+      "research_technical": 0.15,
+      "industrial_logistics": 0.05,
+      "retail_hospitality": 0.15,
+      "health_public": 0.1,
+      "other_nonres": 0.1
+    },
+    "724": {
+      "office_business": 0.9,
+      "research_technical": 0.85,
+      "industrial_logistics": 0.25,
+      "retail_hospitality": 0.15,
+      "health_public": 0.15,
+      "other_nonres": 0.2
+    },
+    "725": {
+      "office_business": 0.9,
+      "research_technical": 0.35,
+      "industrial_logistics": 0.1,
+      "retail_hospitality": 0.5,
+      "health_public": 0.1,
+      "other_nonres": 0.2
+    }
+  },
+  "poi_relevance": {
+    "I": {
+      "poi_business_finance": 0.7,
+      "poi_industry_logistics": 0.2,
+      "poi_education_research": 1.0,
+      "poi_retail_hospitality": 0.05,
+      "poi_health_public": 0.05,
+      "poi_other_economic": 0.3
+    },
+    "J": {
+      "poi_business_finance": 1.0,
+      "poi_industry_logistics": 0.0,
+      "poi_education_research": 0.05,
+      "poi_retail_hospitality": 0.1,
+      "poi_health_public": 0.0,
+      "poi_other_economic": 0.1
+    },
+    "M": {
+      "poi_business_finance": 0.4,
+      "poi_industry_logistics": 0.4,
+      "poi_education_research": 1.0,
+      "poi_retail_hospitality": 0.05,
+      "poi_health_public": 0.1,
+      "poi_other_economic": 0.2
+    },
+    "721": {
+      "poi_business_finance": 1.0,
+      "poi_industry_logistics": 0.1,
+      "poi_education_research": 0.2,
+      "poi_retail_hospitality": 0.15,
+      "poi_health_public": 0.05,
+      "poi_other_economic": 0.25
+    },
+    "723": {
+      "poi_business_finance": 1.0,
+      "poi_industry_logistics": 0.0,
+      "poi_education_research": 0.1,
+      "poi_retail_hospitality": 0.05,
+      "poi_health_public": 0.05,
+      "poi_other_economic": 0.2
+    },
+    "724": {
+      "poi_business_finance": 1.0,
+      "poi_industry_logistics": 0.15,
+      "poi_education_research": 0.5,
+      "poi_retail_hospitality": 0.05,
+      "poi_health_public": 0.1,
+      "poi_other_economic": 0.25
+    },
+    "725": {
+      "poi_business_finance": 0.8,
+      "poi_industry_logistics": 0.05,
+      "poi_education_research": 0.2,
+      "poi_retail_hospitality": 0.6,
+      "poi_health_public": 0.0,
+      "poi_other_economic": 0.4
+    }
+  },
+  "allocation_method": "uncapped linear evidence mixture normalized within district-industry controls, then deterministic largest-remainder integer reconciliation",
+  "core_is_hard_control": true,
+  "core_plus_base_is_central_case": true,
+  "low_and_high_core_plus_retained": true,
+  "uniform_allocation_used_as_main": false,
+  "generic_ppml_fitted": false,
+  "spatial_smoothing_or_winsorization_used": false,
+  "grid_created": true,
+  "reach_intersection_calculated": false,
+  "reach_percentage_calculated": false,
+  "production_outputs_modified": false,
+  "geometry_is_approximate": true,
+  "approximate_boundary_disclosure": "The physical lattice is inherited from the audited OSM street/town supports; it is not an official 2023 accounting-boundary layer.",
+  "source_quality": {
+    "raw_multipolygon_features_in_bbox": 150496,
+    "building_or_office_candidates": 119191,
+    "classified_workplace_buildings_before_scope_filter": 12968,
+    "invalid_or_empty_classified_geometries_before_repair": 72,
+    "invalid_or_empty_classified_geometries_after_repair": 0,
+    "classified_workplace_buildings_in_priority_scope": 9730,
+    "classified_building_cell_intersections": 23536,
+    "cells_with_building_function_evidence": 13522,
+    "office_establishment_anchors_in_source_bbox": 512,
+    "office_establishment_anchors_matched_to_grid": 397,
+    "cells_with_office_establishment_anchors": 344,
+    "known_building_levels_share_of_classified_features": 0.07266187050359713,
+    "building_levels_used_in_allocation": false,
+    "building_function_counts": {
+      "office_business": 3070,
+      "research_technical": 2593,
+      "industrial_logistics": 1356,
+      "retail_hospitality": 1873,
+      "health_public": 487,
+      "other_nonres": 351
+    },
+    "building_function_footprint_m2": {
+      "office_business": 7605665.926222404,
+      "research_technical": 3868688.4964616895,
+      "industrial_logistics": 6327379.332682085,
+      "retail_hospitality": 5048795.845629555,
+      "health_public": 922141.4423888233,
+      "other_nonres": 1376446.514823289
+    },
+    "osm_source_sha256": "3b6e8bb207db37e6d86546c8e73fcfb3a68b8b6c744f74ed1d5d645bc7873099",
+    "osm_source_snapshot_date": "2026-08-23",
+    "priority_grid_cell_count": 172233,
+    "cells_with_positive_jrc_nonresidential_volume": 40161,
+    "positive_jrc_cell_share": 0.23317831077668041,
+    "total_jrc_nonresidential_volume_m3": 544149771.6406815,
+    "cells_with_any_overture_workplace_poi": 6848,
+    "positive_overture_cell_share": 0.039760092432925165,
+    "total_overture_workplace_intensity": 9744.416581734651
+  },
+  "input_sha256": {
+    "general_employment_grid": "12de4bd6c3f8df26c7702f1a4ff0f6aed797068d3f571a6ccabdd6b5f6f8c1b7",
+    "building_function_evidence": "d1e7e411fc1dd00a9f61b3ffa53cad9e6f4d829c8e473cff33fa49f670e86699",
+    "district_industry_controls": "c791c1a8e0cea282201fd1d3303493ee5e82cfb411a627946c6c95fafa0d7cd9",
+    "core_plus_scenarios": "e410728f2bdbec3a5cad5c1a37e5d3af91cdfe3f8742189a9932ca5ad1217306"
+  },
+  "output_sha256": {
+    "core_grid": "fccafa60890e7c397306a8cca06a786ac11e1cbd3df54568e2ec0c541dec13b1",
+    "core_plus_base_grid": "38143ad89e99e1902335a41bc00eea977eeb52c69bc234fb8b7540ecf8fa0a71",
+    "core_plus_sensitivity_grid": "c4d858b46b6cbcc9e21ef24fa77776bf53d18eb0016bae78bfee43fcc6b7abb9",
+    "allocation_diagnostics": "d8924a7c341898ac0118873946bd162efec2189a0e2d6f3f640fba2f9e5edca4"
+  },
+  "cluster_validation": {
+    "cluster_count": 7,
+    "clusters_passing_declared_rule": 7,
+    "clusters_passing_strong_rule": 4,
+    "all_declared_clusters_pass": true,
+    "validation_radius_m": 1500.0,
+    "reach_polygon_used": false
+  }
+}

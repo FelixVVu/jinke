@@ -1,0 +1,121 @@
+scenario,district,industry_code,control_status,assigned_employment,allocated_employment,reconciliation_difference,cell_count,positive_weight_cells,positive_employment_cells,top_1_percent_cell_employment_share,gini_cell_employment,maximum_cell_employment,realized_jrc_nonresidential_volume_share,realized_osm_building_function_footprint_share,realized_osm_office_establishments_share,realized_overture_poi_supplement_share,no_log_cap_winsorize_or_minmax,generic_ppml_fitted,uniform_allocation_used_as_main
+core_hard_control,黄浦区,I,official district-by-industry hard control,35032,35032,0,2184,1383,1116,0.2025576615665677,0.8431581810706611,679,0.6,0.25,0.1,0.05,True,False,False
+core_hard_control,徐汇区,I,official district-by-industry hard control,138974,138974,0,5797,2993,2799,0.16215263286657935,0.8398395849775026,610,0.6,0.25,0.1,0.05,True,False,False
+core_hard_control,长宁区,I,official district-by-industry hard control,65953,65953,0,3961,1782,1597,0.23709308143678073,0.8867801871546902,1438,0.6,0.25,0.1,0.05,True,False,False
+core_hard_control,静安区,I,official district-by-industry hard control,85949,85949,0,3926,1975,1850,0.2319631409324134,0.8511298893874839,1483,0.6,0.25,0.1,0.05,True,False,False
+core_hard_control,普陀区,I,official district-by-industry hard control,57019,57019,0,5906,2480,2147,0.26610428102913064,0.8818741819812832,601,0.6,0.25,0.1,0.05,True,False,False
+core_hard_control,虹口区,I,official district-by-industry hard control,21097,21097,0,2489,1215,1067,0.17846139261506375,0.8541142290713923,241,0.6,0.25,0.1,0.05,True,False,False
+core_hard_control,杨浦区,I,official district-by-industry hard control,82021,82021,0,6270,2828,2500,0.21904146499067312,0.854095663095733,769,0.6,0.25,0.1,0.05,True,False,False
+core_hard_control,浦东新区,I,official district-by-industry hard control,327781,327781,0,141700,34723,25746,0.35513040719260724,0.9326841021451839,1597,0.6,0.25,0.1,0.05,True,False,False
+core_hard_control,黄浦区,J,official district-by-industry hard control,83264,83264,0,2184,1369,1314,0.2053228285933897,0.8459442541909155,1628,0.6,0.25,0.1,0.05,True,False,False
+core_hard_control,徐汇区,J,official district-by-industry hard control,24820,24820,0,5797,2974,2271,0.1717163577759871,0.8508469536814799,121,0.6,0.25,0.1,0.05,True,False,False
+core_hard_control,长宁区,J,official district-by-industry hard control,12558,12558,0,3961,1759,1180,0.24972129319955408,0.8951702173110908,283,0.6,0.25,0.1,0.05,True,False,False
+core_hard_control,静安区,J,official district-by-industry hard control,57821,57821,0,3926,1954,1785,0.23809688521471437,0.8579664674357349,1016,0.6,0.25,0.1,0.05,True,False,False
+core_hard_control,普陀区,J,official district-by-industry hard control,11667,11667,0,5906,2467,1726,0.2758206908374046,0.8874575573299135,122,0.6,0.25,0.1,0.05,True,False,False
+core_hard_control,虹口区,J,official district-by-industry hard control,30268,30268,0,2489,1209,1085,0.18554248711510507,0.862167423275336,373,0.6,0.25,0.1,0.05,True,False,False
+core_hard_control,杨浦区,J,official district-by-industry hard control,9226,9226,0,6270,2811,1881,0.24344244526338607,0.865645663337541,66,0.6,0.25,0.1,0.05,True,False,False
+core_hard_control,浦东新区,J,official district-by-industry hard control,273573,273573,0,141700,34651,25020,0.3900165586516213,0.9364477376943208,1337,0.6,0.25,0.1,0.05,True,False,False
+core_hard_control,黄浦区,M,official district-by-industry hard control,40473,40473,0,2184,1383,1166,0.19808267239888322,0.840473002442093,771,0.6,0.25,0.1,0.05,True,False,False
+core_hard_control,徐汇区,M,official district-by-industry hard control,95029,95029,0,5797,2993,2750,0.1586252617621989,0.8370934107758718,410,0.6,0.25,0.1,0.05,True,False,False
+core_hard_control,长宁区,M,official district-by-industry hard control,26600,26600,0,3961,1782,1370,0.23124060150375939,0.8854852670682006,569,0.6,0.25,0.1,0.05,True,False,False
+core_hard_control,静安区,M,official district-by-industry hard control,50564,50564,0,3926,1975,1773,0.22974843762360572,0.8488481210599557,862,0.6,0.25,0.1,0.05,True,False,False
+core_hard_control,普陀区,M,official district-by-industry hard control,32220,32220,0,5906,2480,2054,0.26045934202358784,0.8801819757201748,348,0.6,0.25,0.1,0.05,True,False,False
+core_hard_control,虹口区,M,official district-by-industry hard control,19712,19712,0,2489,1215,1079,0.177049512987013,0.851354890087815,217,0.6,0.25,0.1,0.05,True,False,False
+core_hard_control,杨浦区,M,official district-by-industry hard control,55738,55738,0,6270,2828,2430,0.21635150166852057,0.8539210762954934,531,0.6,0.25,0.1,0.05,True,False,False
+core_hard_control,浦东新区,M,official district-by-industry hard control,215616,215616,0,141700,34723,24348,0.3502430246363906,0.932335887247629,1049,0.6,0.25,0.1,0.05,True,False,False
+low_office_intensity,黄浦区,721,district subgroup composition modelled; official Shanghai subgroup total,21678,21678,0,2184,1383,1082,0.20338592121044377,0.8438969962288534,421,0.6,0.25,0.1,0.05,True,False,False
+low_office_intensity,徐汇区,721,district subgroup composition modelled; official Shanghai subgroup total,18204,18204,0,5797,2993,2202,0.16847945506482093,0.8457285527216568,87,0.6,0.25,0.1,0.05,True,False,False
+low_office_intensity,长宁区,721,district subgroup composition modelled; official Shanghai subgroup total,12042,12042,0,3961,1782,1213,0.24422853346620163,0.8909853130805624,267,0.6,0.25,0.1,0.05,True,False,False
+low_office_intensity,静安区,721,district subgroup composition modelled; official Shanghai subgroup total,25948,25948,0,3926,1975,1643,0.2365114845074765,0.8540825528167507,452,0.6,0.25,0.1,0.05,True,False,False
+low_office_intensity,普陀区,721,district subgroup composition modelled; official Shanghai subgroup total,9989,9989,0,5906,2480,1726,0.27179897887676446,0.8837131443978827,103,0.6,0.25,0.1,0.05,True,False,False
+low_office_intensity,虹口区,721,district subgroup composition modelled; official Shanghai subgroup total,6497,6497,0,2489,1215,916,0.18223795597968293,0.8576200419602137,77,0.6,0.25,0.1,0.05,True,False,False
+low_office_intensity,杨浦区,721,district subgroup composition modelled; official Shanghai subgroup total,6598,6598,0,6270,2828,1766,0.22825098514701425,0.8596081747259935,54,0.6,0.25,0.1,0.05,True,False,False
+low_office_intensity,浦东新区,721,district subgroup composition modelled; official Shanghai subgroup total,43560,43560,0,141700,34723,16747,0.3709366391184573,0.9374570080091348,213,0.6,0.25,0.1,0.05,True,False,False
+low_office_intensity,黄浦区,723,district subgroup composition modelled; official Shanghai subgroup total,4777,4777,0,2184,1377,791,0.20828972158258321,0.8522408005085418,94,0.6,0.25,0.1,0.05,True,False,False
+low_office_intensity,徐汇区,723,district subgroup composition modelled; official Shanghai subgroup total,4012,4012,0,5797,2987,1431,0.17273180458624127,0.8630879829031106,19,0.6,0.25,0.1,0.05,True,False,False
+low_office_intensity,长宁区,723,district subgroup composition modelled; official Shanghai subgroup total,2654,2654,0,3961,1770,786,0.2528259231348907,0.902703202494099,60,0.6,0.25,0.1,0.05,True,False,False
+low_office_intensity,静安区,723,district subgroup composition modelled; official Shanghai subgroup total,5719,5719,0,3926,1968,1184,0.23815352334324183,0.8631318222578446,101,0.6,0.25,0.1,0.05,True,False,False
+low_office_intensity,普陀区,723,district subgroup composition modelled; official Shanghai subgroup total,2201,2201,0,5906,2474,994,0.279418446160836,0.9040625563019488,23,0.6,0.25,0.1,0.05,True,False,False
+low_office_intensity,虹口区,723,district subgroup composition modelled; official Shanghai subgroup total,1432,1432,0,2489,1212,525,0.18854748603351956,0.8801233808646312,18,0.6,0.25,0.1,0.05,True,False,False
+low_office_intensity,杨浦区,723,district subgroup composition modelled; official Shanghai subgroup total,1454,1454,0,6270,2818,944,0.24621733149931224,0.8934269210603099,11,0.6,0.25,0.1,0.05,True,False,False
+low_office_intensity,浦东新区,723,district subgroup composition modelled; official Shanghai subgroup total,9600,9600,0,141700,34672,7039,0.414375,0.9623663152787579,47,0.6,0.25,0.1,0.05,True,False,False
+low_office_intensity,黄浦区,724,district subgroup composition modelled; official Shanghai subgroup total,34553,34553,0,2184,1383,1114,0.20140074667901484,0.8419424335010536,668,0.6,0.25,0.1,0.05,True,False,False
+low_office_intensity,徐汇区,724,district subgroup composition modelled; official Shanghai subgroup total,29014,29014,0,5797,2993,2342,0.16185289860067553,0.8401595731999205,129,0.6,0.25,0.1,0.05,True,False,False
+low_office_intensity,长宁区,724,district subgroup composition modelled; official Shanghai subgroup total,19193,19193,0,3961,1782,1287,0.2370134945032043,0.8881675795053456,419,0.6,0.25,0.1,0.05,True,False,False
+low_office_intensity,静安区,724,district subgroup composition modelled; official Shanghai subgroup total,41360,41360,0,3926,1975,1667,0.23213249516441006,0.8513873561270349,713,0.6,0.25,0.1,0.05,True,False,False
+low_office_intensity,普陀区,724,district subgroup composition modelled; official Shanghai subgroup total,15921,15921,0,5906,2480,1818,0.266063689466742,0.8826205000974907,167,0.6,0.25,0.1,0.05,True,False,False
+low_office_intensity,虹口区,724,district subgroup composition modelled; official Shanghai subgroup total,10355,10355,0,2489,1215,966,0.17836793819410912,0.8535028194553379,118,0.6,0.25,0.1,0.05,True,False,False
+low_office_intensity,杨浦区,724,district subgroup composition modelled; official Shanghai subgroup total,10516,10516,0,6270,2828,1920,0.2189996196272347,0.8561968608023742,98,0.6,0.25,0.1,0.05,True,False,False
+low_office_intensity,浦东新区,724,district subgroup composition modelled; official Shanghai subgroup total,69430,69430,0,141700,34723,18967,0.35686302750972204,0.9352630085632264,338,0.6,0.25,0.1,0.05,True,False,False
+low_office_intensity,黄浦区,725,district subgroup composition modelled; official Shanghai subgroup total,9558,9558,0,2184,1375,936,0.1977401129943503,0.8441467247964423,181,0.6,0.25,0.1,0.05,True,False,False
+low_office_intensity,徐汇区,725,district subgroup composition modelled; official Shanghai subgroup total,8026,8026,0,5797,2980,1842,0.16745576875155743,0.8484889608169688,41,0.6,0.25,0.1,0.05,True,False,False
+low_office_intensity,长宁区,725,district subgroup composition modelled; official Shanghai subgroup total,5309,5309,0,3961,1771,994,0.2384629873799209,0.8929022558378928,116,0.6,0.25,0.1,0.05,True,False,False
+low_office_intensity,静安区,725,district subgroup composition modelled; official Shanghai subgroup total,11442,11442,0,3926,1961,1421,0.2363223212725048,0.8547600545416192,197,0.6,0.25,0.1,0.05,True,False,False
+low_office_intensity,普陀区,725,district subgroup composition modelled; official Shanghai subgroup total,4404,4404,0,5906,2473,1361,0.26748410535876477,0.8885340513334398,44,0.6,0.25,0.1,0.05,True,False,False
+low_office_intensity,虹口区,725,district subgroup composition modelled; official Shanghai subgroup total,2864,2864,0,2489,1212,734,0.18156424581005587,0.8611067467808077,33,0.6,0.25,0.1,0.05,True,False,False
+low_office_intensity,杨浦区,725,district subgroup composition modelled; official Shanghai subgroup total,2909,2909,0,6270,2821,1361,0.2303196974905466,0.8689614203952646,24,0.6,0.25,0.1,0.05,True,False,False
+low_office_intensity,浦东新区,725,district subgroup composition modelled; official Shanghai subgroup total,19207,19207,0,141700,34703,11567,0.3730931431249024,0.9458337113847027,94,0.6,0.25,0.1,0.05,True,False,False
+base,黄浦区,721,district subgroup composition modelled; official Shanghai subgroup total,22919,22919,0,2184,1383,1093,0.20345564815218814,0.8439907297350903,445,0.6,0.25,0.1,0.05,True,False,False
+base,徐汇区,721,district subgroup composition modelled; official Shanghai subgroup total,18204,18204,0,5797,2993,2202,0.16847945506482093,0.8457285527216568,87,0.6,0.25,0.1,0.05,True,False,False
+base,长宁区,721,district subgroup composition modelled; official Shanghai subgroup total,12731,12731,0,3961,1782,1228,0.24412850522347027,0.8907552826691298,283,0.6,0.25,0.1,0.05,True,False,False
+base,静安区,721,district subgroup composition modelled; official Shanghai subgroup total,27434,27434,0,3926,1975,1656,0.23649486039221404,0.8540527460876697,478,0.6,0.25,0.1,0.05,True,False,False
+base,普陀区,721,district subgroup composition modelled; official Shanghai subgroup total,10561,10561,0,5906,2480,1739,0.27156519269008617,0.8839344888561712,109,0.6,0.25,0.1,0.05,True,False,False
+base,虹口区,721,district subgroup composition modelled; official Shanghai subgroup total,6497,6497,0,2489,1215,916,0.18223795597968293,0.8576200419602137,77,0.6,0.25,0.1,0.05,True,False,False
+base,杨浦区,721,district subgroup composition modelled; official Shanghai subgroup total,6598,6598,0,6270,2828,1766,0.22825098514701425,0.8596081747259935,54,0.6,0.25,0.1,0.05,True,False,False
+base,浦东新区,721,district subgroup composition modelled; official Shanghai subgroup total,43560,43560,0,141700,34723,16747,0.3709366391184573,0.9374570080091348,213,0.6,0.25,0.1,0.05,True,False,False
+base,黄浦区,723,district subgroup composition modelled; official Shanghai subgroup total,5051,5051,0,2184,1377,795,0.20768164719857454,0.8526367135800911,100,0.6,0.25,0.1,0.05,True,False,False
+base,徐汇区,723,district subgroup composition modelled; official Shanghai subgroup total,4012,4012,0,5797,2987,1431,0.17273180458624127,0.8630879829031106,19,0.6,0.25,0.1,0.05,True,False,False
+base,长宁区,723,district subgroup composition modelled; official Shanghai subgroup total,2806,2806,0,3961,1770,798,0.2512473271560941,0.9022948804298792,63,0.6,0.25,0.1,0.05,True,False,False
+base,静安区,723,district subgroup composition modelled; official Shanghai subgroup total,6046,6046,0,3926,1968,1191,0.2385047965597089,0.8637305871490588,107,0.6,0.25,0.1,0.05,True,False,False
+base,普陀区,723,district subgroup composition modelled; official Shanghai subgroup total,2327,2327,0,5906,2474,1017,0.2814782982380748,0.9035161375807287,25,0.6,0.25,0.1,0.05,True,False,False
+base,虹口区,723,district subgroup composition modelled; official Shanghai subgroup total,1432,1432,0,2489,1212,525,0.18854748603351956,0.8801233808646312,18,0.6,0.25,0.1,0.05,True,False,False
+base,杨浦区,723,district subgroup composition modelled; official Shanghai subgroup total,1454,1454,0,6270,2818,944,0.24621733149931224,0.8934269210603099,11,0.6,0.25,0.1,0.05,True,False,False
+base,浦东新区,723,district subgroup composition modelled; official Shanghai subgroup total,9600,9600,0,141700,34672,7039,0.414375,0.9623663152787579,47,0.6,0.25,0.1,0.05,True,False,False
+base,黄浦区,724,district subgroup composition modelled; official Shanghai subgroup total,36531,36531,0,2184,1383,1121,0.20136322575346965,0.8418898300334615,706,0.6,0.25,0.1,0.05,True,False,False
+base,徐汇区,724,district subgroup composition modelled; official Shanghai subgroup total,29014,29014,0,5797,2993,2342,0.16185289860067553,0.8401595731999205,129,0.6,0.25,0.1,0.05,True,False,False
+base,长宁区,724,district subgroup composition modelled; official Shanghai subgroup total,20292,20292,0,3961,1782,1301,0.23703922728168736,0.8879148576205227,443,0.6,0.25,0.1,0.05,True,False,False
+base,静安区,724,district subgroup composition modelled; official Shanghai subgroup total,43728,43728,0,3926,1975,1680,0.2321167215514087,0.8512098898223054,754,0.6,0.25,0.1,0.05,True,False,False
+base,普陀区,724,district subgroup composition modelled; official Shanghai subgroup total,16833,16833,0,5906,2480,1838,0.2659062555694172,0.8824363432020564,176,0.6,0.25,0.1,0.05,True,False,False
+base,虹口区,724,district subgroup composition modelled; official Shanghai subgroup total,10355,10355,0,2489,1215,966,0.17836793819410912,0.8535028194553379,118,0.6,0.25,0.1,0.05,True,False,False
+base,杨浦区,724,district subgroup composition modelled; official Shanghai subgroup total,10516,10516,0,6270,2828,1920,0.2189996196272347,0.8561968608023742,98,0.6,0.25,0.1,0.05,True,False,False
+base,浦东新区,724,district subgroup composition modelled; official Shanghai subgroup total,69430,69430,0,141700,34723,18967,0.35686302750972204,0.9352630085632264,338,0.6,0.25,0.1,0.05,True,False,False
+base,黄浦区,725,district subgroup composition modelled; official Shanghai subgroup total,10106,10106,0,2184,1375,945,0.19760538294082722,0.8439149411838903,191,0.6,0.25,0.1,0.05,True,False,False
+base,徐汇区,725,district subgroup composition modelled; official Shanghai subgroup total,8026,8026,0,5797,2980,1842,0.16745576875155743,0.8484889608169688,41,0.6,0.25,0.1,0.05,True,False,False
+base,长宁区,725,district subgroup composition modelled; official Shanghai subgroup total,5613,5613,0,3961,1771,1013,0.2392659896668448,0.8923859581750502,123,0.6,0.25,0.1,0.05,True,False,False
+base,静安区,725,district subgroup composition modelled; official Shanghai subgroup total,12097,12097,0,3926,1961,1432,0.2364222534512689,0.8548814597709102,209,0.6,0.25,0.1,0.05,True,False,False
+base,普陀区,725,district subgroup composition modelled; official Shanghai subgroup total,4656,4656,0,5906,2473,1398,0.2661082474226804,0.8870971683522959,47,0.6,0.25,0.1,0.05,True,False,False
+base,虹口区,725,district subgroup composition modelled; official Shanghai subgroup total,2864,2864,0,2489,1212,734,0.18156424581005587,0.8611067467808077,33,0.6,0.25,0.1,0.05,True,False,False
+base,杨浦区,725,district subgroup composition modelled; official Shanghai subgroup total,2909,2909,0,6270,2821,1361,0.2303196974905466,0.8689614203952646,24,0.6,0.25,0.1,0.05,True,False,False
+base,浦东新区,725,district subgroup composition modelled; official Shanghai subgroup total,19207,19207,0,141700,34703,11567,0.3730931431249024,0.9458337113847027,94,0.6,0.25,0.1,0.05,True,False,False
+high_office_intensity,黄浦区,721,district subgroup composition modelled; official Shanghai subgroup total,24160,24160,0,2184,1383,1098,0.2033526490066225,0.8440153251825437,469,0.6,0.25,0.1,0.05,True,False,False
+high_office_intensity,徐汇区,721,district subgroup composition modelled; official Shanghai subgroup total,18204,18204,0,5797,2993,2202,0.16847945506482093,0.8457285527216568,87,0.6,0.25,0.1,0.05,True,False,False
+high_office_intensity,长宁区,721,district subgroup composition modelled; official Shanghai subgroup total,13420,13420,0,3961,1782,1238,0.24396423248882265,0.8909158257240585,298,0.6,0.25,0.1,0.05,True,False,False
+high_office_intensity,静安区,721,district subgroup composition modelled; official Shanghai subgroup total,28920,28920,0,3926,1975,1700,0.23651452282157676,0.8535454314218295,504,0.6,0.25,0.1,0.05,True,False,False
+high_office_intensity,普陀区,721,district subgroup composition modelled; official Shanghai subgroup total,11133,11133,0,5906,2480,1764,0.2719841911434474,0.8834312337644383,115,0.6,0.25,0.1,0.05,True,False,False
+high_office_intensity,虹口区,721,district subgroup composition modelled; official Shanghai subgroup total,6497,6497,0,2489,1215,916,0.18223795597968293,0.8576200419602137,77,0.6,0.25,0.1,0.05,True,False,False
+high_office_intensity,杨浦区,721,district subgroup composition modelled; official Shanghai subgroup total,6598,6598,0,6270,2828,1766,0.22825098514701425,0.8596081747259935,54,0.6,0.25,0.1,0.05,True,False,False
+high_office_intensity,浦东新区,721,district subgroup composition modelled; official Shanghai subgroup total,43560,43560,0,141700,34723,16747,0.3709366391184573,0.9374570080091348,213,0.6,0.25,0.1,0.05,True,False,False
+high_office_intensity,黄浦区,723,district subgroup composition modelled; official Shanghai subgroup total,5325,5325,0,2184,1377,803,0.20769953051643192,0.852421279815646,105,0.6,0.25,0.1,0.05,True,False,False
+high_office_intensity,徐汇区,723,district subgroup composition modelled; official Shanghai subgroup total,4012,4012,0,5797,2987,1431,0.17273180458624127,0.8630879829031106,19,0.6,0.25,0.1,0.05,True,False,False
+high_office_intensity,长宁区,723,district subgroup composition modelled; official Shanghai subgroup total,2958,2958,0,3961,1770,811,0.2508451656524679,0.9019780247542,67,0.6,0.25,0.1,0.05,True,False,False
+high_office_intensity,静安区,723,district subgroup composition modelled; official Shanghai subgroup total,6373,6373,0,3926,1968,1209,0.23866310999529264,0.863090866899879,112,0.6,0.25,0.1,0.05,True,False,False
+high_office_intensity,普陀区,723,district subgroup composition modelled; official Shanghai subgroup total,2453,2453,0,5906,2474,1037,0.2796575621687729,0.902852185254819,26,0.6,0.25,0.1,0.05,True,False,False
+high_office_intensity,虹口区,723,district subgroup composition modelled; official Shanghai subgroup total,1432,1432,0,2489,1212,525,0.18854748603351956,0.8801233808646312,18,0.6,0.25,0.1,0.05,True,False,False
+high_office_intensity,杨浦区,723,district subgroup composition modelled; official Shanghai subgroup total,1454,1454,0,6270,2818,944,0.24621733149931224,0.8934269210603099,11,0.6,0.25,0.1,0.05,True,False,False
+high_office_intensity,浦东新区,723,district subgroup composition modelled; official Shanghai subgroup total,9600,9600,0,141700,34672,7039,0.414375,0.9623663152787579,47,0.6,0.25,0.1,0.05,True,False,False
+high_office_intensity,黄浦区,724,district subgroup composition modelled; official Shanghai subgroup total,38509,38509,0,2184,1383,1131,0.2013555272793373,0.8418456267822649,744,0.6,0.25,0.1,0.05,True,False,False
+high_office_intensity,徐汇区,724,district subgroup composition modelled; official Shanghai subgroup total,29014,29014,0,5797,2993,2342,0.16185289860067553,0.8401595731999205,129,0.6,0.25,0.1,0.05,True,False,False
+high_office_intensity,长宁区,724,district subgroup composition modelled; official Shanghai subgroup total,21391,21391,0,3961,1782,1320,0.23706231592725913,0.8876820138418676,467,0.6,0.25,0.1,0.05,True,False,False
+high_office_intensity,静安区,724,district subgroup composition modelled; official Shanghai subgroup total,46096,46096,0,3926,1975,1687,0.23201579312738632,0.8513068277362373,794,0.6,0.25,0.1,0.05,True,False,False
+high_office_intensity,普陀区,724,district subgroup composition modelled; official Shanghai subgroup total,17745,17745,0,5906,2480,1861,0.2661594815440969,0.8822798941661115,186,0.6,0.25,0.1,0.05,True,False,False
+high_office_intensity,虹口区,724,district subgroup composition modelled; official Shanghai subgroup total,10355,10355,0,2489,1215,966,0.17836793819410912,0.8535028194553379,118,0.6,0.25,0.1,0.05,True,False,False
+high_office_intensity,杨浦区,724,district subgroup composition modelled; official Shanghai subgroup total,10516,10516,0,6270,2828,1920,0.2189996196272347,0.8561968608023742,98,0.6,0.25,0.1,0.05,True,False,False
+high_office_intensity,浦东新区,724,district subgroup composition modelled; official Shanghai subgroup total,69430,69430,0,141700,34723,18967,0.35686302750972204,0.9352630085632264,338,0.6,0.25,0.1,0.05,True,False,False
+high_office_intensity,黄浦区,725,district subgroup composition modelled; official Shanghai subgroup total,10654,10654,0,2184,1375,957,0.19767223577998874,0.8436289556760741,202,0.6,0.25,0.1,0.05,True,False,False
+high_office_intensity,徐汇区,725,district subgroup composition modelled; official Shanghai subgroup total,8026,8026,0,5797,2980,1842,0.16745576875155743,0.8484889608169688,41,0.6,0.25,0.1,0.05,True,False,False
+high_office_intensity,长宁区,725,district subgroup composition modelled; official Shanghai subgroup total,5917,5917,0,3961,1771,1036,0.23897245225621092,0.891805036574917,130,0.6,0.25,0.1,0.05,True,False,False
+high_office_intensity,静安区,725,district subgroup composition modelled; official Shanghai subgroup total,12752,12752,0,3926,1961,1453,0.23643350062735258,0.8544838850605716,220,0.6,0.25,0.1,0.05,True,False,False
+high_office_intensity,普陀区,725,district subgroup composition modelled; official Shanghai subgroup total,4908,4908,0,5906,2473,1411,0.2671149144254279,0.8877972368519464,49,0.6,0.25,0.1,0.05,True,False,False
+high_office_intensity,虹口区,725,district subgroup composition modelled; official Shanghai subgroup total,2864,2864,0,2489,1212,734,0.18156424581005587,0.8611067467808077,33,0.6,0.25,0.1,0.05,True,False,False
+high_office_intensity,杨浦区,725,district subgroup composition modelled; official Shanghai subgroup total,2909,2909,0,6270,2821,1361,0.2303196974905466,0.8689614203952646,24,0.6,0.25,0.1,0.05,True,False,False
+high_office_intensity,浦东新区,725,district subgroup composition modelled; official Shanghai subgroup total,19207,19207,0,141700,34703,11567,0.3730931431249024,0.9458337113847027,94,0.6,0.25,0.1,0.05,True,False,False
