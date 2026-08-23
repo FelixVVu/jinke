@@ -9,6 +9,8 @@ from office_employment_pipeline.source_audit import (
     DISTRICTS,
     SOURCE_BYTES,
     SOURCE_SHA256,
+    SUBINDUSTRY_SOURCE_BYTES,
+    SUBINDUSTRY_SOURCE_SHA256,
 )
 
 
@@ -21,6 +23,11 @@ def test_office_industry_scope_is_nested_mutually_exclusive_and_documented():
     assert len(scope) == 9
     assert scope["industry_code"].is_unique
     assert set(scope.loc[scope["core_office"], "industry_code"]) == {"I", "J", "M"}
+    assert set(scope.loc[scope["core_plus_full_row"], "industry_code"]) == {
+        "I",
+        "J",
+        "M",
+    }
     assert set(scope.loc[scope["broad_office"], "industry_code"]) == {
         "I",
         "J",
@@ -33,10 +40,47 @@ def test_office_industry_scope_is_nested_mutually_exclusive_and_documented():
         "S",
     }
     assert not (scope["core_office"] & ~scope["broad_office"]).any()
+    assert not (scope["core_office"] & ~scope["core_plus_full_row"]).any()
     assert scope["rationale"].notna().all()
     assert scope["mixed_activity_warning"].notna().all()
     assert int(scope.loc[scope["core_office"], "official_city_industry_employment"].sum()) == 2_477_585
     assert int(scope.loc[scope["broad_office"], "official_city_industry_employment"].sum()) == 6_374_547
+
+
+def test_business_services_core_plus_selection_is_official_and_conservative():
+    detail = pd.read_csv(
+        OFFICE_DATA / "intermediate/business-services-subindustry-employment-2023.csv",
+        dtype={"industry_code": str},
+    )
+    assert len(detail) == 9
+    assert detail["industry_code"].is_unique
+    assert set(detail["industry_code"]) == {
+        "721",
+        "722",
+        "723",
+        "724",
+        "725",
+        "726",
+        "727",
+        "728",
+        "729",
+    }
+    assert set(detail.loc[detail["core_plus_selected"], "industry_code"]) == {
+        "721",
+        "723",
+        "724",
+        "725",
+    }
+    assert int(detail["official_city_employment"].sum()) == 1_904_322
+    assert int(
+        detail.loc[
+            detail["core_plus_selected"], "official_city_employment"
+        ].sum()
+    ) == 743_125
+    assert not detail.loc[
+        detail["industry_code"].isin(["726", "727", "728", "729"]),
+        "core_plus_selected",
+    ].any()
 
 
 def test_official_district_industry_controls_are_complete_and_reconcile():
@@ -88,6 +132,11 @@ def test_source_is_pinned_and_decision_is_scoped_to_district_calibration():
     assert source["sha256"] == SOURCE_SHA256
     assert int(source["file_bytes"]) == SOURCE_BYTES
     assert "raw workbook not redistributed" in source["license_or_terms"]
+    subindustry_source = manifest.loc[
+        manifest["source_id"] == "shanghai-epc5-a1-03"
+    ].iloc[0]
+    assert subindustry_source["sha256"] == SUBINDUSTRY_SOURCE_SHA256
+    assert int(subindustry_source["file_bytes"]) == SUBINDUSTRY_SOURCE_BYTES
     assert not (OFFICE_DATA / "raw").exists()
 
     summary = json.loads(
@@ -97,6 +146,16 @@ def test_source_is_pinned_and_decision_is_scoped_to_district_calibration():
     )
     assert summary["official_all_industry_employment"] == CITY_EMPLOYMENT
     assert summary["core_office_employment"] == 2_477_585
+    assert summary["core_plus_office_employment"] == 3_220_710
+    assert summary["core_plus_selected_72_employment"] == 743_125
+    assert summary["core_plus_selected_72_subindustry_rows"] == [
+        "721",
+        "723",
+        "724",
+        "725",
+    ]
+    assert summary["core_plus_72_city_total_is_official"] is True
+    assert summary["core_plus_district_controls_constructed"] is False
     assert summary["broad_office_employment"] == 6_374_547
     assert summary["sufficiency_decision"] == "PROCEED"
     assert "district calibration controls" in summary["sufficiency_scope"]

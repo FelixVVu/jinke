@@ -1,149 +1,108 @@
-# Jinke office-oriented employment: 2023 source-audit report
+# Jinke office-oriented employment: refined 2023 source audit
 
 **Audit date:** 2026-08-21
 
-**Scope:** official district × industry controls only; no spatial allocation, reach calculation, or model fitting
+**Scope:** industry definitions and official control sufficiency only; no spatial allocation, reach calculation, or model fitting
 
 **Protected outputs:** the existing 3.69 million / 28.2% employment result, GDP model/results, Site, and production reach polygons are unchanged
 
-## Decision summary
+## Revised decision summary
 
-The official source gate is complete. Shanghai Economic Census Yearbook 2023 Table 1-9 provides **legal-entity employment by industry division and all 16 districts** in one internally consistent workbook. The selected office-oriented rows contain no missing district cells, each industry’s 16 district values sums exactly to its official Shanghai total, and the table’s all-industry district totals sum exactly to **13,099,795**.
+Three differently labelled universes should be retained:
 
-The data are sufficient to supply official **district calibration controls** for two separately labelled, industry-based office-employment benchmarks:
+| Definition | Composition | Shanghai employment | Share of 13,099,795 | Status |
+|---|---|---:|---:|---|
+| **Core office-oriented** | I + J + M | **2,477,585** | **18.913%** | Primary conservative official benchmark |
+| **Core+ office-oriented** | Core + 721 + 723 + 724 + 725 | **3,220,710** | **24.586%** | Preferred expanded office-oriented benchmark |
+| **Broad professional/institutional** | Core + full 72 + K + P + Q + R + S | **6,374,547** | **48.661%** | Optional sensitivity only; not a white-collar metric |
 
-- **Core office-oriented industries:** 2,477,585 workers, **18.913%** of Shanghai legal-entity employment;
-- **Broad office-oriented industries:** 6,374,547 workers, **48.661%**.
+Core remains unchanged. Core+ adds **743,125** workers from four official three-digit groups within business services, equal to **39.023%** of division 72. Education, health and social work, culture/sports/entertainment, public administration/social organizations, and real estate are not in Core+.
 
-They are not occupation-level “white-collar worker” counts and are not fine-geographic observed employment. A future spatial model would still need workplace-location evidence within districts, but it does not need another official district-employment source.
+The Core+ Shanghai denominator is directly observed from official census totals. Its district split must be partly modelled because the official publication does not provide district × three-digit-industry employment.
 
-## Official source
+## Official sources and granularity
 
-| Field | Finding |
-|---|---|
-| Publisher | Shanghai Municipal Statistics Bureau |
-| Table | [Table 1-9: legal-entity employment by industry major group and district](https://tjj.sh.gov.cn/tjnj/jjpcnj2023/zk/html/A1-09.xls) |
-| Reference date | 31 December 2023 |
-| Grain | 16 districts × 97 two-digit industry divisions, with section and city totals |
-| Unit | People; integer counts |
-| Employment definition | Persons working in the legal entity on the final day of the year and receiving wages or other labor remuneration; see the [official indicator definitions](https://tjj.sh.gov.cn/tjnj/jjpcnj2023/zk/html/zba01.pdf) |
-| Individual businesses | Excluded; the separate individual-business table is not used |
-| Finance | Included in the integrated city table: 546,845 workers across the 16 districts |
-| All-industry reconciliation | 13,099,795, exactly matching the existing Shanghai legal-entity denominator |
-| Retrieved workbook | 51,200 bytes; SHA-256 `b217fb6d1fdacf06cfd68e46b93c9f50536e566a3575581add57393a1c9b3d7a` |
-| Classification standard | [GB/T 4754-2017, as amended](https://www.stats.gov.cn/xxgk/tjbz/gjtjbz/201710/t20171017_1758922.html) |
-| Redistribution | Extracted official facts and citations are retained; the raw XLS is not redistributed |
+| Table | Published grain | Use | Limitation |
+|---|---|---|---|
+| [1-9: legal-entity employment by industry division and district](https://tjj.sh.gov.cn/tjnj/jjpcnj2023/zk/html/A1-09.xls) | 16 districts × industry sections/divisions | Exact district I, J, M, full 72, K, P, Q, R, and S controls | No three-digit group within district |
+| [1-3: legal-entity units and employment by industry middle group](https://tjj.sh.gov.cn/tjnj/jjpcnj2023/zk/html/A1-03.xls) | Shanghai city × three-digit group | Exact 721–729 city totals and Core+ denominator | No district cross-tab |
+| [GB/T 4754-2017](https://www.stats.gov.cn/xxgk/tjbz/gjtjbz/201710/t20171017_1758922.html) | Official industry hierarchy and activity definitions | Inclusion/exclusion rules | Classification, not employment data |
+| [Main indicator definitions](https://tjj.sh.gov.cn/tjnj/jjpcnj2023/zk/html/zba01.pdf) | Legal-entity and year-end employment definitions | Common statistical universe | Not an occupational classification |
 
-This citywide table is preferable to stitching district bulletins together. It uses one publication, one universe, one reference date, one industry classification, and includes financial-sector records that some district geographic bulletins exclude.
+Table 1-3 is pinned at 112,128 bytes and SHA-256 `301aedcbc88cd488dac47697b31af42d10ae19334f16f96e47c5a0cb1b2b68d2`. Its nine groups reconcile exactly to the Table 1-9 division-72 total of 1,904,322.
 
-## Industry definitions
+The enterprise-only companion tables do not solve the missing cross-tab. Table 2-4 reports city × middle group, while Table 2-6 reports district × division. Table 4-13 reports the combined rental-and-business-services section by district and rounds employment to 0.1 ten-thousand persons. None publishes district × 721–729 legal-entity employment.
 
-### Core
+## Core: unchanged
 
-Core is deliberately strict and uses only industry rows that are predominantly knowledge, finance, or technical-service workplaces at the published district grain:
+Core is the conservative, fully official district-controlled benchmark:
 
-- **I — Information transmission, software and information technology services**;
-- **J — Financial services**;
-- **M — Scientific research and technical services**.
+- **I — Information transmission, software and information technology services:** 1,058,551;
+- **J — Financial services:** 546,845;
+- **M — Scientific research and technical services:** 872,189.
 
-Two-digit **72 — Business services** is excluded from Core. Although it includes headquarters management, consulting, legal, accounting, advertising, and human-resources activity, it also includes labor dispatch, security, cleaning, travel, conferences, and other non-office services. Table 1-9 cannot separate those subgroups by district.
+Total: **2,477,585**, or **18.913%** of Shanghai legal-entity employment.
 
-### Broad
+Core is industry based, not occupation based. It includes non-desk jobs inside these industries and excludes corporate-office occupations employed by industries outside I/J/M.
 
-Broad includes Core and adds industries with substantial commercial, professional, administrative, or institutional workplace activity:
+## Core+: selected business-service groups
 
-- **72 — Business services**;
-- **K — Real estate**;
-- **P — Education**;
-- **Q — Health and social work**;
-- **R — Culture, sports and entertainment**;
-- **S — Public administration, social security and social organizations**.
+| Code | Official group | Employment | Share of division 72 | Core+ | Reason |
+|---|---|---:|---:|:---:|---|
+| 721 | Organization management services | 228,288 | 11.988% | Yes | Headquarters, investment/asset management, rights exchange, and related management are predominantly office oriented |
+| 722 | Integrated management services | 54,595 | 2.867% | No | Park, commercial-complex, market, and supply-chain management mix office and operational work |
+| 723 | Legal services | 50,311 | 2.642% | Yes | Predominantly professional office services |
+| 724 | Consulting and investigation | 363,868 | 19.107% | Yes | Accounting, audit, tax, research, and professional consulting are predominantly office oriented |
+| 725 | Advertising | 100,658 | 5.286% | Yes | Predominantly office/creative-workplace activity |
+| 726 | Human-resources services | 791,271 | 41.551% | No | Labor dispatch and outsourcing-related activity cannot be separated from recruitment and consulting |
+| 727 | Security-protection services | 179,327 | 9.417% | No | Predominantly operational employment |
+| 728 | Conference, exhibition and related services | 37,521 | 1.970% | No | Planning cannot be separated from venue, logistics, and event operations |
+| 729 | Other business services | 98,483 | 5.172% | No | Travel, packaging, office, translation, agency, ticketing, credit, and other services are too heterogeneous |
+| **Division 72** | **Business services** | **1,904,322** | **100.000%** | — | — |
 
-Broad is not a claim that every included employee works in an office. It intentionally includes schools, hospitals, cultural venues, property operations, government services, security/cleaning, and other mixed workplaces. It is the sensitivity definition for a wider professional/institutional employment universe.
+Cleaning is not in division 72 under GB/T 4754-2017; it is group 821 and is not included in Core, Core+, or the existing Broad definition.
 
-### Official city totals
+### Important 721 caveat
 
-| Code | Official industry | Core | Broad | Employment | Share of 13,099,795 |
-|---|---|:---:|:---:|---:|---:|
-| I | Information transmission, software and IT services | Yes | Yes | 1,058,551 | 8.081% |
-| J | Financial services | Yes | Yes | 546,845 | 4.174% |
-| M | Scientific research and technical services | Yes | Yes | 872,189 | 6.658% |
-| 72 | Business services | No | Yes | 1,904,322 | 14.537% |
-| K | Real estate | No | Yes | 601,432 | 4.591% |
-| P | Education | No | Yes | 478,200 | 3.650% |
-| Q | Health and social work | No | Yes | 428,065 | 3.268% |
-| R | Culture, sports and entertainment | No | Yes | 150,609 | 1.150% |
-| S | Public administration, social security and social organizations | No | Yes | 334,334 | 2.552% |
-| **Core total** | I + J + M | — | — | **2,477,585** | **18.913%** |
-| **Broad total** | Core + 72 + K + P + Q + R + S | — | — | **6,374,547** | **48.661%** |
+Group 721 also contains unit-logistics management and rural collective management. Four-digit 721 employment is not published, so full inclusion is not occupation-pure. It is retained because the group is predominantly organization-management activity and Core+ is explicitly industry based.
 
-The selected rows are mutually exclusive. Section L is not selected as a whole, because using L together with division 72 would double-count business services and would also add division 71 rental services.
+A stricter diagnostic excluding all of 721 would be **2,992,422 workers (22.843%)**. This is not the recommended Core+ denominator; it records the maximum definitional effect of the unresolved 721 composition.
 
-## Official district controls
+## Proposed Core+ district-control method
 
-| District | All legal-entity employment | Core | Core / district | Broad | Broad / district |
-|---|---:|---:|---:|---:|---:|
-| Huangpu | 712,613 | 158,769 | 22.3% | 478,374 | 67.1% |
-| Xuhui | 1,027,746 | 258,823 | 25.2% | 571,893 | 55.6% |
-| Changning | 602,150 | 105,111 | 17.5% | 299,213 | 49.7% |
-| Jing’an | 973,987 | 194,334 | 20.0% | 604,189 | 62.0% |
-| Putuo | 524,969 | 100,906 | 19.2% | 288,085 | 54.9% |
-| Hongkou | 409,389 | 71,077 | 17.4% | 226,952 | 55.4% |
-| Yangpu | 510,562 | 146,985 | 28.8% | 322,470 | 63.2% |
-| Minhang | 1,278,262 | 229,092 | 17.9% | 605,180 | 47.3% |
-| Baoshan | 766,004 | 73,770 | 9.6% | 353,767 | 46.2% |
-| Jiading | 873,958 | 112,899 | 12.9% | 307,556 | 35.2% |
-| Pudong | 2,879,157 | 816,970 | 28.4% | 1,534,797 | 53.3% |
-| Jinshan | 393,752 | 20,472 | 5.2% | 103,875 | 26.4% |
-| Songjiang | 852,240 | 64,930 | 7.6% | 248,404 | 29.1% |
-| Qingpu | 549,805 | 72,568 | 13.2% | 198,056 | 36.0% |
-| Fengxian | 583,748 | 40,638 | 7.0% | 163,266 | 28.0% |
-| Chongming | 161,453 | 10,241 | 6.3% | 68,470 | 42.4% |
-| **Shanghai** | **13,099,795** | **2,477,585** | **18.9%** | **6,374,547** | **48.7%** |
+The following official margins are available:
 
-The machine-readable district table retains the Chinese official district names and exact unrounded counts.
+- exact district totals for division 72 from Table 1-9;
+- exact city totals for groups 721–729 from Table 1-3;
+- exact selected city subtotal 721 + 723 + 724 + 725 = 743,125.
 
-## Sufficiency assessment
+The official tables do not identify how that selected subtotal is distributed across districts. The least-assumptive constrained estimate is the maximum-entropy independence solution:
 
-| Test | Result | Consequence |
-|---|---|---|
-| All 16 districts present | Pass | Complete Shanghai denominator and district controls |
-| One consistent official source | Pass | No cross-bulletin universe reconciliation required |
-| Reference date and employment definition consistent | Pass | Core and Broad can be compared across districts |
-| Finance available by district | Pass | Core finance is not left as a residual |
-| Selected industry rows contain no blank district cells | Pass | No imputation or suppression handling required |
-| Each selected industry reconciles district sum to city total | Pass | No hidden geographic residual in selected rows |
-| District all-industry totals reconcile to 13,099,795 | Pass | Compatible with the existing legal-entity accounting universe |
-| Core rows mutually exclusive and nested in Broad | Pass | No double counting |
-| Street/town × industry employment available | No | Future within-district allocation remains model dependent |
-| Occupation or actual office-building employment available | No | Results must be labelled industry based, not “all white-collar workers” |
+`estimated selected-72 employment in district d = official district-72 employment × 743,125 / 1,904,322`
 
-### What the data are sufficient for
+Integer controls should use largest-remainder rounding so the 16 district estimates sum exactly to 743,125. This would preserve every observed district-72 margin and the observed city Core+ subtotal without introducing unobserved district industry patterns.
 
-- fixed Shanghai Core and Broad denominators;
-- exact district totals for each selected industry row;
-- district-level calibration of a future independent office-oriented workplace surface;
-- separate Core and Broad reach percentages without altering the existing all-industry benchmark.
+This would be a district composition estimate, not spatial allocation within districts. Every resulting Core+ district control must carry `core_plus_72_is_modelled = true`. The construction is deliberately left to the next implementation commit.
 
-### What the data are not sufficient for
+## Broad: relabelled sensitivity only
 
-- directly observing office employment inside the production reach;
-- distinguishing office and non-office occupations within an included industry;
-- locating district industry totals below district grain without additional evidence;
-- capturing corporate-office occupations inside manufacturing, wholesale/retail, transport, construction, or other excluded industries;
-- claiming that Broad employment is literal office-building occupancy.
+Broad retains the previous arithmetic definition and denominator:
 
-These limitations affect the interpretation and future spatial allocation, but they do not create an official-control data gap. A future model should retain Core as the primary result and Broad as a sensitivity result, normalize each selected industry to its official district control, and keep the output entirely separate from the existing 28.2% all-industry benchmark.
+`Core + full 72 + K + P + Q + R + S = 6,374,547 (48.661%)`
 
-## Reproducible workstream
+Its label is now **Broad professional/institutional employment sensitivity**. It is not the main white-collar or office-employment metric because it includes property operations, labor dispatch, security, schools, hospitals, cultural/sports venues, public administration, and other mixed workplaces.
 
-- `office_employment_pipeline/source_audit.py` downloads and verifies the official XLS, extracts only the declared non-overlapping rows, and performs accounting checks. It contains no spatial model.
-- `data/office_employment/manifests/source-manifest.csv` freezes source provenance.
-- `data/office_employment/manifests/industry-scope-2023.csv` freezes the Core/Broad definitions and mixed-activity warnings.
-- `data/office_employment/intermediate/district-industry-employment-2023.csv` contains 144 official district-industry records.
-- `data/office_employment/outputs/district-office-employment-controls-2023.csv` contains the 16 district controls.
-- `data/office_employment/outputs/city-office-employment-summary-2023.json` contains the reconciled city totals and scoped decision.
+## Sufficiency and next gate
 
-No model, 100 m grid, reach intersection, web JSON, UI change, merge, or deployment is included.
+The evidence is sufficient to freeze:
 
-**PROCEED**
+- an exact official Core denominator and exact Core district controls;
+- an exact official Core+ Shanghai denominator;
+- a transparent specification for a constrained, explicitly modelled Core+ district bridge;
+- an unchanged Broad professional/institutional sensitivity denominator.
+
+It is not sufficient to call Core+ district composition directly observed, to infer occupation, or to estimate employment inside any reach polygon. No spatial allocation should begin until the user approves the revised definitions and the partly modelled district-72 bridge.
+
+No employment result, GDP result, web asset, reach polygon, UI, merge, or deployment was changed.
+
+**STOP FOR REVIEW**
