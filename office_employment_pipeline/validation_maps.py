@@ -75,12 +75,16 @@ STRONG_DENSITY_RATIO = 1.5
 STRONG_MAX_CELL_PERCENTILE = 90.0
 
 
-def evaluate_clusters(grid: gpd.GeoDataFrame) -> pd.DataFrame:
+def evaluate_clusters(
+    grid: gpd.GeoDataFrame,
+    *,
+    value_column: str = "cell_employment_core_plus_base",
+    allocation_architecture: str = "fine_control_base",
+) -> pd.DataFrame:
     """Evaluate declared centres without using any reach polygon."""
 
     if grid.crs is None or grid.crs.to_epsg() != 32651:
         raise ValueError("Cluster validation grid must use EPSG:32651.")
-    value_column = "cell_employment_core_plus_base"
     if value_column not in grid.columns:
         raise ValueError(f"Missing {value_column}.")
     transformer = Transformer.from_crs("EPSG:4326", grid.crs, always_xy=True)
@@ -116,6 +120,7 @@ def evaluate_clusters(grid: gpd.GeoDataFrame) -> pd.DataFrame:
         records.append(
             {
                 **cluster,
+                "allocation_architecture": allocation_architecture,
                 "analysis_x": float(x),
                 "analysis_y": float(y),
                 "validation_radius_m": RADIUS_METRES,
@@ -248,9 +253,42 @@ def render_cluster_validation_maps(
     core_plus_grid_path: Path,
     maps_directory: Path,
     diagnostics_path: Path,
+    district_direct_diagnostics_path: Path | None = None,
 ) -> pd.DataFrame:
     grid = gpd.read_parquet(core_plus_grid_path)
     diagnostics = evaluate_clusters(grid)
+    if district_direct_diagnostics_path is not None:
+        legacy = pd.read_csv(district_direct_diagnostics_path)
+        legacy_columns = {
+            "core_plus_base_employment_in_radius": (
+                "district_direct_core_plus_base_employment_in_radius"
+            ),
+            "local_to_district_density_ratio": (
+                "district_direct_local_to_district_density_ratio"
+            ),
+            "maximum_local_cell_percentile_among_positive_cells": (
+                "district_direct_maximum_local_cell_percentile"
+            ),
+            "cluster_emerges_under_declared_rule": (
+                "district_direct_cluster_emerges"
+            ),
+            "strong_cluster_emerges_under_declared_rule": (
+                "district_direct_strong_cluster_emerges"
+            ),
+        }
+        diagnostics = diagnostics.merge(
+            legacy[["cluster_id", *legacy_columns]].rename(columns=legacy_columns),
+            on="cluster_id",
+            validate="one_to_one",
+        )
+        diagnostics["employment_in_radius_change_from_district_direct"] = (
+            diagnostics["core_plus_base_employment_in_radius"]
+            - diagnostics["district_direct_core_plus_base_employment_in_radius"]
+        )
+        diagnostics["density_ratio_change_from_district_direct"] = (
+            diagnostics["local_to_district_density_ratio"]
+            - diagnostics["district_direct_local_to_district_density_ratio"]
+        )
     maps_directory.mkdir(parents=True, exist_ok=True)
     diagnostics.to_csv(diagnostics_path, index=False)
     positive = grid.loc[
@@ -274,6 +312,31 @@ def render_cluster_validation_maps(
     return diagnostics
 
 
+def evaluate_weighting_cluster_sensitivity(
+    weighting_grid_path: Path,
+    output_path: Path,
+) -> pd.DataFrame:
+    """Evaluate all declared clusters under each evidence-weight scenario."""
+
+    grid = gpd.read_parquet(weighting_grid_path)
+    records = []
+    for scenario in (
+        "base",
+        "building_volume_dominant",
+        "workplace_evidence_emphasis",
+    ):
+        current = evaluate_clusters(
+            grid,
+            value_column=f"cell_employment_core_plus_{scenario}",
+            allocation_architecture=f"fine_control_{scenario}",
+        )
+        current.insert(1, "weighting_scenario", scenario)
+        records.append(current)
+    output = pd.concat(records, ignore_index=True)
+    output.to_csv(output_path, index=False)
+    return output
+
+
 def update_summary_with_clusters(summary_path: Path, clusters: pd.DataFrame) -> None:
     summary = json.loads(summary_path.read_text(encoding="utf-8"))
     summary["cluster_validation"] = {
@@ -289,6 +352,9 @@ def update_summary_with_clusters(summary_path: Path, clusters: pd.DataFrame) -> 
         ),
         "validation_radius_m": RADIUS_METRES,
         "reach_polygon_used": False,
+        "comparison_with_district_direct_retained": bool(
+            "district_direct_core_plus_base_employment_in_radius" in clusters.columns
+        ),
     }
     summary_path.write_text(
         json.dumps(summary, ensure_ascii=False, indent=2) + "\n",

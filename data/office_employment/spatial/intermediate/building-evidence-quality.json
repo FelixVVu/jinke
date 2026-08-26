@@ -36,5 +36,13 @@
   "total_jrc_nonresidential_volume_m3": 544149771.6406815,
   "cells_with_any_overture_workplace_poi": 6848,
   "positive_overture_cell_share": 0.039760092432925165,
-  "total_overture_workplace_intensity": 9744.416581734651
+  "total_overture_workplace_intensity": 9744.416581734651,
+  "official_fine_control_count": 116,
+  "ordinary_control_count": 113,
+  "functional_zone_count": 3,
+  "residual_overlay_count": 8,
+  "support_record_count": 360335,
+  "functional_zone_support_records": 6861,
+  "restricted_zone_source_geometry_committed": false,
+  "functional_zone_output_is_aggregated_with_other_strata": true
 }
