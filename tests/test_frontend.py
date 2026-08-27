@@ -290,7 +290,10 @@ def test_location_marker_is_standalone_and_search_does_not_mutate_map_layers():
 
 def test_location_failure_is_isolated_from_core_map_data_loading():
     assert (
-        "initializeLocationSearch();\nvoid loadEconomicData();\n\nPromise.all(["
+        "initializeLocationSearch();\n"
+        "void loadEconomicData();\n"
+        "void loadOfficeEmploymentData().then(loadOfficeDensityData);\n\n"
+        "Promise.all(["
         in MAIN
     )
     assert "fetchJson('shanghai-boundary.geojson')" in MAIN
