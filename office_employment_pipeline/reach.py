@@ -26,7 +26,6 @@ from employment_pipeline.boundaries import (
     load_restricted_zone_controls,
 )
 from employment_pipeline.reach import load_production_reaches, partial_cell_fractions
-from employment_pipeline.sensitivity import ZONE_PLAN_SOURCES
 from office_employment_pipeline.control_reconciliation import (
     CORE_CODES,
     OFFICE_CODES,
@@ -58,6 +57,17 @@ LIMITS = (10, 20, 30, 40, 50)
 REACH_EDGE_METRES = 100.0
 EMPLOYMENT_LABEL = "2023 secondary- and tertiary-sector legal-entity workplace employment"
 CLASSIFICATION = "USABLE WITH CAUTION"
+
+# Kept here because importing the all-employment sensitivity module also imports
+# its optional fitted-model stack. The office reach calculation uses only these
+# three audited source citations and must remain runnable without scikit-learn.
+ZONE_PLAN_SOURCES = {
+    "310115501000": "https://www.pudong.gov.cn/zwgk/qt-bsqglj/2024/200/328852.html",
+    "310115502000": "https://www.pudong.gov.cn/zwgk/006003002/2022/302/257742.html",
+    "310115503000": (
+        "https://www.pudong.gov.cn/zwgk/14482.gkml_ywl_sthjgl/2025/171/341785.html"
+    ),
+}
 
 SCENARIO_DEFINITIONS = {
     "core": {
