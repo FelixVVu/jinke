@@ -1,0 +1,46 @@
+{
+  "schema_version": 1,
+  "source_commit": "7b88f7fc8d81a52daebcd19ddc68df90bee4c6c5",
+  "reference_date": "2023-12-31",
+  "employment_universe": "2023 secondary- and tertiary-sector legal-entity workplace employment",
+  "individual_business_employment_included": false,
+  "denominators": {
+    "core": 2477585,
+    "core_plus_each_scenario": 3220710
+  },
+  "analysis": {
+    "crs": "EPSG:32651",
+    "grid_metres": 100,
+    "grid_smoothed": false,
+    "partial_cell_method": "area(cell intersection reach) / clipped cell_area_m2",
+    "rendered_heatmap_used": false,
+    "spatial_model_refit": false,
+    "spatial_grids_regenerated": false,
+    "control_attribution_rehydrated_in_memory": true,
+    "control_attribution_reproduced_committed_industry_cells_exactly": true,
+    "production_reach_modified": false,
+    "reach_sha256": "6f039b0661f63c1017a2c4a3bc8f5c4d8fdef207ca10afe987f160642fb5656b"
+  },
+  "committed_grid_sha256": {
+    "data/office_employment/spatial/outputs/core-employment-grid-100m.parquet": "13963900c459f4ff12672c2af52cff66fc4da4f58f68c321ec0bddcfeafb0af0",
+    "data/office_employment/spatial/outputs/core-plus-base-employment-grid-100m.parquet": "433acd3ef11fc7570e0e06d5a0fa2da49fecedc1cf65a6b120b3087197ae6abb",
+    "data/office_employment/spatial/outputs/core-plus-sensitivity-grid-100m.parquet": "76239b9e0786f86ff0b0e3f6b9e2c0decf2a23b7c7ac29a2ede9881c50ae69af",
+    "data/office_employment/spatial/outputs/core-plus-weighting-sensitivity-grid-100m.parquet": "c09fbfd7c3e3b8d4cd8913eecf79f7456dc90ec2ba394134bfff1cfa966027ce"
+  },
+  "uncertainty_dimensions_are_separate": true,
+  "uncertainty_is_statistical_confidence_interval": false,
+  "rounding_method": "district-total-constrained directional rounding envelope; candidate fine-row extrema are selected from current reach coefficients, offset by each district residual, and passed through exact district-industry RAS/IPF plus deterministic integer allocation; the city Core+ denominator and every district-industry margin remain fixed",
+  "pudong_functional_zones": {
+    "selected_support": "hash-pinned approximate 2020 statistical polygons",
+    "reported_area_sensitivity": "area-matched morphology; not official census geometry",
+    "source_geometry_redistributed": false
+  },
+  "comparators": {
+    "all_employment_50min_percentage": 28.177982379536193,
+    "gdp_50min_percentage": 21.621658694880143
+  },
+  "classification": "USABLE WITH CAUTION",
+  "site_modified": false,
+  "gdp_modified": false,
+  "existing_all_employment_outputs_modified": false
+}
