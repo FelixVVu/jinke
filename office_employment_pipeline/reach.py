@@ -303,10 +303,10 @@ def _industry_contributions(
         "I": "Information transmission, software and IT services",
         "J": "Financial services",
         "M": "Scientific research and technical services",
-        "721": "Headquarters/organization management services",
-        "723": "Consulting and investigation",
-        "724": "Advertising",
-        "725": "Human-resources services",
+        "721": "Organization management services",
+        "723": "Legal services",
+        "724": "Consulting and investigation",
+        "725": "Advertising",
     }
     records: list[dict[str, Any]] = []
     for code in OFFICE_CODES:

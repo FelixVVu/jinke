@@ -22,6 +22,23 @@ SCENARIOS = {
     "core_plus_workplace_evidence_emphasis",
 }
 
+INDUSTRY_LABELS = {
+    "I": "Information transmission, software and IT services",
+    "J": "Financial services",
+    "M": "Scientific research and technical services",
+    "721": "Organization management services",
+    "723": "Legal services",
+    "724": "Consulting and investigation",
+    "725": "Advertising",
+}
+
+REACH_SUMMARY_SHA256 = (
+    "f505b28a82b6d91f862d03cdbe306b3f7ff87d31965e3d07c5948d146f523c5a"
+)
+INDUSTRY_NUMERIC_PROJECTION_SHA256 = (
+    "68e7c9cf816e8e1b11f7025d47450839f0cd4837c894f7fdf9fd6a2872716623"
+)
+
 PROTECTED_SHA256 = {
     "web/public/data/reach-areas.geojson": "6f039b0661f63c1017a2c4a3bc8f5c4d8fdef207ca10afe987f160642fb5656b",
     "web/public/data/reach-employment.json": "7f4a7447e52f70c595e3be9d0b38e1fc3ec06e9c8c3e3350a095b997cc87b105",
@@ -96,6 +113,44 @@ def test_fifty_minute_headlines_are_pinned_to_committed_unsmoothed_grids():
             percentage,
             atol=1e-7,
         )
+
+    assert round(fifty.loc["core", "employment_inside_reach"], 6) == 945_831.540970
+    assert round(
+        fifty.loc["core", "percentage_of_exact_shanghai_denominator"], 7
+    ) == 38.1755436
+    assert round(
+        fifty.loc["core_plus_base", "employment_inside_reach"], 6
+    ) == 1_212_066.713237
+    assert round(
+        fifty.loc[
+            "core_plus_base", "percentage_of_exact_shanghai_denominator"
+        ],
+        7,
+    ) == 37.6335253
+
+
+def test_industry_labels_match_census_codes_and_726_is_excluded():
+    industry_path = REACH_OUTPUTS / "office-50min-industry-contributions.csv"
+    industry = pd.read_csv(industry_path, dtype={"industry_code": str})
+    observed = industry.set_index("industry_code")["industry_name"].to_dict()
+    assert observed == INDUSTRY_LABELS
+    assert "726" not in observed
+
+    numeric_projection = industry.drop(columns=["industry_name"]).to_csv(
+        index=False, lineterminator="\n"
+    )
+    assert hashlib.sha256(numeric_projection.encode()).hexdigest() == (
+        INDUSTRY_NUMERIC_PROJECTION_SHA256
+    )
+    assert _sha256(REACH_OUTPUTS / "office-reach-summary.csv") == (
+        REACH_SUMMARY_SHA256
+    )
+
+    report = (REACH_OUTPUTS / "office-reach-report.md").read_text(encoding="utf-8")
+    for code, label in INDUSTRY_LABELS.items():
+        assert f"| {code} — {label} |" in report
+    assert "| 726 —" not in report
+    assert "Human-resources services" not in report
 
 
 def test_fifty_minute_contributions_reconcile_to_core_plus_base():

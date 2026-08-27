@@ -88,10 +88,10 @@ The Pudong reported-area morphology interpretation changes the selected-support 
 | I — Information transmission, software and IT services | 1,058,551 | 384,401 | 36.31% | 31.71% |
 | J — Financial services | 546,845 | 295,380 | 54.02% | 24.37% |
 | M — Scientific research and technical services | 872,189 | 266,051 | 30.50% | 21.95% |
-| 721 — Headquarters/organization management services | 228,288 | 81,790 | 35.83% | 6.75% |
-| 723 — Consulting and investigation | 50,311 | 18,213 | 36.20% | 1.50% |
-| 724 — Advertising | 363,868 | 129,979 | 35.72% | 10.72% |
-| 725 — Human-resources services | 100,658 | 36,253 | 36.02% | 2.99% |
+| 721 — Organization management services | 228,288 | 81,790 | 35.83% | 6.75% |
+| 723 — Legal services | 50,311 | 18,213 | 36.20% | 1.50% |
+| 724 — Consulting and investigation | 363,868 | 129,979 | 35.72% | 10.72% |
+| 725 — Advertising | 100,658 | 36,253 | 36.02% | 2.99% |
 
 ## Top fine controls in the 50-minute Core+ Base numerator
 
