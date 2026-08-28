@@ -1213,7 +1213,7 @@ function restoreCustomLayers() {
             0.8,
             'rgba(236,72,153,0.86)',
             1,
-            'rgba(251,207,232,0.96)',
+            'rgba(126,20,122,1)',
           ],
           'heatmap-opacity': state.showOfficeDensity ? 0.86 : 0,
         },
