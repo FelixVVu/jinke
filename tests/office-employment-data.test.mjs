@@ -96,9 +96,19 @@ test('UI keeps office heatmap below reach overlays and offers both metrics', () 
   const mainSource = readFileSync(resolve(sourceDirectory, 'main.js'), 'utf8');
   const densityLayerIndex = mainSource.indexOf("id: 'office-density-heatmap'");
   const reachLayerIndex = mainSource.indexOf("id: 'reach-fill'");
+  const weightExpression = mainSource.slice(
+    mainSource.indexOf("'heatmap-weight'", densityLayerIndex),
+    mainSource.indexOf("'heatmap-intensity'", densityLayerIndex),
+  );
 
   assert.ok(densityLayerIndex >= 0);
   assert.ok(reachLayerIndex > densityLayerIndex);
+  assert.match(weightExpression, /\['get', 'j'\]/);
+  assert.doesNotMatch(weightExpression, /\['get', 'w'\]/);
+  assert.match(
+    weightExpression,
+    /100,\s+0\.05,\s+400,\s+0\.15,\s+1_200,\s+0\.4,\s+2_200,\s+0\.65,\s+5_400,\s+0\.95,\s+14_000,\s+1/,
+  );
   assert.match(mainSource, /data-economic-metric="gdp"/);
   assert.match(mainSource, /data-economic-metric="office"/);
   assert.match(mainSource, /Show office workplace density/);
