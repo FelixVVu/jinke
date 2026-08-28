@@ -1,0 +1,31 @@
+scenario,scenario_label,limit_minutes,employment_inside_reach,percentage_of_exact_shanghai_denominator,incremental_employment,exact_shanghai_denominator,employment_universe,exact_partial_cell_area_intersection,grid_smoothed
+core,Core office-oriented employment,10,31723.5168279247,1.2804209271498133,31723.5168279247,2477585,2023 secondary- and tertiary-sector legal-entity workplace employment,True,False
+core,Core office-oriented employment,20,94832.71572455176,3.8276271338642975,63109.19889662706,2477585,2023 secondary- and tertiary-sector legal-entity workplace employment,True,False
+core,Core office-oriented employment,30,257630.96073266928,10.398471121381075,162798.24500811752,2477585,2023 secondary- and tertiary-sector legal-entity workplace employment,True,False
+core,Core office-oriented employment,40,551285.0018143397,22.250901656828713,293654.0410816704,2477585,2023 secondary- and tertiary-sector legal-entity workplace employment,True,False
+core,Core office-oriented employment,50,945831.5409696298,38.17554356236536,394546.5391552901,2477585,2023 secondary- and tertiary-sector legal-entity workplace employment,True,False
+core_plus_base,Core+ Base,10,37443.529000083654,1.162586168890824,37443.529000083654,3220710,2023 secondary- and tertiary-sector legal-entity workplace employment,True,False
+core_plus_base,Core+ Base,20,111723.95342130521,3.4689231076782825,74280.42442122156,3220710,2023 secondary- and tertiary-sector legal-entity workplace employment,True,False
+core_plus_base,Core+ Base,30,310332.4823497941,9.635530126891092,198608.5289284889,3220710,2023 secondary- and tertiary-sector legal-entity workplace employment,True,False
+core_plus_base,Core+ Base,40,697418.4955368859,21.654184808221974,387086.0131870918,3220710,2023 secondary- and tertiary-sector legal-entity workplace employment,True,False
+core_plus_base,Core+ Base,50,1212066.7132367718,37.633525316988234,514648.21769988583,3220710,2023 secondary- and tertiary-sector legal-entity workplace employment,True,False
+core_plus_low_office_intensity,Core+ Low composition,10,37443.529000083654,1.162586168890824,37443.529000083654,3220710,2023 secondary- and tertiary-sector legal-entity workplace employment,True,False
+core_plus_low_office_intensity,Core+ Low composition,20,111723.95342130521,3.4689231076782825,74280.42442122156,3220710,2023 secondary- and tertiary-sector legal-entity workplace employment,True,False
+core_plus_low_office_intensity,Core+ Low composition,30,309740.6302682806,9.617153679414807,198016.6768469754,3220710,2023 secondary- and tertiary-sector legal-entity workplace employment,True,False
+core_plus_low_office_intensity,Core+ Low composition,40,693409.0822438721,21.529696316770902,383668.4519755915,3220710,2023 secondary- and tertiary-sector legal-entity workplace employment,True,False
+core_plus_low_office_intensity,Core+ Low composition,50,1204075.5970314043,37.38540871520268,510666.51478753216,3220710,2023 secondary- and tertiary-sector legal-entity workplace employment,True,False
+core_plus_high_office_intensity,Core+ High composition,10,37443.529000083654,1.162586168890824,37443.529000083654,3220710,2023 secondary- and tertiary-sector legal-entity workplace employment,True,False
+core_plus_high_office_intensity,Core+ High composition,20,111723.95342130521,3.4689231076782825,74280.42442122156,3220710,2023 secondary- and tertiary-sector legal-entity workplace employment,True,False
+core_plus_high_office_intensity,Core+ High composition,30,310901.3546663502,9.653193074395091,199177.40124504495,3220710,2023 secondary- and tertiary-sector legal-entity workplace employment,True,False
+core_plus_high_office_intensity,Core+ High composition,40,701444.5324382554,21.77918944699322,390543.1777719052,3220710,2023 secondary- and tertiary-sector legal-entity workplace employment,True,False
+core_plus_high_office_intensity,Core+ High composition,50,1220058.6748042349,37.881668166467485,518614.1423659795,3220710,2023 secondary- and tertiary-sector legal-entity workplace employment,True,False
+core_plus_building_volume_dominant,Core+ building-volume-dominant weighting,10,37154.41385944182,1.1536094171608688,37154.41385944182,3220710,2023 secondary- and tertiary-sector legal-entity workplace employment,True,False
+core_plus_building_volume_dominant,Core+ building-volume-dominant weighting,20,109168.02721468163,3.3895640158437623,72013.61335523981,3220710,2023 secondary- and tertiary-sector legal-entity workplace employment,True,False
+core_plus_building_volume_dominant,Core+ building-volume-dominant weighting,30,311025.4897573329,9.657047351588094,201857.46254265128,3220710,2023 secondary- and tertiary-sector legal-entity workplace employment,True,False
+core_plus_building_volume_dominant,Core+ building-volume-dominant weighting,40,690508.1406139088,21.439624822287904,379482.65085657587,3220710,2023 secondary- and tertiary-sector legal-entity workplace employment,True,False
+core_plus_building_volume_dominant,Core+ building-volume-dominant weighting,50,1201284.7500743137,37.29875555620698,510776.60946040496,3220710,2023 secondary- and tertiary-sector legal-entity workplace employment,True,False
+core_plus_workplace_evidence_emphasis,Core+ workplace-evidence-emphasis weighting,10,38212.49012105863,1.186461684568267,38212.49012105863,3220710,2023 secondary- and tertiary-sector legal-entity workplace employment,True,False
+core_plus_workplace_evidence_emphasis,Core+ workplace-evidence-emphasis weighting,20,115160.42996400857,3.5756224548006053,76947.93984294994,3220710,2023 secondary- and tertiary-sector legal-entity workplace employment,True,False
+core_plus_workplace_evidence_emphasis,Core+ workplace-evidence-emphasis weighting,30,310552.3882876422,9.642357998318452,195391.95832363365,3220710,2023 secondary- and tertiary-sector legal-entity workplace employment,True,False
+core_plus_workplace_evidence_emphasis,Core+ workplace-evidence-emphasis weighting,40,707413.9420497159,21.9645339707616,396861.5537620737,3220710,2023 secondary- and tertiary-sector legal-entity workplace employment,True,False
+core_plus_workplace_evidence_emphasis,Core+ workplace-evidence-emphasis weighting,50,1226561.5625755754,38.08357668264375,519147.62052585953,3220710,2023 secondary- and tertiary-sector legal-entity workplace employment,True,False

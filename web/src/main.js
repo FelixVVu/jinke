@@ -27,6 +27,13 @@ import {
   methodologyText,
   validateEconomyPayload,
 } from './economy.js';
+import {
+  formatOfficeEmployment,
+  formatOfficeShare,
+  officeMethodologyText,
+  validateOfficeDensityPayload,
+  validateOfficeEmploymentPayload,
+} from './office-employment.js';
 
 const LIMITS = [10, 20, 30, 40, 50];
 const base = window.JINKE_BASE || '/';
@@ -50,6 +57,9 @@ const defaults = {
   showLabels: true,
   stationSize: 7,
   stationDisplay: 'relevant',
+  economicMetric: 'gdp',
+  officeBenchmark: 'core_plus_base',
+  showOfficeDensity: false,
 };
 
 function savedAppearance() {
@@ -162,6 +172,12 @@ if (!LIMITS.includes(Number(state.limit))) state.limit = defaults.limit;
 if (!['relevant', 'all'].includes(state.stationDisplay)) {
   state.stationDisplay = defaults.stationDisplay;
 }
+if (!['gdp', 'office'].includes(state.economicMetric)) {
+  state.economicMetric = defaults.economicMetric;
+}
+if (!['core_plus_base', 'core'].includes(state.officeBenchmark)) {
+  state.officeBenchmark = defaults.officeBenchmark;
+}
 
 document.querySelector('#app').innerHTML = `
   <main>
@@ -193,14 +209,24 @@ document.querySelector('#app').innerHTML = `
         <div
           id="economicSummary"
           class="economic-summary"
-          role="status"
-          aria-live="polite"
-          aria-atomic="true"
         >
-          <span id="economicEstimate" class="economic-estimate">Loading economic estimate…</span>
-          <span id="economicShare" class="economic-share" hidden></span>
-          <span id="economicIncrement" class="economic-detail" hidden></span>
-          <span id="economicSensitivity" class="economic-detail" hidden></span>
+          <div class="metric-selector" role="group" aria-label="Economic metric">
+            <button type="button" data-economic-metric="gdp" aria-pressed="true">GDP</button>
+            <button type="button" data-economic-metric="office" aria-pressed="false">Office employment</button>
+          </div>
+          <label id="officeBenchmarkField" class="office-benchmark-field" for="officeBenchmark" hidden>
+            Benchmark
+            <select id="officeBenchmark">
+              <option value="core_plus_base">Core+ Base</option>
+              <option value="core">Core</option>
+            </select>
+          </label>
+          <div id="economicResult" class="economic-result" role="status" aria-live="polite" aria-atomic="true">
+            <span id="economicEstimate" class="economic-estimate">Loading economic estimate…</span>
+            <span id="economicShare" class="economic-share" hidden></span>
+            <span id="economicIncrement" class="economic-detail" hidden></span>
+            <span id="economicSensitivity" class="economic-detail" hidden></span>
+          </div>
         </div>
       </header>
       <div class="segments" role="group" aria-label="Total time limit">
@@ -294,6 +320,7 @@ document.querySelector('#app').innerHTML = `
           <legend>Map layers</legend>
           <label class="toggle"><input id="showPoly" type="checkbox"/> Show polygon</label>
           <label class="toggle"><input id="invertFill" type="checkbox"/> Invert fill — Shanghai only</label>
+          <label class="toggle"><input id="showOfficeDensity" type="checkbox" disabled/> Show office workplace density</label>
           <label class="toggle"><input id="showStations" type="checkbox"/> Show stations</label>
           <label class="toggle"><input id="showLabels" type="checkbox"/> Show labels</label>
         </fieldset>
@@ -332,6 +359,7 @@ document.querySelector('#app').innerHTML = `
             <li><span class="legend-mark boundary"></span><span><strong>White</strong> — boundary station</span></li>
             <li><span class="legend-mark outside"></span><span><strong>Gray</strong> — outside selected time</span></li>
             <li><span class="legend-mark area"></span><span><strong>Turquoise area</strong> — reachable area</span></li>
+            <li id="officeDensityLegend" hidden><span class="legend-mark office-density"></span><span><strong>Purple glow</strong> — modelled office workplace density</span></li>
           </ul>
         </details>
 
@@ -346,7 +374,7 @@ document.querySelector('#app').innerHTML = `
             <p id="transitMethod"></p>
             <p id="walkingMethod"></p>
             <section id="economicMethod" class="economic-method" hidden>
-              <h3>Economic estimate</h3>
+              <h3>GDP estimate</h3>
               <p>
                 This is a spatial model estimate, not an officially published GDP
                 value for the reach polygon.
@@ -356,6 +384,20 @@ document.querySelector('#app').innerHTML = `
               <p id="gdpSensitivityMethod"></p>
               <a id="gdpMethodologyLink" class="source-link" target="_blank" rel="noopener noreferrer">
                 View full GDP methodology
+              </a>
+            </section>
+            <section id="officeEmploymentMethod" class="economic-method" hidden>
+              <div class="method-heading">
+                <h3>Office-oriented employment</h3>
+                <span id="officeBenchmarkStatus" class="method-status"></span>
+              </div>
+              <p id="officeDefinition"></p>
+              <p id="officeControls"></p>
+              <p id="officeBoundaryDisclosure"></p>
+              <p id="officeDisplayScope"></p>
+              <p id="officeDensityDisclosure"></p>
+              <a id="officeMethodologyLink" class="source-link" target="_blank" rel="noopener noreferrer">
+                View full office-employment methodology
               </a>
             </section>
             <a id="sourceSheet" class="source-link" target="_blank" rel="noopener noreferrer" hidden>
@@ -397,6 +439,11 @@ let selectedLocationResult;
 let economyData;
 let gdpMethodology;
 let economyLoadState = 'loading';
+let officeEmploymentData;
+let officeEmploymentMethodology;
+let officeEmploymentLoadState = 'loading';
+let officeDensityData;
+let officeDensityLoadState = 'loading';
 
 const mobileQuery = window.matchMedia('(max-width: 760px)');
 const byId = id => document.getElementById(id);
@@ -443,14 +490,12 @@ function hideEconomicDetails() {
   });
 }
 
-function renderEconomy() {
+function renderGdpSummary() {
   const estimate = byId('economicEstimate');
-  const summary = byId('economicSummary');
   const record = economyData?.recordsByLimit?.get(Number(state.limit));
-  summary.classList.toggle('is-unavailable', economyLoadState === 'unavailable');
 
   if (economyLoadState === 'loading') {
-    estimate.textContent = 'Loading economic estimate…';
+    estimate.textContent = 'Loading GDP estimate…';
     hideEconomicDetails();
     return;
   }
@@ -485,6 +530,70 @@ function renderEconomy() {
   sensitivity.hidden = false;
 }
 
+function renderOfficeEmploymentSummary() {
+  const estimate = byId('economicEstimate');
+  const benchmark = officeEmploymentData?.benchmarksByKey?.get(
+    state.officeBenchmark,
+  );
+  const record = benchmark?.recordsByLimit?.get(Number(state.limit));
+
+  if (officeEmploymentLoadState === 'loading') {
+    estimate.textContent = 'Loading office-employment estimate…';
+    hideEconomicDetails();
+    return;
+  }
+  if (officeEmploymentLoadState !== 'ready' || !record || !benchmark) {
+    estimate.textContent = 'Office-employment estimate unavailable.';
+    hideEconomicDetails();
+    return;
+  }
+
+  estimate.textContent =
+    `Office-oriented employment within reach: ` +
+    formatOfficeEmployment(record.employment_inside_reach);
+  const share = byId('economicShare');
+  share.textContent =
+    `${formatOfficeShare(record.percentage_of_shanghai)} of Shanghai ` +
+    `${state.officeBenchmark === 'core' ? 'Core' : 'Core+'} office-oriented employment`;
+  share.hidden = false;
+
+  const increment = byId('economicIncrement');
+  if (Number(state.limit) === LIMITS[0]) {
+    increment.hidden = true;
+  } else {
+    increment.textContent =
+      `Added vs ${Number(state.limit) - 10} minutes: ` +
+      `+${formatOfficeEmployment(record.incremental_employment)}`;
+    increment.hidden = false;
+  }
+
+  const definition = byId('economicSensitivity');
+  definition.textContent =
+    `${benchmark.label} · exact Shanghai denominator: ` +
+    `${formatOfficeEmployment(benchmark.denominator)}`;
+  definition.hidden = false;
+}
+
+function renderEconomy() {
+  const isOffice = state.economicMetric === 'office';
+  const unavailable = isOffice
+    ? officeEmploymentLoadState === 'unavailable'
+    : economyLoadState === 'unavailable';
+  byId('economicSummary').classList.toggle('is-office', isOffice);
+  byId('economicSummary').classList.toggle('is-unavailable', unavailable);
+  byId('officeBenchmarkField').hidden = !isOffice;
+  byId('officeBenchmark').value = state.officeBenchmark;
+
+  document.querySelectorAll('[data-economic-metric]').forEach(button => {
+    const active = button.dataset.economicMetric === state.economicMetric;
+    button.classList.toggle('active', active);
+    button.setAttribute('aria-pressed', String(active));
+  });
+
+  if (isOffice) renderOfficeEmploymentSummary();
+  else renderGdpSummary();
+}
+
 function renderEconomicMethodology() {
   const section = byId('economicMethod');
   if (economyLoadState !== 'ready' || !gdpMethodology) {
@@ -496,6 +605,29 @@ function renderEconomicMethodology() {
   byId('gdpProxySources').textContent = copy.proxies;
   byId('gdpSensitivityMethod').textContent = copy.sensitivity;
   byId('gdpMethodologyLink').href = assetUrl('data/gdp-methodology.json');
+  section.hidden = false;
+}
+
+function renderOfficeEmploymentMethodology() {
+  const section = byId('officeEmploymentMethod');
+  if (
+    officeEmploymentLoadState !== 'ready' ||
+    !officeEmploymentMethodology
+  ) {
+    section.hidden = true;
+    return;
+  }
+  const copy = officeMethodologyText(officeEmploymentMethodology);
+  byId('officeBenchmarkStatus').textContent =
+    officeEmploymentMethodology.classification;
+  byId('officeDefinition').textContent = copy.definition;
+  byId('officeControls').textContent = copy.controls;
+  byId('officeBoundaryDisclosure').textContent = copy.boundaries;
+  byId('officeDisplayScope').textContent = copy.scope;
+  byId('officeDensityDisclosure').textContent = copy.disclosure;
+  byId('officeMethodologyLink').href = assetUrl(
+    'data/office-employment-methodology.json',
+  );
   section.hidden = false;
 }
 
@@ -541,6 +673,7 @@ function renderAbout() {
     sourceLink.hidden = false;
   }
   renderEconomicMethodology();
+  renderOfficeEmploymentMethodology();
 }
 
 function renderState() {
@@ -579,11 +712,18 @@ function setControlValues() {
   ['fill', 'outline', 'opacity', 'width', 'stationSize'].forEach(id => {
     byId(id).value = state[id];
   });
-  ['showPoly', 'invertFill', 'showStations', 'showLabels'].forEach(id => {
+  [
+    'showPoly',
+    'invertFill',
+    'showOfficeDensity',
+    'showStations',
+    'showLabels',
+  ].forEach(id => {
     byId(id).checked = Boolean(state[id]);
   });
   byId('basemap').value = state.basemap;
   byId('stationDisplay').value = state.stationDisplay;
+  byId('officeBenchmark').value = state.officeBenchmark;
   updateAppearanceOutputs();
 }
 
@@ -594,6 +734,9 @@ function setPaintProperty(layerId, property, value) {
 function applyMapState() {
   renderState();
   updateAppearanceOutputs();
+  byId('officeDensityLegend').hidden = !(
+    state.showOfficeDensity && officeDensityLoadState === 'ready'
+  );
   if (!map || !areas || !outsideAreas || !stations) return;
 
   map.getSource('areas')?.setData(selectedAreas());
@@ -616,6 +759,11 @@ function applyMapState() {
   );
   setPaintProperty('reach-line', 'line-color', state.outline);
   setPaintProperty('reach-line', 'line-width', polygonPaint.outlineWidth);
+  setPaintProperty(
+    'office-density-heatmap',
+    'heatmap-opacity',
+    state.showOfficeDensity && officeDensityLoadState === 'ready' ? 0.86 : 0,
+  );
   setPaintProperty('station-circle', 'circle-radius', [
     'case',
     ['get', 'is_jinke'],
@@ -651,8 +799,13 @@ function addSourceOnce(id, definition) {
   if (!map.getSource(id)) map.addSource(id, definition);
 }
 
-function addLayerOnce(definition) {
-  if (!map.getLayer(definition.id)) map.addLayer(definition);
+function addLayerOnce(definition, beforeId) {
+  if (!map.getLayer(definition.id)) {
+    map.addLayer(
+      definition,
+      beforeId && map.getLayer(beforeId) ? beforeId : undefined,
+    );
+  }
 }
 
 function escapeHtml(value) {
@@ -1007,6 +1160,67 @@ function restoreCustomLayers() {
     type: 'geojson',
     data: highlightedStationData(),
   });
+  if (officeDensityData) {
+    addSourceOnce('office-density', {
+      type: 'geojson',
+      data: officeDensityData,
+      attribution:
+        'Office density: Shanghai 2023 Economic Census controls · JRC built volume · ' +
+        '<a href="https://www.openstreetmap.org/copyright">OpenStreetMap contributors</a> (ODbL) · Overture Maps',
+    });
+    addLayerOnce(
+      {
+        id: 'office-density-heatmap',
+        type: 'heatmap',
+        source: 'office-density',
+        maxzoom: 16,
+        paint: {
+          'heatmap-weight': ['coalesce', ['to-number', ['get', 'w']], 0],
+          'heatmap-intensity': [
+            'interpolate',
+            ['linear'],
+            ['zoom'],
+            8,
+            0.52,
+            11,
+            0.82,
+            14,
+            1.12,
+          ],
+          'heatmap-radius': [
+            'interpolate',
+            ['linear'],
+            ['zoom'],
+            8,
+            11,
+            11,
+            22,
+            14,
+            34,
+          ],
+          'heatmap-color': [
+            'interpolate',
+            ['linear'],
+            ['heatmap-density'],
+            0,
+            'rgba(88,28,135,0)',
+            0.14,
+            'rgba(126,34,206,0.28)',
+            0.34,
+            'rgba(168,85,247,0.5)',
+            0.58,
+            'rgba(217,70,239,0.7)',
+            0.8,
+            'rgba(236,72,153,0.86)',
+            1,
+            'rgba(126,20,122,1)',
+          ],
+          'heatmap-opacity': state.showOfficeDensity ? 0.86 : 0,
+        },
+      },
+      'outside-fill',
+    );
+  }
 
   addLayerOnce({
     id: 'outside-fill',
@@ -1184,13 +1398,31 @@ function wireControls() {
     };
   });
 
-  ['showPoly', 'invertFill', 'showStations', 'showLabels'].forEach(id => {
+  [
+    'showPoly',
+    'invertFill',
+    'showOfficeDensity',
+    'showStations',
+    'showLabels',
+  ].forEach(id => {
     const element = byId(id);
     element.onchange = () => {
       state[id] = element.checked;
       applyMapState();
     };
   });
+
+  document.querySelectorAll('[data-economic-metric]').forEach(button => {
+    button.onclick = () => {
+      state.economicMetric = button.dataset.economicMetric;
+      renderState();
+    };
+  });
+
+  byId('officeBenchmark').onchange = event => {
+    state.officeBenchmark = event.target.value;
+    renderState();
+  };
 
   document.querySelectorAll('[data-limit]').forEach(button => {
     button.onclick = () => {
@@ -1378,9 +1610,58 @@ async function loadEconomicData() {
   renderEconomicMethodology();
 }
 
+async function loadOfficeEmploymentData() {
+  try {
+    const [records, methodology] = await Promise.all([
+      fetchJson('reach-office-employment.json'),
+      fetchJson('office-employment-methodology.json'),
+    ]);
+    officeEmploymentData = validateOfficeEmploymentPayload(
+      records,
+      methodology,
+      LIMITS,
+    );
+    officeEmploymentMethodology = methodology;
+    officeEmploymentLoadState = 'ready';
+  } catch (error) {
+    console.warn('Office-employment estimate load failed', error);
+    officeEmploymentData = undefined;
+    officeEmploymentMethodology = undefined;
+    officeEmploymentLoadState = 'unavailable';
+  }
+  renderEconomy();
+  renderOfficeEmploymentMethodology();
+}
+
+async function loadOfficeDensityData() {
+  const toggle = byId('showOfficeDensity');
+  try {
+    const density = await fetchJson('office-density-display.geojson');
+    officeDensityData = validateOfficeDensityPayload(
+      density,
+      officeEmploymentMethodology,
+    );
+    officeDensityLoadState = 'ready';
+    toggle.disabled = false;
+    toggle.title = '';
+    if (map?.getStyle()) restoreCustomLayers();
+    else applyMapState();
+  } catch (error) {
+    console.warn('Office-density display load failed', error);
+    officeDensityData = undefined;
+    officeDensityLoadState = 'unavailable';
+    state.showOfficeDensity = false;
+    toggle.checked = false;
+    toggle.disabled = true;
+    toggle.title = 'Office workplace density is unavailable.';
+    applyMapState();
+  }
+}
+
 wireControls();
 initializeLocationSearch();
 void loadEconomicData();
+void loadOfficeEmploymentData().then(loadOfficeDensityData);
 
 Promise.all([
   fetchJson('reach-areas.geojson'),

@@ -1,0 +1,7 @@
+district,constraint,nominal,lower,upper_exclusive,central_rule
+徐汇区,sum of 13 displayed rows,954400,953750,955050,published nominal midpoints
+静安区,sum of 14 displayed rows,917000,910000,924000,published nominal midpoints
+普陀区,sum of 10 displayed rows,512000,507000,517000,published nominal midpoints
+浦东新区,street subtotal,695000,694500,695500,least-squares row reconciliation (-250 each)
+浦东新区,town subtotal,1099000,1098500,1099500,published nominal midpoints
+浦东新区,functional-zone subtotal,821000,820500,821500,published nominal midpoints

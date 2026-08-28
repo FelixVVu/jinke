@@ -1,0 +1,7 @@
+{
+  "district": "闵行区",
+  "intersection_area_m2": 2915.159950421586,
+  "treatment": "technical boundary sensitivity only; no Minhang employment assigned to the sliver",
+  "employment_assigned": 0.0,
+  "could_dominate_uncertainty": false
+}

@@ -1,0 +1,25 @@
+scenario,district,fine_control_count,fine_control_employment,residual_employment,district_total_employment,residual_class,residual_finance_fixed_employment,residual_other_fixed_employment,residual_composition_method,ipf_iterations,ipf_maximum_margin_error,district_margin_I,district_margin_J,district_margin_M,district_margin_721,district_margin_723,district_margin_724,district_margin_725,district_margin_OTHER
+low_office_intensity,黄浦区,10,638279,74334,712613,finance_regulator_return,74334,0,bulletin-compatible finance assignment,1,0.0,35032,83264,40473,21678,4777,34553,9558,483278
+low_office_intensity,徐汇区,13,954400,73346,1027746,construction_plus_finance_unsplit,24820,48526,bulletin-compatible finance assignment,1,3.637978807091713e-12,138974,24820,95029,18204,4012,29014,8026,709667
+low_office_intensity,长宁区,10,596976,5174,602150,directly_managed_finance,5174,0,bulletin-compatible finance assignment,1,0.0,65953,12558,26600,12042,2654,19193,5309,457841
+low_office_intensity,静安区,14,917000,56987,973987,finance,56987,0,bulletin-compatible finance assignment,1,2.9103830456733704e-11,85949,57821,50564,25948,5719,41360,11442,695184
+low_office_intensity,普陀区,10,512000,12969,524969,finance,11667,1302,bulletin-compatible finance assignment,1,0.0,57019,11667,32220,9989,2201,15921,4404,391548
+low_office_intensity,虹口区,8,379833,29556,409389,unsubdivided_special_channel,0,0,maximum-entropy district composition,1,7.275957614183426e-12,21097,30268,19712,6497,1432,10355,2864,317164
+low_office_intensity,杨浦区,12,501023,9539,510562,finance_plus_national_channel_construction,9226,313,bulletin-compatible finance assignment,1,7.275957614183426e-12,82021,9226,55738,6598,1454,10516,2909,342100
+low_office_intensity,浦东新区,39,2615000,264157,2879157,unsubdivided_special_channel,0,0,maximum-entropy district composition,1,2.3283064365386963e-10,327781,273573,215616,43560,9600,69430,19207,1920390
+base,黄浦区,10,638279,74334,712613,finance_regulator_return,74334,0,bulletin-compatible finance assignment,1,7.275957614183426e-12,35032,83264,40473,22919,5051,36531,10106,479237
+base,徐汇区,13,954400,73346,1027746,construction_plus_finance_unsplit,24820,48526,bulletin-compatible finance assignment,1,3.637978807091713e-12,138974,24820,95029,18204,4012,29014,8026,709667
+base,长宁区,10,596976,5174,602150,directly_managed_finance,5174,0,bulletin-compatible finance assignment,1,2.9103830456733704e-11,65953,12558,26600,12731,2806,20292,5613,455597
+base,静安区,14,917000,56987,973987,finance,56987,0,bulletin-compatible finance assignment,1,1.4551915228366852e-11,85949,57821,50564,27434,6046,43728,12097,690348
+base,普陀区,10,512000,12969,524969,finance,11667,1302,bulletin-compatible finance assignment,1,0.0,57019,11667,32220,10561,2327,16833,4656,389686
+base,虹口区,8,379833,29556,409389,unsubdivided_special_channel,0,0,maximum-entropy district composition,1,7.275957614183426e-12,21097,30268,19712,6497,1432,10355,2864,317164
+base,杨浦区,12,501023,9539,510562,finance_plus_national_channel_construction,9226,313,bulletin-compatible finance assignment,1,7.275957614183426e-12,82021,9226,55738,6598,1454,10516,2909,342100
+base,浦东新区,39,2615000,264157,2879157,unsubdivided_special_channel,0,0,maximum-entropy district composition,1,2.3283064365386963e-10,327781,273573,215616,43560,9600,69430,19207,1920390
+high_office_intensity,黄浦区,10,638279,74334,712613,finance_regulator_return,74334,0,bulletin-compatible finance assignment,1,1.1641532182693481e-10,35032,83264,40473,24160,5325,38509,10654,475196
+high_office_intensity,徐汇区,13,954400,73346,1027746,construction_plus_finance_unsplit,24820,48526,bulletin-compatible finance assignment,1,3.637978807091713e-12,138974,24820,95029,18204,4012,29014,8026,709667
+high_office_intensity,长宁区,10,596976,5174,602150,directly_managed_finance,5174,0,bulletin-compatible finance assignment,1,1.8189894035458565e-12,65953,12558,26600,13420,2958,21391,5917,453353
+high_office_intensity,静安区,14,917000,56987,973987,finance,56987,0,bulletin-compatible finance assignment,1,7.275957614183426e-12,85949,57821,50564,28920,6373,46096,12752,685512
+high_office_intensity,普陀区,10,512000,12969,524969,finance,11667,1302,bulletin-compatible finance assignment,1,0.0,57019,11667,32220,11133,2453,17745,4908,387824
+high_office_intensity,虹口区,8,379833,29556,409389,unsubdivided_special_channel,0,0,maximum-entropy district composition,1,7.275957614183426e-12,21097,30268,19712,6497,1432,10355,2864,317164
+high_office_intensity,杨浦区,12,501023,9539,510562,finance_plus_national_channel_construction,9226,313,bulletin-compatible finance assignment,1,7.275957614183426e-12,82021,9226,55738,6598,1454,10516,2909,342100
+high_office_intensity,浦东新区,39,2615000,264157,2879157,unsubdivided_special_channel,0,0,maximum-entropy district composition,1,2.3283064365386963e-10,327781,273573,215616,43560,9600,69430,19207,1920390

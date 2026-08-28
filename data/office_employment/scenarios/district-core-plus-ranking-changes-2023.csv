@@ -1,0 +1,49 @@
+scenario,scenario_label,district,core_plus_employment,difference_from_base_employment,employment_rank,employment_rank_change_from_base,core_plus_share_of_district_employment_percentage,intensity_rank,intensity_rank_change_from_base,core_is_hard_control,core_plus_is_composition_sensitivity,grid_created,reach_percentage_calculated
+low_office_intensity,Low office intensity,黄浦区,229335,-4041,5,0,32.18226442683476,3,0,True,True,False,False
+low_office_intensity,Low office intensity,徐汇区,318079,0,2,0,30.949183942335946,4,0,True,True,False,False
+low_office_intensity,Low office intensity,长宁区,144309,-2244,9,1,23.96562318359213,7,0,True,True,False,False
+low_office_intensity,Low office intensity,静安区,278803,-4836,4,0,28.624920045134072,5,0,True,True,False,False
+low_office_intensity,Low office intensity,普陀区,133421,-1862,10,0,25.415024506208937,6,0,True,True,False,False
+low_office_intensity,Low office intensity,虹口区,92225,0,11,0,22.52747386959591,9,0,True,True,False,False
+low_office_intensity,Low office intensity,杨浦区,168462,0,6,0,32.9954050634399,2,0,True,True,False,False
+low_office_intensity,Low office intensity,闵行区,301661,0,3,0,23.599309061835523,8,0,True,True,False,False
+low_office_intensity,Low office intensity,宝山区,151667,12983,7,-2,19.79976605866288,10,0,True,True,False,False
+low_office_intensity,Low office intensity,嘉定区,150079,0,8,1,17.17233551269054,11,0,True,True,False,False
+low_office_intensity,Low office intensity,浦东新区,958767,0,1,0,33.300268099308234,1,0,True,True,False,False
+low_office_intensity,Low office intensity,金山区,32854,0,15,0,8.343830634511063,16,0,True,True,False,False
+low_office_intensity,Low office intensity,松江区,91522,0,12,0,10.738993710691824,14,0,True,True,False,False
+low_office_intensity,Low office intensity,青浦区,89760,0,13,0,16.32578823401024,12,0,True,True,False,False
+low_office_intensity,Low office intensity,奉贤区,62083,0,14,0,10.635239863776835,15,0,True,True,False,False
+low_office_intensity,Low office intensity,崇明区,17683,0,16,0,10.952413395848946,13,0,True,True,False,False
+base,Base,黄浦区,233376,0,5,0,32.7493323865829,3,0,True,True,False,False
+base,Base,徐汇区,318079,0,2,0,30.949183942335946,4,0,True,True,False,False
+base,Base,长宁区,146553,0,8,0,24.33828780204268,7,0,True,True,False,False
+base,Base,静安区,283639,0,4,0,29.121435912388975,5,0,True,True,False,False
+base,Base,普陀区,135283,0,10,0,25.769712116334485,6,0,True,True,False,False
+base,Base,虹口区,92225,0,11,0,22.52747386959591,9,0,True,True,False,False
+base,Base,杨浦区,168462,0,6,0,32.9954050634399,2,0,True,True,False,False
+base,Base,闵行区,301661,0,3,0,23.599309061835523,8,0,True,True,False,False
+base,Base,宝山区,138684,0,9,0,18.104866293126406,10,0,True,True,False,False
+base,Base,嘉定区,150079,0,7,0,17.17233551269054,11,0,True,True,False,False
+base,Base,浦东新区,958767,0,1,0,33.300268099308234,1,0,True,True,False,False
+base,Base,金山区,32854,0,15,0,8.343830634511063,16,0,True,True,False,False
+base,Base,松江区,91522,0,12,0,10.738993710691824,14,0,True,True,False,False
+base,Base,青浦区,89760,0,13,0,16.32578823401024,12,0,True,True,False,False
+base,Base,奉贤区,62083,0,14,0,10.635239863776835,15,0,True,True,False,False
+base,Base,崇明区,17683,0,16,0,10.952413395848946,13,0,True,True,False,False
+high_office_intensity,High office intensity,黄浦区,237417,4041,5,0,33.31640034633104,1,-2,True,True,False,False
+high_office_intensity,High office intensity,徐汇区,318079,0,2,0,30.949183942335946,4,0,True,True,False,False
+high_office_intensity,High office intensity,长宁区,148797,2244,8,0,24.710952420493232,7,0,True,True,False,False
+high_office_intensity,High office intensity,静安区,288475,4836,4,0,29.617951779643874,5,0,True,True,False,False
+high_office_intensity,High office intensity,普陀区,137145,1862,9,-1,26.12439972646004,6,0,True,True,False,False
+high_office_intensity,High office intensity,虹口区,92225,0,11,0,22.52747386959591,9,0,True,True,False,False
+high_office_intensity,High office intensity,杨浦区,168462,0,6,0,32.9954050634399,3,1,True,True,False,False
+high_office_intensity,High office intensity,闵行区,301661,0,3,0,23.599309061835523,8,0,True,True,False,False
+high_office_intensity,High office intensity,宝山区,125701,-12983,10,1,16.409966527589933,11,1,True,True,False,False
+high_office_intensity,High office intensity,嘉定区,150079,0,7,0,17.17233551269054,10,-1,True,True,False,False
+high_office_intensity,High office intensity,浦东新区,958767,0,1,0,33.300268099308234,2,1,True,True,False,False
+high_office_intensity,High office intensity,金山区,32854,0,15,0,8.343830634511063,16,0,True,True,False,False
+high_office_intensity,High office intensity,松江区,91522,0,12,0,10.738993710691824,14,0,True,True,False,False
+high_office_intensity,High office intensity,青浦区,89760,0,13,0,16.32578823401024,12,0,True,True,False,False
+high_office_intensity,High office intensity,奉贤区,62083,0,14,0,10.635239863776835,15,0,True,True,False,False
+high_office_intensity,High office intensity,崇明区,17683,0,16,0,10.952413395848946,13,0,True,True,False,False

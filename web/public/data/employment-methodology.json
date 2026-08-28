@@ -1,0 +1,525 @@
+{
+  "schema_version": 1,
+  "title": "Jinke independent Shanghai workplace-employment benchmark v1",
+  "employment_universe": "2023 secondary- and tertiary-sector legal-entity workplace employment",
+  "universe_disclosure": "This is workplace employment of legal entities engaged in secondary- and tertiary-sector activity, not all jobs and not employed population.",
+  "reference_date": "2023-12-31",
+  "denominator": 13099795,
+  "individual_business_employment_included": false,
+  "priority_district_employment": 7640573,
+  "fine_control_employment": 7114511,
+  "residual_employment": 526062,
+  "analysis": {
+    "crs": "EPSG:32651",
+    "grid_metres": 100,
+    "grid_rule": "common 100 m lattice; squares clipped to each accounting support",
+    "reach_path": "web/public/data/reach-areas.geojson",
+    "reach_sha256": "6f039b0661f63c1017a2c4a3bc8f5c4d8fdef207ca10afe987f160642fb5656b",
+    "reach_limits_minutes": [
+      10,
+      20,
+      30,
+      40,
+      50
+    ],
+    "partial_cell_rule": "area(cell intersection reach) / clipped cell_area_m2",
+    "production_reach_modified": false
+  },
+  "accounting": {
+    "ordinary_controls": 113,
+    "pudong_functional_zone_strata": 3,
+    "functional_zone_counts_are_separate": true,
+    "geometric_overlap_does_not_merge_or_duplicate_accounting_rows": true,
+    "pudong_street_rounding_reconciliation": "The 12 displayed rows sum to 69.8 万 versus the published 69.5 万 subtotal. The minimum-squared adjustment subtracts 250 people from each row, remains within every half-unit interval, and totals 695,000."
+  },
+  "ordinary_boundary": {
+    "source": "OpenStreetMap",
+    "source_url": "https://download.openstreetmap.fr/extracts/asia/china/shanghai.osm.pbf",
+    "snapshot_date": "2026-08-19",
+    "source_pbf_sha256": "cba608c2e67cbd2ee7616dcee6833e575e818237048faabf4c0e447acd6c0b6f",
+    "source_crs": "EPSG:4326",
+    "relation_ids": "data/employment/manifests/control-crosswalk-2023.csv",
+    "license": "OpenStreetMap contributors, ODbL 1.0",
+    "geometry_is_approximate": true,
+    "topology": {
+      "analysis_crs": "EPSG:32651",
+      "control_count": 116,
+      "ordinary_control_count": 113,
+      "functional_zone_count": 3,
+      "all_valid": true,
+      "no_empty_geometries": true,
+      "duplicate_accounting_strata": 0,
+      "duplicate_geometry_hashes": 0,
+      "ordinary_within_district_overlap_m2": 9.313225746154785e-08,
+      "zone_overlap_is_intentional": true,
+      "parent_containment_note": "The available repository parent layer is geoBoundaries 2017 and is used only as a cross-vintage diagnostic; differences do not modify OSM controls."
+    }
+  },
+  "official_map_validation": {
+    "authoritative_source": "Shanghai Tianditu / Shanghai SHMAP_D and SHMAP_LAN map service",
+    "review_date": "2026-08-19",
+    "controls_reviewed": 82,
+    "passed": 80,
+    "failed": 2,
+    "review_file": "data/employment/intermediate/official-map-visual-review.csv",
+    "review_scope": "only controls intersecting or within 500 m of the 50-minute boundary",
+    "pass_definition": "no visible material contradiction at official display precision; not official adoption of the OSM line"
+  },
+  "pudong_functional_zones": {
+    "selected_support": "approximately 2020 statistical polygons",
+    "selected_support_areas_km2": {
+      "310115501000": 22.97572364836535,
+      "310115502000": 19.475692467276037,
+      "310115503000": 18.30313339122193
+    },
+    "source_hashes": {
+      "310115501000": "9ca089bb740650ee47446e430c7e8f29c15b06516d414203c585fce8414f806f",
+      "310115502000": "11cd1685641f79c3bd0b658e2a160d8dc7c60a53d8773111b9c057aedb367d78",
+      "310115503000": "a2e2206cda63c922f963b51a462ad62d09bfeaccc7d8c03427fd42f1407e98c4"
+    },
+    "source_geometry_redistributed": false,
+    "public_grid_treatment": "three aggregate ledger rows with null geometry; exact acquisition and processing instructions retained",
+    "establishment_attribution_investigation": [
+      {
+        "accounting_stratum_id": "310115501000",
+        "control_name": "中国（上海）自由贸易试验区（保税片区）",
+        "attributed_place_count": 9,
+        "attribution_rule": "外高桥保税|Waigaoqiao Free Trade|Waigaoqiao Bonded|浦东机场综合保税|洋山港保税",
+        "sufficient_for_central_support": false,
+        "decision": "insufficient coverage and no employment-by-establishment weights; use the separately acquired 2020 statistical support"
+      },
+      {
+        "accounting_stratum_id": "310115502000",
+        "control_name": "金桥经济技术开发区",
+        "attributed_place_count": 0,
+        "attribution_rule": "金桥经济技术开发区|金桥开发区|Jinqiao Economic|Jinqiao Development",
+        "sufficient_for_central_support": false,
+        "decision": "insufficient coverage and no employment-by-establishment weights; use the separately acquired 2020 statistical support"
+      },
+      {
+        "accounting_stratum_id": "310115503000",
+        "control_name": "张江高科技园区",
+        "attributed_place_count": 16,
+        "attribution_rule": "张江高科技园区|张江高新区|Zhangjiang Hi-?Tech Park|Zhangjiang High-?Tech Park",
+        "sufficient_for_central_support": false,
+        "decision": "insufficient coverage and no employment-by-establishment weights; use the separately acquired 2020 statistical support"
+      }
+    ],
+    "decision": "release Places do not provide sufficiently complete, employment-weighted zone attribution; fallback support selected",
+    "sensitivity_file": "data/employment/intermediate/pudong-zone-sensitivity.csv",
+    "planning_scope_warning": "same-name planning scopes are not assumed equal to census strata; the area-matched case is a morphology sensitivity, not an official vector",
+    "conservative_bounds": "0% and 100% of each zone row inside each reach"
+  },
+  "predictors": {
+    "jrc": "raw 2020 JRC non-residential built volume; upper tail preserved",
+    "overture": "Overture Places release 2026-07-22.0; confidence summed by interpretable category",
+    "temporal_alignment": "JRC epoch 2020 and Overture/OSM snapshots after the 2023 census are spatial predictors/supports, not replacements for the 2023 counts",
+    "viirs": "not used in v1: it is auxiliary and the official annual numerical product requires an Earthdata credential; no visual-tile substitute was used"
+  },
+  "allocation_models": {
+    "uniform": "uniform employment density within each accounting support",
+    "building_volume": "raw JRC non-residential built volume; no log target, cap, winsorization, district min-max normalization, or GDP weights",
+    "calibrated_workplace": {
+      "model": "non-negative ridge-regularized Poisson pseudo-maximum likelihood count model",
+      "formula": "E[control employment] = exp(intercept + district effect + control-type effect + sum(beta_k × standardized log1p(control proxy total)))",
+      "cell_weight_formula": "clipped area fraction × exp(sum(beta_k × standardized log1p(cell proxy / clipped area fraction))); equivalently an uncapped multiplicative power surface using the fitted log-total slopes",
+      "ecological_transfer_disclosure": "coefficients are identified from control-level totals and transferred to 100 m proxy densities; this is evaluated by geographic control holdout, then every surface is normalized to the observed control total",
+      "coefficient_constraint": "all spatial predictor coefficients are non-negative; district and control-type calibration effects are unconstrained and cancel during within-control normalization",
+      "upper_tail_treatment": "no cap, winsorization, log1p target, district min-max, or GDP weights",
+      "cross_validation_design": "six contiguous citywide geographic-block folds formed by control-centroid longitude tertiles crossed with the latitude median; each complete block is held out and predictions are evaluated before within-control normalization",
+      "alpha_selection": "minimum geographic-CV weighted absolute percentage error",
+      "candidate_alpha_metrics": [
+        {
+          "alpha": 0.001,
+          "mae_people": 27558.412997184256,
+          "mean_absolute_percentage_error": 55.94018152832736,
+          "weighted_absolute_percentage_error": 44.933178227897514,
+          "spearman_rank_correlation": 0.7020748202295591
+        },
+        {
+          "alpha": 0.01,
+          "mae_people": 27522.407771981372,
+          "mean_absolute_percentage_error": 56.106411184661276,
+          "weighted_absolute_percentage_error": 44.87447277191418,
+          "spearman_rank_correlation": 0.7064997180687371
+        },
+        {
+          "alpha": 0.1,
+          "mae_people": 28136.258388686532,
+          "mean_absolute_percentage_error": 58.819830418920894,
+          "weighted_absolute_percentage_error": 45.87533806733362,
+          "spearman_rank_correlation": 0.7122470875470788
+        },
+        {
+          "alpha": 1.0,
+          "mae_people": 32307.14019124941,
+          "mean_absolute_percentage_error": 77.51055216854338,
+          "weighted_absolute_percentage_error": 52.67583762517103,
+          "spearman_rank_correlation": 0.6467462974654833
+        },
+        {
+          "alpha": 10.0,
+          "mae_people": 40287.8226618056,
+          "mean_absolute_percentage_error": 112.29304953476856,
+          "weighted_absolute_percentage_error": 65.68810461842634,
+          "spearman_rank_correlation": 0.07657649005959044
+        }
+      ],
+      "selected_alpha": 0.01,
+      "all_control_metrics": {
+        "mae_people": 27522.407771981372,
+        "mean_absolute_percentage_error": 56.106411184661276,
+        "weighted_absolute_percentage_error": 44.87447277191418,
+        "spearman_rank_correlation": 0.7064997180687371
+      },
+      "top_employment_control_definition": "observed employment >= 75th percentile (80390)",
+      "top_employment_control_metrics": {
+        "mae_people": 63122.75253966335,
+        "mean_absolute_percentage_error": 37.72198848639419,
+        "weighted_absolute_percentage_error": 45.039501431110445,
+        "spearman_rank_correlation": 0.1990638148611205
+      },
+      "obvious_high_employment_underprediction_rule": "top-quartile control predicted below 50% of observed employment",
+      "obvious_high_employment_underprediction": [
+        {
+          "district": "黄浦区",
+          "accounting_control": "310101017000",
+          "control_name": "小东门街道",
+          "control_employment": 126442,
+          "geographic_holdout_prediction": 38671.32480096116,
+          "prediction_as_pct_of_actual": 30.584240047580046
+        },
+        {
+          "district": "徐汇区",
+          "accounting_control": "310104012000",
+          "control_name": "虹梅路街道",
+          "control_employment": 262100,
+          "geographic_holdout_prediction": 66063.73947096635,
+          "prediction_as_pct_of_actual": 25.205547299109632
+        },
+        {
+          "district": "长宁区",
+          "accounting_control": "310105010000",
+          "control_name": "程家桥街道",
+          "control_employment": 101760,
+          "geographic_holdout_prediction": 38889.60500326858,
+          "prediction_as_pct_of_actual": 38.21698604880953
+        },
+        {
+          "district": "静安区",
+          "accounting_control": "310106015000",
+          "control_name": "天目西路街道",
+          "control_employment": 161000,
+          "geographic_holdout_prediction": 70163.07795703984,
+          "prediction_as_pct_of_actual": 43.5795515261117
+        },
+        {
+          "district": "浦东新区",
+          "accounting_control": "310115004000",
+          "control_name": "潍坊新村街道",
+          "control_employment": 153750,
+          "geographic_holdout_prediction": 67028.29849640152,
+          "prediction_as_pct_of_actual": 43.59564129847253
+        },
+        {
+          "district": "浦东新区",
+          "accounting_control": "310115145000",
+          "control_name": "南汇新城镇",
+          "control_employment": 138000,
+          "geographic_holdout_prediction": 47722.596522700864,
+          "prediction_as_pct_of_actual": 34.58159168311657
+        },
+        {
+          "district": "浦东新区",
+          "accounting_control": "310115501000",
+          "control_name": "中国（上海）自由贸易试验区（保税片区）",
+          "control_employment": 149000,
+          "geographic_holdout_prediction": 50699.0320905533,
+          "prediction_as_pct_of_actual": 34.02619603392839
+        },
+        {
+          "district": "浦东新区",
+          "accounting_control": "310115502000",
+          "control_name": "金桥经济技术开发区",
+          "control_employment": 203000,
+          "geographic_holdout_prediction": 79174.58831142541,
+          "prediction_as_pct_of_actual": 39.0022602519337
+        },
+        {
+          "district": "浦东新区",
+          "accounting_control": "310115503000",
+          "control_name": "张江高科技园区",
+          "control_employment": 469000,
+          "geographic_holdout_prediction": 99780.2162113379,
+          "prediction_as_pct_of_actual": 21.275099405402536
+        }
+      ],
+      "geographic_folds": [
+        {
+          "held_out_spatial_quadrant": 0,
+          "test_controls": 25,
+          "test_districts": [
+            "徐汇区",
+            "浦东新区",
+            "长宁区",
+            "静安区"
+          ],
+          "mae_people": 52829.9961056574,
+          "weighted_absolute_percentage_error": 55.893496279328915,
+          "converged": true
+        },
+        {
+          "held_out_spatial_quadrant": 1,
+          "test_controls": 14,
+          "test_districts": [
+            "徐汇区",
+            "浦东新区",
+            "黄浦区"
+          ],
+          "mae_people": 19389.97540262921,
+          "weighted_absolute_percentage_error": 39.525572497879125,
+          "converged": true
+        },
+        {
+          "held_out_spatial_quadrant": 2,
+          "test_controls": 19,
+          "test_districts": [
+            "浦东新区"
+          ],
+          "mae_people": 25973.001978005497,
+          "weighted_absolute_percentage_error": 47.12218071922697,
+          "converged": true
+        },
+        {
+          "held_out_spatial_quadrant": 3,
+          "test_controls": 14,
+          "test_districts": [
+            "普陀区",
+            "静安区"
+          ],
+          "mae_people": 19082.78258628064,
+          "weighted_absolute_percentage_error": 36.90040831601228,
+          "converged": true
+        },
+        {
+          "held_out_spatial_quadrant": 4,
+          "test_controls": 24,
+          "test_districts": [
+            "杨浦区",
+            "浦东新区",
+            "虹口区",
+            "静安区",
+            "黄浦区"
+          ],
+          "mae_people": 20194.665162825713,
+          "weighted_absolute_percentage_error": 29.417721448854522,
+          "converged": true
+        },
+        {
+          "held_out_spatial_quadrant": 5,
+          "test_controls": 20,
+          "test_districts": [
+            "杨浦区",
+            "浦东新区"
+          ],
+          "mae_people": 17753.58927868722,
+          "weighted_absolute_percentage_error": 54.96986334216458,
+          "converged": true
+        }
+      ],
+      "nonlinear_alternative": {
+        "model": "histogram gradient-boosted Poisson count model",
+        "role": "scientifically justified nonlinear diagnostic; not used for cell allocation",
+        "reason_not_selected_for_allocation": "tree response surfaces do not yield stable, interpretable elasticities for ecological transfer from control totals to 100 m cell densities",
+        "all_control_metrics": {
+          "mae_people": 30488.670852565403,
+          "mean_absolute_percentage_error": 66.49766867730801,
+          "weighted_absolute_percentage_error": 49.71087709187022,
+          "spearman_rank_correlation": 0.6555849659403329
+        },
+        "top_employment_control_metrics": {
+          "mae_people": 64546.63832988607,
+          "mean_absolute_percentage_error": 38.196867652781776,
+          "weighted_absolute_percentage_error": 46.05547591742862,
+          "spearman_rank_correlation": -0.1719847247251579
+        },
+        "obvious_high_employment_underprediction_count": 12,
+        "geographic_folds": [
+          {
+            "held_out_contiguous_block": 0,
+            "test_controls": 25,
+            "mae_people": 54162.52936938092,
+            "mean_absolute_percentage_error": 59.3807869462467,
+            "weighted_absolute_percentage_error": 57.303300339678565,
+            "spearman_rank_correlation": 0.6139642352464664
+          },
+          {
+            "held_out_contiguous_block": 1,
+            "test_controls": 14,
+            "mae_people": 31214.685367617934,
+            "mean_absolute_percentage_error": 119.60424235279781,
+            "weighted_absolute_percentage_error": 63.62969956779695,
+            "spearman_rank_correlation": 0.3802197802197802
+          },
+          {
+            "held_out_contiguous_block": 2,
+            "test_controls": 19,
+            "mae_people": 27594.166154053117,
+            "mean_absolute_percentage_error": 70.69289954980306,
+            "weighted_absolute_percentage_error": 50.063419138411,
+            "spearman_rank_correlation": 0.6610893785857566
+          },
+          {
+            "held_out_contiguous_block": 3,
+            "test_controls": 14,
+            "mae_people": 18339.045076351213,
+            "mean_absolute_percentage_error": 48.97466200743733,
+            "weighted_absolute_percentage_error": 35.462241860347646,
+            "spearman_rank_correlation": 0.7731296287783735
+          },
+          {
+            "held_out_contiguous_block": 4,
+            "test_controls": 24,
+            "mae_people": 24213.175836948092,
+            "mean_absolute_percentage_error": 43.811806250230816,
+            "weighted_absolute_percentage_error": 35.27151633465393,
+            "spearman_rank_correlation": 0.7913043478260868
+          },
+          {
+            "held_out_contiguous_block": 5,
+            "test_controls": 20,
+            "mae_people": 19173.24907168661,
+            "mean_absolute_percentage_error": 73.72283952082361,
+            "weighted_absolute_percentage_error": 59.36550996823728,
+            "spearman_rank_correlation": 0.5844302782612387
+          }
+        ]
+      },
+      "acceptance_gate": {
+        "status": "failed",
+        "reason": "PPML and the nonlinear Poisson alternative both retain large high-employment-control errors and weak top-control rank ordering",
+        "result_use": "reach estimates remain model-contingent sensitivity results, not an accepted calibrated benchmark"
+      },
+      "final_fit": {
+        "converged": true,
+        "iterations": 51,
+        "objective": -10.271218053437414,
+        "intercept": 12.17170570603938,
+        "standardized_spatial_coefficients": {
+          "log1p_jrc_nres_volume_total": 0.3061216109073598,
+          "log1p_poi_business_finance_total": 0.2305801986134947,
+          "log1p_poi_industry_logistics_total": 0.0,
+          "log1p_poi_education_research_total": 0.037770630988877646,
+          "log1p_poi_retail_hospitality_total": 0.2894301894472558,
+          "log1p_poi_health_public_total": 0.0,
+          "log1p_poi_other_economic_total": 0.0
+        },
+        "unstandardized_log_total_slopes": {
+          "log1p_jrc_nres_volume_total": 0.19890332305891056,
+          "log1p_poi_business_finance_total": 0.23091896356028332,
+          "log1p_poi_industry_logistics_total": 0.0,
+          "log1p_poi_education_research_total": 0.0496736416428445,
+          "log1p_poi_retail_hospitality_total": 0.22347561746965472,
+          "log1p_poi_health_public_total": 0.0,
+          "log1p_poi_other_economic_total": 0.0
+        },
+        "feature_means": {
+          "log1p_jrc_nres_volume_total": 14.568945511861571,
+          "log1p_poi_business_finance_total": 1.4632721412869198,
+          "log1p_poi_industry_logistics_total": 0.9898842318548773,
+          "log1p_poi_education_research_total": 1.1687073468917486,
+          "log1p_poi_retail_hospitality_total": 3.5093107566928152,
+          "log1p_poi_health_public_total": 0.9159609449434631,
+          "log1p_poi_other_economic_total": 1.5947874303405727
+        },
+        "feature_scales": {
+          "log1p_jrc_nres_volume_total": 1.5390472426480961,
+          "log1p_poi_business_finance_total": 0.9985329704344521,
+          "log1p_poi_industry_logistics_total": 0.7372769686423692,
+          "log1p_poi_education_research_total": 0.7603757191882572,
+          "log1p_poi_retail_hospitality_total": 1.2951309530962898,
+          "log1p_poi_health_public_total": 0.7079338793763271,
+          "log1p_poi_other_economic_total": 0.9293776474418676
+        },
+        "calibration_effects": {
+          "district=普陀区": -0.11214291829752401,
+          "district=杨浦区": -0.12110109852171395,
+          "district=浦东新区": -0.5109653657017007,
+          "district=虹口区": 0.018296127083664057,
+          "district=长宁区": -0.28722823053578495,
+          "district=静安区": -0.06656574523206465,
+          "district=黄浦区": -0.37961416843378765,
+          "control_type=street": -1.1967754881711528,
+          "control_type=town": -1.0527180679198955
+        },
+        "nuisance_penalty": 0.0001
+      },
+      "poi_diagnostics": {
+        "input_places": 20738,
+        "workplace_relevant_places": 16077,
+        "control_place_matches": 13428,
+        "ordinary_matches_after_edge_deduplication": 13039,
+        "functional_zone_overlap_matches": 389,
+        "positive_cells_by_category": {
+          "poi_business_finance": 870,
+          "poi_industry_logistics": 383,
+          "poi_education_research": 491,
+          "poi_retail_hospitality": 5472,
+          "poi_health_public": 339,
+          "poi_other_economic": 948
+        },
+        "poi_weighting": "sum of source confidence; no category multiplier"
+      }
+    },
+    "normalization": "each model is normalized independently within every census accounting control so its cell sum exactly equals the reconciled control count"
+  },
+  "residuals": {
+    "total": 526062,
+    "lower": "all unresolved residual employment contributes zero",
+    "central": "only four bulletin-identified finance residuals use finance/business workplace points and building evidence; unsplit/unclassified residuals remain unresolved",
+    "upper": "all unresolved residual employment contributes to the numerator",
+    "separate_from_spatial_model_sensitivity": true
+  },
+  "rounding": {
+    "method": "linear extrema inside every published half-unit interval, with Pudong category-subtotal constraints; rounding is not an employment stratum",
+    "50min_minus_percentage_points": -0.0569601940549018,
+    "50min_plus_percentage_points": 0.05448977095383077
+  },
+  "boundary_sensitivity": {
+    "reach_edge_method": "recalculate with reach edges displaced inward/outward by 100 m",
+    "functional_zone_method": "compare selected 2020 statistical supports with official-reported-area morphology interpretations and a conservative 0%-to-100% reach envelope",
+    "reported_area_interpretation_warning": "reported-area morphology is not an official vector and is not assumed equal to a census accounting boundary",
+    "combined_envelope_rule": "take the most adverse single component; do not add the independent reach-edge and functional-zone support perturbations",
+    "reported_separately_from_residual_and_model_ranges": true
+  },
+  "minhang_sliver": {
+    "district": "闵行区",
+    "intersection_area_m2": 2915.159950421586,
+    "treatment": "technical boundary sensitivity only; no Minhang employment assigned to the sliver",
+    "employment_assigned": 0.0,
+    "could_dominate_uncertainty": false
+  },
+  "prohibited_inputs": {
+    "openrouteservice_called": false,
+    "job_posting_counts_used": false,
+    "existing_gdp_model_reused_as_primary_employment_model": false
+  },
+  "gdp_diagnostic": {
+    "comparison_only": true,
+    "source_path": "web/public/data/reach-economy.json",
+    "source_sha256": "4054f47f07afa1e53612b50d965b3094161f43d94e8420a96911d6ac3c5731ca",
+    "existing_50min_gdp_share_percentage": 21.621658694880143,
+    "employment_share_source": "50-minute model-contingent central result",
+    "interpretation": "GDP share divided by employment share is relative GDP per worker inside the reach versus Shanghai overall; no GDP result was rerun",
+    "employment_share_percentage": 28.177982379536193,
+    "gdp_share_divided_by_employment_share": 0.7673245871067946
+  },
+  "benchmark_classification": "NOT YET RELIABLE",
+  "limitations": [
+    "The calibrated model fails its high-employment-control spatial-holdout acceptance gate; reach estimates are model-contingent sensitivity results.",
+    "All street/town geometries are approximate rather than official 2023 accounting boundaries.",
+    "The three Pudong zone supports fail official-scope equivalence and dominate boundary uncertainty.",
+    "The calibrated surface is constrained by aggregate controls and cannot identify establishment headcounts.",
+    "Several residual strata remain deliberately unlocated in the central estimate."
+  ]
+}

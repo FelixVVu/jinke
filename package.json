@@ -4,7 +4,7 @@
     "dev": "node scripts/dev-server.mjs",
     "build": "node scripts/build.mjs",
     "test": "python -m pytest -q",
-    "test:frontend": "node --test tests/frontend-map.test.mjs"
+    "test:frontend": "node --test tests/frontend-map.test.mjs tests/office-employment-data.test.mjs"
   },
   "dependencies": {},
   "devDependencies": {}

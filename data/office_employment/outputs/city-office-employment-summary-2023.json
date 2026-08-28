@@ -1,0 +1,52 @@
+{
+  "schema_version": 2,
+  "reference_date": "2023-12-31",
+  "employment_universe": "people employed by Shanghai legal entities at 2023-12-31; individual-business employment excluded",
+  "official_all_industry_employment": 13099795,
+  "core_office_employment": 2477585,
+  "core_share_of_shanghai_all_industry_percentage": 18.913158564695095,
+  "core_plus_office_employment": 3220710,
+  "core_plus_share_of_shanghai_all_industry_percentage": 24.585957261163248,
+  "core_plus_selected_72_employment": 743125,
+  "core_plus_selected_share_of_division_72_percentage": 39.02307487914334,
+  "core_plus_72_city_total_is_official": true,
+  "core_plus_district_controls_constructed": false,
+  "proposed_core_plus_district_estimation_method": "maximum-entropy independence allocation of the observed city 721+723+724+725 subtotal across observed district 72 totals, with largest-remainder integer reconciliation",
+  "broad_office_employment": 6374547,
+  "broad_share_of_shanghai_all_industry_percentage": 48.66142561772913,
+  "district_count": 16,
+  "selected_industry_row_count": 9,
+  "core_industry_rows": [
+    "I",
+    "J",
+    "M"
+  ],
+  "core_plus_full_industry_rows": [
+    "I",
+    "J",
+    "M"
+  ],
+  "core_plus_selected_72_subindustry_rows": [
+    "721",
+    "723",
+    "724",
+    "725"
+  ],
+  "broad_industry_rows": [
+    "I",
+    "J",
+    "72",
+    "M",
+    "K",
+    "P",
+    "Q",
+    "R",
+    "S"
+  ],
+  "source_url": "https://tjj.sh.gov.cn/tjnj/jjpcnj2023/zk/html/A1-09.xls",
+  "source_sha256": "b217fb6d1fdacf06cfd68e46b93c9f50536e566a3575581add57393a1c9b3d7a",
+  "subindustry_source_url": "https://tjj.sh.gov.cn/tjnj/jjpcnj2023/zk/html/A1-03.xls",
+  "subindustry_source_sha256": "301aedcbc88cd488dac47697b31af42d10ae19334f16f96e47c5a0cb1b2b68d2",
+  "sufficiency_decision": "PROCEED",
+  "sufficiency_scope": "sufficient as official district calibration controls for an industry-based Core benchmark and an official Shanghai Core+ denominator; future Core+ district controls must be partly modelled because district by three-digit industry employment is not published; none of the definitions is occupation-level employment"
+}

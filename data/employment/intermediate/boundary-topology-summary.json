@@ -1,0 +1,13 @@
+{
+  "analysis_crs": "EPSG:32651",
+  "control_count": 116,
+  "ordinary_control_count": 113,
+  "functional_zone_count": 3,
+  "all_valid": true,
+  "no_empty_geometries": true,
+  "duplicate_accounting_strata": 0,
+  "duplicate_geometry_hashes": 0,
+  "ordinary_within_district_overlap_m2": 9.313225746154785e-08,
+  "zone_overlap_is_intentional": true,
+  "parent_containment_note": "The available repository parent layer is geoBoundaries 2017 and is used only as a cross-vintage diagnostic; differences do not modify OSM controls."
+}
