@@ -92,17 +92,28 @@ test('office-density display is lightweight, visual-only, and valid', () => {
   assert.equal(shippedFiles.some(name => name.includes('office-grid')), false);
 });
 
-test('UI keeps office heatmap below reach overlays and offers both metrics', () => {
+test('UI layers office heatmap above reach fill and below outline and stations', () => {
   const mainSource = readFileSync(resolve(sourceDirectory, 'main.js'), 'utf8');
+  const outsideLayerIndex = mainSource.indexOf("id: 'outside-fill'");
+  const reachFillLayerIndex = mainSource.indexOf("id: 'reach-fill'");
   const densityLayerIndex = mainSource.indexOf("id: 'office-density-heatmap'");
-  const reachLayerIndex = mainSource.indexOf("id: 'reach-fill'");
+  const reachLineLayerIndex = mainSource.indexOf("id: 'reach-line'");
+  const stationLayerIndex = mainSource.indexOf("id: 'station-circle'");
+  const densityLayerDefinition = mainSource.slice(
+    densityLayerIndex,
+    reachLineLayerIndex,
+  );
   const weightExpression = mainSource.slice(
     mainSource.indexOf("'heatmap-weight'", densityLayerIndex),
     mainSource.indexOf("'heatmap-intensity'", densityLayerIndex),
   );
 
-  assert.ok(densityLayerIndex >= 0);
-  assert.ok(reachLayerIndex > densityLayerIndex);
+  assert.ok(outsideLayerIndex >= 0);
+  assert.ok(reachFillLayerIndex > outsideLayerIndex);
+  assert.ok(densityLayerIndex > reachFillLayerIndex);
+  assert.ok(reachLineLayerIndex > densityLayerIndex);
+  assert.ok(stationLayerIndex > reachLineLayerIndex);
+  assert.doesNotMatch(densityLayerDefinition, /maxzoom/);
   assert.match(weightExpression, /\['get', 'j'\]/);
   assert.doesNotMatch(weightExpression, /\['get', 'w'\]/);
   assert.match(
