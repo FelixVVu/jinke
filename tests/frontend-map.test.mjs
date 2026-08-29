@@ -13,6 +13,7 @@ import {
   normalizeStationQuery,
   polygonPaintForState,
   selectedFeatureCollection,
+  stationPaintForState,
   stationFeatureCollection,
 } from '../web/src/map-utils.js';
 import {
@@ -326,6 +327,49 @@ test('normal and inverse paint states are mutually exclusive', () => {
     inverseFillOpacity: 0,
     outlineWidth: 0,
   });
+});
+
+
+test('adaptive station paint shrinks citywide markers and restores close detail', () => {
+  const paint = stationPaintForState({
+    stationSize: 7,
+    stationScaling: 'adaptive',
+  });
+
+  assert.deepEqual(paint.radius.slice(0, 5), [
+    'interpolate',
+    ['linear'],
+    ['zoom'],
+    7,
+    ['case', ['get', 'is_jinke'], 3.9, 2.1],
+  ]);
+  assert.deepEqual(paint.radius.slice(-2), [
+    18,
+    ['case', ['get', 'is_jinke'], 10.76, 7.56],
+  ]);
+  assert.deepEqual(paint.strokeWidth.slice(0, 7), [
+    'interpolate',
+    ['linear'],
+    ['zoom'],
+    7,
+    0.75,
+    9,
+    1,
+  ]);
+  assert.equal(paint.highlightRadius[0], 'interpolate');
+  assert.deepEqual(paint.highlightRadius.slice(-2), [18, 14.56]);
+});
+
+
+test('fixed station paint preserves the existing pixel sizes', () => {
+  assert.deepEqual(
+    stationPaintForState({ stationSize: 7, stationScaling: 'fixed' }),
+    {
+      radius: ['case', ['get', 'is_jinke'], 10, 7],
+      strokeWidth: 2,
+      highlightRadius: 14,
+    },
+  );
 });
 
 

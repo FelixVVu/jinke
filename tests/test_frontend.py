@@ -88,8 +88,12 @@ def test_summary_legend_and_journey_explanation_are_clear():
 
 def test_station_display_search_highlight_and_clear_controls_exist():
     assert "stationDisplay: 'relevant'" in MAIN
+    assert "stationScaling: 'adaptive'" in MAIN
     assert '<option value="relevant">Relevant only</option>' in MAIN
     assert '<option value="all">All stations</option>' in MAIN
+    assert '<option value="adaptive">Adaptive to zoom</option>' in MAIN
+    assert '<option value="fixed">Fixed size</option>' in MAIN
+    assert "stationPaintForState(state)" in MAIN
     assert "stationFeatureCollection(" in MAIN
     assert "findStationMatch(" in MAIN
     assert "matchingStations(" in MAIN

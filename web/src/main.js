@@ -9,6 +9,7 @@ import {
   normalizeStationQuery,
   polygonPaintForState,
   selectedFeatureCollection,
+  stationPaintForState,
   stationFeatureCollection,
 } from './map-utils.js';
 import {
@@ -64,6 +65,7 @@ const defaults = {
   showStations: true,
   showLabels: true,
   stationSize: 7,
+  stationScaling: 'adaptive',
   stationDisplay: 'relevant',
   economicMetric: 'gdp',
   officeBenchmark: 'core_plus_base',
@@ -179,6 +181,9 @@ if (!basemaps[state.basemap]) state.basemap = defaults.basemap;
 if (!LIMITS.includes(Number(state.limit))) state.limit = defaults.limit;
 if (!['relevant', 'all'].includes(state.stationDisplay)) {
   state.stationDisplay = defaults.stationDisplay;
+}
+if (!['adaptive', 'fixed'].includes(state.stationScaling)) {
+  state.stationScaling = defaults.stationScaling;
 }
 if (!['gdp', 'office'].includes(state.economicMetric)) {
   state.economicMetric = defaults.economicMetric;
@@ -324,6 +329,13 @@ document.querySelector('#app').innerHTML = `
           </select>
         </label>
 
+        <label class="field" for="stationScaling">Station scaling
+          <select id="stationScaling" disabled>
+            <option value="adaptive">Adaptive to zoom</option>
+            <option value="fixed">Fixed size</option>
+          </select>
+        </label>
+
         <fieldset class="layer-controls">
           <legend>Map layers</legend>
           <label class="toggle"><input id="showPoly" type="checkbox"/> Show polygon</label>
@@ -353,7 +365,7 @@ document.querySelector('#app').innerHTML = `
               <input id="width" type="range" min="0" max="8" step="0.5"/>
             </label>
             <label class="field" for="stationSize">
-              <span class="label-line">Station size <output id="stationSizeValue"></output></span>
+              <span class="label-line">Close-zoom station size <output id="stationSizeValue"></output></span>
               <input id="stationSize" type="range" min="3" max="18" step="1"/>
             </label>
           </div>
@@ -693,6 +705,7 @@ function renderState() {
 
   byId('provider').textContent = basemaps[state.basemap].attribution;
   byId('stationDisplay').value = state.stationDisplay;
+  byId('stationScaling').value = state.stationScaling;
   document.documentElement.style.setProperty('--reach-color', state.fill);
 
   if (areas) {
@@ -731,6 +744,7 @@ function setControlValues() {
   });
   byId('basemap').value = state.basemap;
   byId('stationDisplay').value = state.stationDisplay;
+  byId('stationScaling').value = state.stationScaling;
   byId('officeBenchmark').value = state.officeBenchmark;
   updateAppearanceOutputs();
 }
@@ -772,12 +786,13 @@ function applyMapState() {
     'heatmap-opacity',
     state.showOfficeDensity && officeDensityLoadState === 'ready' ? 0.86 : 0,
   );
-  setPaintProperty('station-circle', 'circle-radius', [
-    'case',
-    ['get', 'is_jinke'],
-    state.stationSize + 3,
-    state.stationSize,
-  ]);
+  const stationPaint = stationPaintForState(state);
+  setPaintProperty('station-circle', 'circle-radius', stationPaint.radius);
+  setPaintProperty(
+    'station-circle',
+    'circle-stroke-width',
+    stationPaint.strokeWidth,
+  );
   setPaintProperty(
     'station-circle',
     'circle-opacity',
@@ -791,7 +806,7 @@ function applyMapState() {
   setPaintProperty(
     'station-highlight',
     'circle-radius',
-    state.stationSize + 7,
+    stationPaint.highlightRadius,
   );
 
   if (map.getLayer('station-label')) {
@@ -1275,6 +1290,7 @@ function restoreCustomLayers() {
     source: 'areas',
     paint: { 'line-color': state.outline, 'line-width': state.width },
   });
+  const stationPaint = stationPaintForState(state);
   addLayerOnce({
     id: 'station-circle',
     type: 'circle',
@@ -1296,8 +1312,8 @@ function restoreCustomLayers() {
         '#111827',
         '#ffffff',
       ],
-      'circle-stroke-width': 2,
-      'circle-radius': state.stationSize,
+      'circle-stroke-width': stationPaint.strokeWidth,
+      'circle-radius': stationPaint.radius,
     },
   });
   addLayerOnce({
@@ -1308,7 +1324,7 @@ function restoreCustomLayers() {
       'circle-color': 'rgba(255,255,255,0)',
       'circle-stroke-color': '#f97316',
       'circle-stroke-width': 4,
-      'circle-radius': state.stationSize + 7,
+      'circle-radius': stationPaint.highlightRadius,
     },
   });
   addLayerOnce({
@@ -1484,6 +1500,11 @@ function wireControls() {
 
   byId('stationDisplay').onchange = event => {
     state.stationDisplay = event.target.value;
+    applyMapState();
+  };
+
+  byId('stationScaling').onchange = event => {
+    state.stationScaling = event.target.value;
     applyMapState();
   };
 
@@ -1723,6 +1744,7 @@ Promise.all([
 
       byId('search').disabled = false;
       byId('stationDisplay').disabled = false;
+      byId('stationScaling').disabled = false;
       updateSearchSuggestions();
       renderAbout();
       renderState();

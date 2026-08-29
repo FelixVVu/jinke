@@ -602,6 +602,81 @@ export function polygonPaintForState(state) {
   };
 }
 
+const roundStationSize = value => Math.round(value * 100) / 100;
+
+export function stationPaintForState(state) {
+  const requestedSize = Number(state.stationSize);
+  const stationSize = Number.isFinite(requestedSize)
+    ? Math.max(3, requestedSize)
+    : 7;
+
+  if (state.stationScaling === 'fixed') {
+    return {
+      radius: [
+        'case',
+        ['get', 'is_jinke'],
+        stationSize + 3,
+        stationSize,
+      ],
+      strokeWidth: 2,
+      highlightRadius: stationSize + 7,
+    };
+  }
+
+  const radiusStops = [
+    [7, roundStationSize(Math.max(1.8, stationSize * 0.3)), 1.8, 3.5],
+    [9, roundStationSize(Math.max(2.3, stationSize * 0.38)), 2.05, 4],
+    [11, roundStationSize(Math.max(3.2, stationSize * 0.55)), 2.3, 5],
+    [13, roundStationSize(Math.max(4.6, stationSize * 0.78)), 2.65, 6],
+    [15, stationSize, 3, 7],
+    [18, roundStationSize(stationSize * 1.08), 3.2, 7],
+  ];
+  const radius = [
+    'interpolate',
+    ['linear'],
+    ['zoom'],
+    ...radiusStops.flatMap(([zoom, value, originBoost]) => [
+      zoom,
+      [
+        'case',
+        ['get', 'is_jinke'],
+        roundStationSize(value + originBoost),
+        value,
+      ],
+    ]),
+  ];
+
+  return {
+    radius,
+    strokeWidth: [
+      'interpolate',
+      ['linear'],
+      ['zoom'],
+      7,
+      0.75,
+      9,
+      1,
+      11,
+      1.25,
+      13,
+      1.6,
+      15,
+      2,
+      18,
+      2,
+    ],
+    highlightRadius: [
+      'interpolate',
+      ['linear'],
+      ['zoom'],
+      ...radiusStops.flatMap(([zoom, value, , highlightGap]) => [
+        zoom,
+        roundStationSize(value + highlightGap),
+      ]),
+    ],
+  };
+}
+
 const layerHandlerBindings = new WeakMap();
 
 export function bindLayerHandlerOnce(map, eventName, layerId, handler) {
