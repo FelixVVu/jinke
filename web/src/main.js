@@ -1168,12 +1168,34 @@ function restoreCustomLayers() {
         'Office density: Shanghai 2023 Economic Census controls · JRC built volume · ' +
         '<a href="https://www.openstreetmap.org/copyright">OpenStreetMap contributors</a> (ODbL) · Overture Maps',
     });
+  }
+
+  addLayerOnce({
+    id: 'outside-fill',
+    type: 'fill',
+    source: 'outside-areas',
+    paint: {
+      'fill-antialias': true,
+      'fill-color': state.fill,
+      'fill-opacity': 0,
+    },
+  });
+  addLayerOnce({
+    id: 'reach-fill',
+    type: 'fill',
+    source: 'areas',
+    paint: {
+      'fill-antialias': true,
+      'fill-color': state.fill,
+      'fill-opacity': state.opacity,
+    },
+  });
+  if (officeDensityData) {
     addLayerOnce(
       {
         id: 'office-density-heatmap',
         type: 'heatmap',
         source: 'office-density',
-        maxzoom: 16,
         paint: {
           'heatmap-weight': [
             'interpolate',
@@ -1236,30 +1258,10 @@ function restoreCustomLayers() {
           'heatmap-opacity': state.showOfficeDensity ? 0.86 : 0,
         },
       },
-      'outside-fill',
+      'reach-line',
     );
   }
 
-  addLayerOnce({
-    id: 'outside-fill',
-    type: 'fill',
-    source: 'outside-areas',
-    paint: {
-      'fill-antialias': true,
-      'fill-color': state.fill,
-      'fill-opacity': 0,
-    },
-  });
-  addLayerOnce({
-    id: 'reach-fill',
-    type: 'fill',
-    source: 'areas',
-    paint: {
-      'fill-antialias': true,
-      'fill-color': state.fill,
-      'fill-opacity': state.opacity,
-    },
-  });
   addLayerOnce({
     id: 'reach-line',
     type: 'line',
