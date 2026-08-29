@@ -43,6 +43,14 @@ const runtimeLocationSearchEndpoint = () =>
   typeof window.JINKE_LOCATION_SEARCH_ENDPOINT === 'string'
     ? window.JINKE_LOCATION_SEARCH_ENDPOINT.trim()
     : '';
+const runtimeCartoBasemapKey = () =>
+  typeof window.JINKE_CARTO_BASEMAP_KEY === 'string'
+    ? window.JINKE_CARTO_BASEMAP_KEY.trim()
+    : '';
+const cartoTileUrl = url => {
+  const key = runtimeCartoBasemapKey();
+  return key ? `${url}?key=${encodeURIComponent(key)}` : url;
+};
 
 const defaults = {
   limit: 50,
@@ -97,8 +105,8 @@ const basemaps = {
         'explore',
         'carto-positron',
         [
-          'https://a.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png',
-          'https://b.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png',
+          cartoTileUrl('https://a.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png'),
+          cartoTileUrl('https://b.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png'),
         ],
         cartoAttribution,
       ),
@@ -124,7 +132,7 @@ const basemaps = {
       createRasterStyle(
         'dark',
         'carto-dark-matter',
-        ['https://a.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}.png'],
+        [cartoTileUrl('https://a.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}.png')],
         cartoAttribution,
       ),
   },
@@ -147,10 +155,10 @@ const basemaps = {
         'pastel',
         'carto-voyager',
         [
-          'https://a.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}.png',
-          'https://b.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}.png',
-          'https://c.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}.png',
-          'https://d.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}.png',
+          cartoTileUrl('https://a.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}.png'),
+          cartoTileUrl('https://b.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}.png'),
+          cartoTileUrl('https://c.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}.png'),
+          cartoTileUrl('https://d.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}.png'),
         ],
         cartoAttribution,
       ),
@@ -161,7 +169,7 @@ const basemaps = {
       createRasterStyle(
         'mono',
         'carto-positron-no-labels',
-        ['https://a.basemaps.cartocdn.com/light_nolabels/{z}/{x}/{y}.png'],
+        [cartoTileUrl('https://a.basemaps.cartocdn.com/light_nolabels/{z}/{x}/{y}.png')],
         cartoAttribution,
       ),
   },
@@ -1261,7 +1269,6 @@ function restoreCustomLayers() {
       'reach-line',
     );
   }
-
   addLayerOnce({
     id: 'reach-line',
     type: 'line',
