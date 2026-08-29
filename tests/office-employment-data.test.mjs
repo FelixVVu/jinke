@@ -126,3 +126,18 @@ test('UI layers office heatmap above reach fill and below outline and stations',
   assert.match(mainSource, /reach-office-employment\.json/);
   assert.match(mainSource, /office-density-display\.geojson/);
 });
+
+test('CARTO raster basemaps use the runtime public key', () => {
+  const mainSource = readFileSync(resolve(sourceDirectory, 'main.js'), 'utf8');
+  const keyedCartoUrls = [
+    ...mainSource.matchAll(
+      /cartoTileUrl\('https:\/\/[a-d]\.basemaps\.cartocdn\.com\/[^']+'\)/g,
+    ),
+  ];
+
+  assert.equal(keyedCartoUrls.length, 8);
+  assert.match(mainSource, /window\.JINKE_CARTO_BASEMAP_KEY/);
+  assert.match(mainSource, /\?key=\$\{encodeURIComponent\(key\)\}/);
+  assert.doesNotMatch(mainSource, /cartoTileUrl\('https:\/\/tile\.openstreetmap\.org/);
+  assert.doesNotMatch(mainSource, /cb1_/);
+});
