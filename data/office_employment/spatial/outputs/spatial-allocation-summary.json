@@ -1,8 +1,8 @@
 {
-  "schema_version": 2,
+  "schema_version": 3,
   "reference_date": "2023-12-31",
   "employment_universe": "people employed by Shanghai legal entities at 2023-12-31; individual-business employment excluded",
-  "spatial_scope": "eight audited reach-relevant districts",
+  "spatial_scope": "all 16 Shanghai districts",
   "spatial_scope_districts": [
     "黄浦区",
     "徐汇区",
@@ -11,7 +11,15 @@
     "普陀区",
     "虹口区",
     "杨浦区",
-    "浦东新区"
+    "闵行区",
+    "宝山区",
+    "嘉定区",
+    "浦东新区",
+    "金山区",
+    "松江区",
+    "青浦区",
+    "奉贤区",
+    "崇明区"
   ],
   "city_core_hard_control": 2477585,
   "city_core_plus_control_each_scenario": 3220710,
@@ -218,7 +226,7 @@
   "reach_percentage_calculated": false,
   "production_outputs_modified": false,
   "geometry_is_approximate": true,
-  "approximate_boundary_disclosure": "Ordinary supports inherit audited approximate OSM street/town boundaries; three Pudong census-zone supports use restricted approximate 2020 statistical polygons and are published only as combined non-reconstructive cell totals.",
+  "approximate_boundary_disclosure": "All ordinary fine supports use exact-name OSM relations clipped to approximate parent-district boundaries. Controls without reusable polygons use disclosed district overlays; Minhang and Jinshan use district totals because compatible fine tables were not found. The original eight-district rows and Pudong functional-zone treatment are unchanged.",
   "source_quality": {
     "raw_multipolygon_features_in_bbox": 150496,
     "building_or_office_candidates": 119191,
@@ -277,15 +285,15 @@
     "district_direct_office_baseline": "8faed83a6e6e60bdd66c39dfede17c35dc8e05e5705986823ed9c488143caca1"
   },
   "output_sha256": {
-    "core_grid": "13963900c459f4ff12672c2af52cff66fc4da4f58f68c321ec0bddcfeafb0af0",
-    "core_plus_base_grid": "433acd3ef11fc7570e0e06d5a0fa2da49fecedc1cf65a6b120b3087197ae6abb",
-    "core_plus_sensitivity_grid": "76239b9e0786f86ff0b0e3f6b9e2c0decf2a23b7c7ac29a2ede9881c50ae69af",
-    "core_plus_weighting_sensitivity_grid": "c09fbfd7c3e3b8d4cd8913eecf79f7456dc90ec2ba394134bfff1cfa966027ce",
-    "allocation_diagnostics": "7f9a90d93f6e12452d90633f32213379de365966e436a376af0c8b4729ab066a",
+    "core_grid": "73b173e42e5dfdde73d227c734fe3bccf27b498bc8acc1538b417f689cac9185",
+    "core_plus_base_grid": "a2d7836ae0bfb3f49304dec503dfbb84c40823adbda3d45965684398e0ccb182",
+    "core_plus_sensitivity_grid": "fb595a0a6e5b8c224586dbec13989633ca0b1384838eb5fd235eca56d83e01d9",
+    "core_plus_weighting_sensitivity_grid": "f81be2c09a2781d120063f25e6d4fbe237ca6a764789f4a3934822a2cd73d523",
+    "allocation_diagnostics": "ea3adf210a4c69d3703b6f879a8f4d0ca271eac56a7a2a23884569ba0c395f25",
     "control_shift_comparison": "8d12defe4ae135cb6431cc453f0ac38409400d892e2e0fb86390064119aa1cfa",
     "concentration_comparison": "f57e03273b8670973e569e72560c534a61d658b8cfa40fac3f1a4348d141e212",
-    "control_industry_matrix": "c06956d9ef7bac1e562139028bab10a3c4681736c122249a3d380d8d4992a179",
-    "control_industry_reconciliation": "c0778251050e7e7d701c26da97d5a59afbbf89a9686bfb79730ea214897c409b"
+    "control_industry_matrix": "86c8ef658e7e5f17cfb0384b9fcce130eb93a5dc4e66c72562b0a50178e5d5d3",
+    "control_industry_reconciliation": "ca6509953ab778af6df133a3a596daab427360da271dbd14bc2febc9c2272ae2"
   },
   "cluster_validation": {
     "cluster_count": 7,
@@ -295,5 +303,76 @@
     "validation_radius_m": 1500.0,
     "reach_polygon_used": false,
     "comparison_with_district_direct_retained": true
+  },
+  "all_city_grid_cell_count": 709373,
+  "outer_grid_cell_count": 537140,
+  "all_city_core_allocated_employment": 2477585,
+  "all_city_core_plus_allocated_employment": {
+    "low_office_intensity": 3220710,
+    "base": 3220710,
+    "high_office_intensity": 3220710
+  },
+  "all_city_core_plus_weighting_sensitivity": {
+    "base": 3220710,
+    "building_volume_dominant": 3220710,
+    "workplace_evidence_emphasis": 3220710
+  },
+  "outer_official_fine_control_count": 91,
+  "outer_district_fallback_control_count": 2,
+  "outer_residual_overlay_count": 6,
+  "all_city_accounting_stratum_count": 223,
+  "priority_grid_rows_preserved_without_reallocation": true,
+  "priority_grid_source_sha256_before_extension": {
+    "core": "13963900c459f4ff12672c2af52cff66fc4da4f58f68c321ec0bddcfeafb0af0",
+    "base": "433acd3ef11fc7570e0e06d5a0fa2da49fecedc1cf65a6b120b3087197ae6abb",
+    "composition": "76239b9e0786f86ff0b0e3f6b9e2c0decf2a23b7c7ac29a2ede9881c50ae69af",
+    "weighting": "c09fbfd7c3e3b8d4cd8913eecf79f7456dc90ec2ba394134bfff1cfa966027ce"
+  },
+  "priority_row_content_sha256": {
+    "core": "b91fffeb16fd4278c4036f3f3b7cd92368842c03bd4938b8b2c181e71139c83a",
+    "base": "cd5d43035558293e95a99fa2d58fda591a0da963e07d4175d53ad615579a4f8f",
+    "composition": "48579037b60de88a12db3b2997b967aebd50173d9badcb8f14fda2f2ef16c9f3",
+    "weighting": "15182d1f72388807f5ab4db8a7d90790b1d79c344c55afcdab6380e74822d3e9"
+  },
+  "source_quality_outer_extension": {
+    "input_places": 20738,
+    "outer_workplace_relevant_places": 2937,
+    "outer_cells_with_workplace_places": 2377,
+    "overture_release": "2026-07-22.0",
+    "clipped_places_sha256": "73a2cde80d687e126499012b66b1e50dfe4954ca933fd46c5a3aef0384beaf5f",
+    "raw_multipolygon_features_in_bbox": 205984,
+    "building_or_office_candidates": 156714,
+    "classified_workplace_buildings_before_scope_filter": 18019,
+    "invalid_or_empty_classified_geometries_before_repair": 76,
+    "invalid_or_empty_classified_geometries_after_repair": 0,
+    "classified_workplace_buildings_in_priority_scope": 7621,
+    "classified_building_cell_intersections": 19935,
+    "cells_with_building_function_evidence": 11349,
+    "office_establishment_anchors_in_source_bbox": 797,
+    "office_establishment_anchors_matched_to_grid": 363,
+    "cells_with_office_establishment_anchors": 308,
+    "known_building_levels_share_of_classified_features": 0.0427765385120063,
+    "building_levels_used_in_allocation": false,
+    "building_function_counts": {
+      "office_business": 1813,
+      "research_technical": 1020,
+      "industrial_logistics": 3356,
+      "retail_hospitality": 855,
+      "health_public": 305,
+      "other_nonres": 272
+    },
+    "building_function_footprint_m2": {
+      "office_business": 5417307.995085688,
+      "research_technical": 2357898.5885166847,
+      "industrial_logistics": 11828823.793626204,
+      "retail_hospitality": 4291242.465082917,
+      "health_public": 789588.4755233311,
+      "other_nonres": 1942346.619635338
+    },
+    "osm_source_sha256": "0b307452336c5984f1a894cc514e5d67663cee8d5eca55c0b1b4cb1505e44319",
+    "osm_source_snapshot_date": "2026-08-30",
+    "outer_support_record_count": 2005828,
+    "outer_accounting_control_count": 99,
+    "outer_controls_with_district_overlay": 14
   }
 }

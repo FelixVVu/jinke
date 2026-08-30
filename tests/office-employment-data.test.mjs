@@ -81,11 +81,12 @@ test('Core+ definition and methodology retain the approved disclosure', () => {
 
 test('office-density display is lightweight, visual-only, and valid', () => {
   officeModule.validateOfficeDensityPayload(density, methodology);
-  assert.equal(density.features.length, 4_989);
+  assert.equal(density.features.length, 12_261);
   assert.equal(density.metadata.aggregation_metres, 400);
-  assert.ok(density.metadata.retained_share_of_priority_district_grid > 0.999);
-  assert.ok(statSync(densityPath).size < 650_000);
-  assert.ok(gzipSync(readFileSync(densityPath)).length < 125_000);
+  assert.equal(density.metadata.analytical_all_city_jobs, 3_220_710);
+  assert.ok(density.metadata.retained_share_of_all_city_grid > 0.998);
+  assert.ok(statSync(densityPath).size < 1_500_000);
+  assert.ok(gzipSync(readFileSync(densityPath)).length < 175_000);
 
   const shippedFiles = readdirSync(dataDirectory).map(name => name.toLowerCase());
   assert.equal(shippedFiles.some(name => name.endsWith('.parquet')), false);

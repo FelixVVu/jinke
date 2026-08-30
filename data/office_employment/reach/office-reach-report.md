@@ -1,4 +1,4 @@
-# Jinke office-employment reach benchmark
+# Jinke office-employment reach benchmark — all-city extension
 
 ## Primary result
 
@@ -6,9 +6,9 @@
 
 **Core+ Base office employment within 50 minutes: 1,212,067 (37.63%)**
 
-Core denominator: **2,477,585**. Core+ denominator: **3,220,710**. Both cover 2023 secondary- and tertiary-sector legal-entity workplace employment; individual-business employment is excluded.
+The extension changes the previous eight-district Core+ numerator by **0.000000 jobs (0.000000000 percentage points)**. All 16 districts now have spatial grids. The exact Minhang overlap is 2,915.16 m² across 3 clipped cells; those cells contain 0.000000 allocated Core+ jobs.
 
-The calculation uses the exact committed production polygons and exact clipped-cell intersection area divided by clipped cell area. It does not read the heatmap, smooth the grid, fit a model, or target a prior expectation.
+Reach statistics use the committed unsmoothed 100 m grid and exact clipped-cell intersections. The rendered heatmap is never used for calculation.
 
 ## Results by reach and scenario
 
@@ -47,7 +47,7 @@ The calculation uses the exact committed production polygons and exact clipped-c
 
 ## Separate 50-minute sensitivities
 
-These dimensions are not added and are not a statistical confidence interval.
+These dimensions remain separate and are not a statistical confidence interval.
 
 | Dimension | Lower | Central | Upper | Minus | Plus |
 |---|---:|---:|---:|---:|---:|
@@ -58,28 +58,26 @@ These dimensions are not added and are not a statistical confidence interval.
 | Reach-edge ±100 m sensitivity | 35.427% | 37.634% | 39.571% | -2.207 pp | +1.937 pp |
 | Census rounding sensitivity | 37.589% | 37.634% | 37.728% | -0.045 pp | +0.094 pp |
 
-The Pudong reported-area morphology interpretation changes the selected-support result by +0.142 percentage points. This is a morphology diagnostic, not an official census-zone boundary.
-
 ## 50-minute district contribution
 
-| District | Core inside | Core captured | Core+ inside | Core+ captured | Core+ numerator contribution |
-|---|---:|---:|---:|---:|---:|
-| 黄浦区 | 157,880 | 99.44% | 232,076 | 99.44% | 19.15% |
-| 徐汇区 | 73,472 | 28.39% | 90,664 | 28.50% | 7.48% |
-| 长宁区 | 33,466 | 31.84% | 46,975 | 32.05% | 3.88% |
-| 静安区 | 118,038 | 60.74% | 175,135 | 61.75% | 14.45% |
-| 普陀区 | 7,295 | 7.23% | 9,959 | 7.36% | 0.82% |
-| 虹口区 | 48,245 | 67.88% | 62,601 | 67.88% | 5.16% |
-| 杨浦区 | 66,270 | 45.09% | 76,061 | 45.15% | 6.28% |
-| 闵行区 | 0 | 0.00% | 0 | 0.00% | 0.00% |
-| 宝山区 | 0 | 0.00% | 0 | 0.00% | 0.00% |
-| 嘉定区 | 0 | 0.00% | 0 | 0.00% | 0.00% |
-| 浦东新区 | 441,165 | 54.00% | 518,595 | 54.09% | 42.79% |
-| 金山区 | 0 | 0.00% | 0 | 0.00% | 0.00% |
-| 松江区 | 0 | 0.00% | 0 | 0.00% | 0.00% |
-| 青浦区 | 0 | 0.00% | 0 | 0.00% | 0.00% |
-| 奉贤区 | 0 | 0.00% | 0 | 0.00% | 0.00% |
-| 崇明区 | 0 | 0.00% | 0 | 0.00% | 0.00% |
+| District | Core inside | Core captured | Core+ inside | Core+ captured | Core+ contribution | Grid available |
+|---|---:|---:|---:|---:|---:|---|
+| 黄浦区 | 157,880 | 99.44% | 232,076 | 99.44% | 19.15% | yes |
+| 徐汇区 | 73,472 | 28.39% | 90,664 | 28.50% | 7.48% | yes |
+| 长宁区 | 33,466 | 31.84% | 46,975 | 32.05% | 3.88% | yes |
+| 静安区 | 118,038 | 60.74% | 175,135 | 61.75% | 14.45% | yes |
+| 普陀区 | 7,295 | 7.23% | 9,959 | 7.36% | 0.82% | yes |
+| 虹口区 | 48,245 | 67.88% | 62,601 | 67.88% | 5.16% | yes |
+| 杨浦区 | 66,270 | 45.09% | 76,061 | 45.15% | 6.28% | yes |
+| 闵行区 | 0 | 0.00% | 0 | 0.00% | 0.00% | yes |
+| 宝山区 | 0 | 0.00% | 0 | 0.00% | 0.00% | yes |
+| 嘉定区 | 0 | 0.00% | 0 | 0.00% | 0.00% | yes |
+| 浦东新区 | 441,165 | 54.00% | 518,595 | 54.09% | 42.79% | yes |
+| 金山区 | 0 | 0.00% | 0 | 0.00% | 0.00% | yes |
+| 松江区 | 0 | 0.00% | 0 | 0.00% | 0.00% | yes |
+| 青浦区 | 0 | 0.00% | 0 | 0.00% | 0.00% | yes |
+| 奉贤区 | 0 | 0.00% | 0 | 0.00% | 0.00% | yes |
+| 崇明区 | 0 | 0.00% | 0 | 0.00% | 0.00% | yes |
 
 ## 50-minute industry contribution
 
@@ -95,7 +93,7 @@ The Pudong reported-area morphology interpretation changes the selected-support 
 
 ## Top fine controls in the 50-minute Core+ Base numerator
 
-| Rank | District | Control | Type | Core+ control | Inside | Captured | Numerator contribution |
+| Rank | District | Control | Type | Core+ control | Inside | Captured | Contribution |
 |---:|---|---|---|---:|---:|---:|---:|
 | 1 | 浦东新区 | 张江高科技园区 | functional_zone | 156,179 | 155,923 | 99.84% | 12.86% |
 | 2 | 浦东新区 | 陆家嘴街道 | street | 66,850 | 66,813 | 99.95% | 5.51% |
@@ -118,20 +116,10 @@ The Pudong reported-area morphology interpretation changes the selected-support 
 | 19 | 静安区 | 北站街道 | street | 16,066 | 16,066 | 100.00% | 1.33% |
 | 20 | 杨浦区 | 大桥街道 | street | 22,985 | 16,022 | 69.71% | 1.32% |
 
-## Comparison with existing benchmarks
+## Interpretation
 
-- Core+ Base office share: **37.634%**
-- Existing all-employment share: **28.178%**
-- Existing GDP share: **21.622%**
-- Office share / all-employment share: **1.336×**
-- Office share / GDP share: **1.741×**
-
-The larger office share is consistent with office-oriented industries being more spatially concentrated in the central and major business/technology clusters than total legal-entity employment. It does not validate either benchmark through comparison alone.
-
-## Decision classification
+The unchanged headline is an observed consequence, not an imposed constraint: among the newly allocated districts, only Minhang intersects the 50-minute polygon, and only as the previously documented 2,915 m² topology sliver. Its three intersected cells carry zero allocated office employment under every committed scenario.
 
 **USABLE WITH CAUTION**
 
-The benchmark has exact city denominators, exact district-industry controls, hard fine-geographic totals, deterministic within-control allocation, exact partial-cell geometry, and stable declared weighting alternatives. Caution remains necessary because control×industry composition is synthetic, selected division-72 district composition is partly modelled, ordinary boundaries are approximate, residual locations are not directly observed, and Pudong functional-zone scopes remain uncertain.
-
-No Site, GDP, all-employment, or production-reach output was modified. This report does not constitute a confidence interval.
+The original eight-district analytical rows are unchanged. GDP, all-employment, production reach, stations, search, basemaps, and Site source were not modified.

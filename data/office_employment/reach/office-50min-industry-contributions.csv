@@ -1,8 +1,8 @@
-industry_code,industry_name,control_status,exact_or_constrained_city_employment,priority_grid_employment,employment_inside_50min,percentage_of_city_industry_employment_captured,contribution_to_core_plus_base_numerator_percentage
-I,"Information transmission, software and IT services",official district-by-industry employment,1058551,813826,384400.5082391543,36.313839223538054,31.714467862303497
-J,Financial services,official district-by-industry employment,546845,503197,295380.1010212722,54.01532445597421,24.36995404588518
-M,Scientific research and technical services,official district-by-industry employment,872189,535952,266050.93170920317,30.50381645597493,21.95018878117077
-721,Organization management services,official city subgroup; district composition modelled,228288,148504,81790.08115724196,35.82758671381849,6.747985095541901
-723,Legal services,official city subgroup; district composition modelled,50311,32728,18213.410237329444,36.20164623507671,1.5026739071722643
-724,Consulting and investigation,official city subgroup; district composition modelled,363868,236699,129979.07888297169,35.721492102348016,10.72375616486226
-725,Advertising,official city subgroup; district composition modelled,100658,65478,36252.601989598916,36.01561921516314,2.990974143064115
+industry_code,industry_name,control_status,exact_or_constrained_city_employment,all_city_grid_employment,employment_inside_50min,percentage_of_city_industry_employment_captured,contribution_to_core_plus_base_numerator_percentage
+I,"Information transmission, software and IT services",official district-by-industry employment,1058551,1058551,384400.5082391543,36.313839223538054,31.714467862303497
+J,Financial services,official district-by-industry employment,546845,546845,295380.1010212722,54.01532445597421,24.36995404588518
+M,Scientific research and technical services,official district-by-industry employment,872189,872189,266050.93170920317,30.50381645597493,21.95018878117077
+721,Organization management services,official city subgroup; district composition modelled,228288,228288,81790.08115724196,35.82758671381849,6.747985095541901
+723,Legal services,official city subgroup; district composition modelled,50311,50311,18213.410237329444,36.20164623507671,1.5026739071722643
+724,Consulting and investigation,official city subgroup; district composition modelled,363868,363868,129979.07888297169,35.721492102348016,10.72375616486226
+725,Advertising,official city subgroup; district composition modelled,100658,100658,36252.601989598916,36.01561921516314,2.990974143064115

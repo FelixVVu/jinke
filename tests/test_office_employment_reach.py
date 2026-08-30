@@ -36,7 +36,7 @@ REACH_SUMMARY_SHA256 = (
     "f505b28a82b6d91f862d03cdbe306b3f7ff87d31965e3d07c5948d146f523c5a"
 )
 INDUSTRY_NUMERIC_PROJECTION_SHA256 = (
-    "68e7c9cf816e8e1b11f7025d47450839f0cd4837c894f7fdf9fd6a2872716623"
+    "03aceb1aeb0e49135e1d624fc1e0bac85fda6898a0a409803704730dd1114e52"
 )
 
 PROTECTED_SHA256 = {
@@ -199,8 +199,8 @@ def test_fifty_minute_contributions_reconcile_to_core_plus_base():
     assert int(industry["exact_or_constrained_city_employment"].sum()) == 3_220_710
     assert np.isclose(industry["employment_inside_50min"].sum(), central, atol=1e-6)
 
-    assert len(fine) == 116
-    assert len(residual) == 8
+    assert len(fine) == 209
+    assert len(residual) == 14
     assert fine["accounting_stratum_id"].is_unique
     assert residual["accounting_stratum_id"].is_unique
     assert not set(fine["accounting_stratum_id"]) & set(residual["accounting_stratum_id"])
@@ -212,7 +212,7 @@ def test_fifty_minute_contributions_reconcile_to_core_plus_base():
     )
     top = fine.sort_values("fine_control_rank").iloc[0]
     assert top["control_name"] == "张江高科技园区"
-    assert top["accounting_stratum_id"] == 310115503000
+    assert top["accounting_stratum_id"] == "310115503000"
 
 
 def test_six_uncertainty_dimensions_remain_separate_and_bounded():
@@ -257,7 +257,11 @@ def test_methodology_declares_exact_geometry_no_refit_and_cautious_classificatio
     assert analysis["grid_smoothed"] is False
     assert analysis["rendered_heatmap_used"] is False
     assert analysis["spatial_model_refit"] is False
-    assert analysis["spatial_grids_regenerated"] is False
+    assert analysis["spatial_grids_regenerated"] is True
+    assert analysis["only_previously_missing_outer_districts_allocated"] is True
+    assert analysis["priority_district_rows_preserved_exactly"] is True
+    assert analysis["spatial_scope"] == "all 16 Shanghai districts"
+    assert analysis["grid_cell_count"] == 709_373
     assert analysis["partial_cell_method"] == "area(cell intersection reach) / clipped cell_area_m2"
     assert methodology["uncertainty_dimensions_are_separate"] is True
     assert methodology["uncertainty_is_statistical_confidence_interval"] is False
@@ -265,6 +269,10 @@ def test_methodology_declares_exact_geometry_no_refit_and_cautious_classificatio
     assert methodology["site_modified"] is False
     assert methodology["gdp_modified"] is False
     assert methodology["existing_all_employment_outputs_modified"] is False
+    assert methodology["all_16_districts_spatial_grid_available"] is True
+    assert methodology["minhang_technical_sliver"]["intersected_clipped_cells"] == 3
+    assert methodology["minhang_technical_sliver"]["core_plus_base_employment_inside"] == 0
+    assert methodology["change_from_priority_only_50min"] == 0
 
 
 def test_partial_cell_fraction_uses_intersection_over_clipped_cell_area():

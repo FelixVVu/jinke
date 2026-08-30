@@ -22,8 +22,8 @@ from pyproj import Transformer
 SOURCE_COMMIT = "7b88f7fc8d81a52daebcd19ddc68df90bee4c6c5"
 EXPECTED_HASHES = {
     "reach_summary": "f505b28a82b6d91f862d03cdbe306b3f7ff87d31965e3d07c5948d146f523c5a",
-    "reach_methodology": "2c228e241e5685018d80605d31cfc8da882d403253c052cc9ebe932ebe44898b",
-    "core_plus_grid": "433acd3ef11fc7570e0e06d5a0fa2da49fecedc1cf65a6b120b3087197ae6abb",
+    "reach_methodology": "5adcbfea90ddcd336c44013ebe5bbf23d338762f3f7a9d8507e79ae5f6bf461f",
+    "core_plus_grid": "a2d7836ae0bfb3f49304dec503dfbb84c40823adbda3d45965684398e0ccb182",
     "cluster_validation": "25d538a5eab6a40ad094c17b4d0bd496996d22088b9f6106fcd8163c403b8fb3",
 }
 DENOMINATORS = {"core": 2_477_585, "core_plus_base": 3_220_710}
@@ -137,14 +137,14 @@ def build_reach_data(summary_path: Path) -> dict:
 def build_density(grid_path: Path, clusters_path: Path) -> tuple[dict, dict]:
     columns = ["center_x", "center_y", "cell_employment_core_plus_base"]
     grid = pd.read_parquet(grid_path, columns=columns)
-    if len(grid) != 172_233:
+    if len(grid) != 709_373:
         raise ValueError(f"Unexpected analytical cell count: {len(grid)}")
     if (grid["cell_employment_core_plus_base"] < 0).any():
         raise ValueError("Negative Core+ employment in analytical grid")
 
     analytical_total = float(grid["cell_employment_core_plus_base"].sum())
-    if not math.isclose(analytical_total, 2_336_384, rel_tol=0, abs_tol=1e-6):
-        raise ValueError(f"Priority-district Core+ grid total changed: {analytical_total}")
+    if not math.isclose(analytical_total, 3_220_710, rel_tol=0, abs_tol=1e-6):
+        raise ValueError(f"All-city Core+ grid total changed: {analytical_total}")
 
     size = DISPLAY_AGGREGATION_METRES
     positive = grid[grid["cell_employment_core_plus_base"] > 0].copy()
@@ -160,7 +160,7 @@ def build_density(grid_path: Path, clusters_path: Path) -> tuple[dict, dict]:
     displayed = aggregated[aggregated["jobs"] > DISPLAY_MINIMUM_JOBS].copy()
     displayed_total = float(displayed["jobs"].sum())
     retained_share = displayed_total / analytical_total
-    if len(displayed) > 5_000 or retained_share < 0.999:
+    if len(displayed) > 15_000 or retained_share < 0.998:
         raise ValueError(
             f"Display trade-off failed: {len(displayed)} features, {retained_share:.8%} retained"
         )
@@ -223,9 +223,9 @@ def build_density(grid_path: Path, clusters_path: Path) -> tuple[dict, dict]:
         "aggregation_metres": size,
         "smoothing": "MapLibre heatmap kernel at render time",
         "minimum_aggregated_jobs_exclusive": DISPLAY_MINIMUM_JOBS,
-        "analytical_priority_district_jobs": analytical_total,
-        "displayed_priority_district_jobs_before_rounding": displayed_total,
-        "retained_share_of_priority_district_grid": retained_share,
+        "analytical_all_city_jobs": analytical_total,
+        "displayed_all_city_jobs_before_rounding": displayed_total,
+        "retained_share_of_all_city_grid": retained_share,
         "feature_count": len(features),
         "statistics_source": "reach-office-employment.json from unsmoothed 100 m exact-area intersections",
         "disclosure": REQUIRED_DISCLOSURE,
@@ -300,11 +300,9 @@ def build_methodology(reach_method_path: Path, density_diagnostics: dict) -> dic
             "rendered_heatmap_used": False,
         },
         "density_display": density_diagnostics,
-        "priority_district_display_scope": [
-            "Huangpu", "Xuhui", "Changning", "Jing'an", "Putuo", "Hongkou", "Yangpu", "Pudong"
-        ],
-        "priority_district_scope_note": "The display grid covers the eight audited reach-relevant districts; percentages use the exact all-Shanghai denominator.",
-        "approximate_boundary_disclosure": "Fine controls use approximate OSM boundaries; Pudong functional-zone supports use approximate 2020 statistical polygons.",
+        "display_scope": "all 16 Shanghai districts",
+        "priority_district_scope_note": "The analytical and display grids cover all 16 Shanghai districts; percentages use the exact all-Shanghai denominator.",
+        "approximate_boundary_disclosure": "Fine controls use approximate OSM boundaries or disclosed district overlays; Pudong functional-zone supports use approximate 2020 statistical polygons. Minhang and Jinshan use district controls because compatible fine tables were unavailable.",
         "required_disclosure": REQUIRED_DISCLOSURE,
         "source_hashes": EXPECTED_HASHES,
     }
@@ -344,7 +342,7 @@ def main() -> None:
             {
                 "reach_records": sum(len(item["records"]) for item in reach_data["benchmarks"].values()),
                 "density_features": density_diagnostics["feature_count"],
-                "density_retained_share": density_diagnostics["retained_share_of_priority_district_grid"],
+                "density_retained_share": density_diagnostics["retained_share_of_all_city_grid"],
                 "output_sha256": {
                     "reach": sha256(args.reach_output),
                     "methodology": sha256(args.methodology_output),

@@ -394,10 +394,13 @@ def _building_function(row: pd.Series) -> str | None:
 def extract_building_evidence(
     osm_pbf_path: Path,
     cells: gpd.GeoDataFrame,
+    *,
+    expected_sha256: str = OSM_BUILDING_SHA256,
+    source_snapshot_date: str = OSM_BUILDING_SNAPSHOT_DATE,
 ) -> tuple[pd.DataFrame, dict[str, Any]]:
     """Aggregate OSM building function and office tags to physical 100 m cells."""
 
-    _require_hash(osm_pbf_path, OSM_BUILDING_SHA256, "OSM building snapshot")
+    _require_hash(osm_pbf_path, expected_sha256, "OSM building snapshot")
     bbox = tuple(float(value) for value in cells.to_crs("EPSG:4326").total_bounds)
     columns = [
         "osm_id",
@@ -541,8 +544,8 @@ def extract_building_evidence(
         "building_function_footprint_m2": {
             key: float(value) for key, value in function_area.items()
         },
-        "osm_source_sha256": OSM_BUILDING_SHA256,
-        "osm_source_snapshot_date": OSM_BUILDING_SNAPSHOT_DATE,
+        "osm_source_sha256": expected_sha256,
+        "osm_source_snapshot_date": source_snapshot_date,
     }
     return evidence, quality
 

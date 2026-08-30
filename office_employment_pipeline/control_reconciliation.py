@@ -6,8 +6,8 @@ employment.  This module constructs the otherwise unobserved contingency table
 with a maximum-entropy (independence-prior RAS/IPF) reconciliation.  An explicit
 OTHER column closes the all-industry row margins.
 
-Eight audited residual strata are retained as separate rows so the matrix grand
-total remains the exact district total.  Where a bulletin explicitly identifies
+Audited residual strata are retained as separate rows so the matrix grand total
+remains the exact district total.  Where a bulletin explicitly identifies
 the residual as finance (or finance plus construction), the finance assignment
 is fixed before IPF instead of being spread back into street/town controls.
 """
@@ -204,19 +204,28 @@ def construct_control_industry_matrix(
     residual = residual_strata.loc[
         residual_strata["district"].isin(priority_districts)
     ].copy()
-    if len(fine) != 116 or fine["accounting_stratum_id"].duplicated().any():
-        raise ValueError("Expected exactly 116 unique fine accounting strata.")
-    if len(residual) != 8 or residual["residual_id"].duplicated().any():
-        raise ValueError("Expected exactly eight district residual strata.")
+    if fine.empty or fine["accounting_stratum_id"].duplicated().any():
+        raise ValueError("Fine accounting strata must be non-empty and unique.")
+    if residual["residual_id"].duplicated().any():
+        raise ValueError("District residual strata must be unique.")
 
     records: list[dict[str, Any]] = []
     diagnostics: list[dict[str, Any]] = []
     for scenario in SCENARIOS:
         for district in priority_districts:
             district_fine = fine.loc[fine["district"].eq(district)].copy()
-            district_residual = residual.loc[residual["district"].eq(district)].iloc[0]
+            district_residuals = residual.loc[residual["district"].eq(district)]
+            if len(district_residuals) > 1:
+                raise ValueError(f"Expected at most one residual stratum for {district}.")
+            district_residual = (
+                district_residuals.iloc[0] if len(district_residuals) else None
+            )
             fine_total = int(district_fine["employment_reconciled"].sum())
-            residual_total = int(district_residual["employment_nominal"])
+            residual_total = (
+                int(district_residual["employment_nominal"])
+                if district_residual is not None
+                else 0
+            )
             district_total = fine_total + residual_total
             targets = _district_column_targets(
                 district,
@@ -226,8 +235,9 @@ def construct_control_industry_matrix(
                 subgroup_scenarios,
             )
 
-            residual_is_fixed = (
-                district_residual["residual_class"]
+            residual_is_fixed = bool(
+                district_residual is not None
+                and district_residual["residual_class"]
                 in FINANCE_TIED_RESIDUAL_CLASSES
             )
             fixed_residual = {code: 0 for code in MATRIX_CODES}
@@ -238,7 +248,7 @@ def construct_control_industry_matrix(
                 active_row_targets = active_rows["employment_reconciled"].to_numpy(
                     dtype=np.int64
                 )
-            else:
+            elif district_residual is not None:
                 residual_row = {
                     "district": district,
                     "accounting_stratum_id": district_residual["residual_id"],
@@ -250,6 +260,11 @@ def construct_control_industry_matrix(
                 active_rows = pd.concat(
                     [district_fine, pd.DataFrame([residual_row])], ignore_index=True
                 )
+                active_row_targets = active_rows["employment_reconciled"].to_numpy(
+                    dtype=np.int64
+                )
+            else:
+                active_rows = district_fine
                 active_row_targets = active_rows["employment_reconciled"].to_numpy(
                     dtype=np.int64
                 )
@@ -275,7 +290,10 @@ def construct_control_industry_matrix(
 
             for row_index, row in active_rows.reset_index(drop=True).iterrows():
                 stratum_id = str(row["accounting_stratum_id"])
-                is_residual = stratum_id == str(district_residual["residual_id"])
+                is_residual = bool(
+                    district_residual is not None
+                    and stratum_id == str(district_residual["residual_id"])
+                )
                 for column_index, code in enumerate(MATRIX_CODES):
                     records.append(
                         {
@@ -284,7 +302,10 @@ def construct_control_industry_matrix(
                             "accounting_stratum_id": stratum_id,
                             "control_name": row["official_control_name_2023"],
                             "control_type": "residual" if is_residual else row["control_type"],
-                            "row_is_official_fine_control": not is_residual,
+                            "row_is_official_fine_control": bool(
+                                row.get("row_is_official_fine_control", True)
+                            )
+                            and not is_residual,
                             "official_row_total_employment": int(
                                 row["employment_reconciled"]
                             ),
@@ -316,7 +337,7 @@ def construct_control_industry_matrix(
                         }
                     )
 
-            if residual_is_fixed:
+            if residual_is_fixed and district_residual is not None:
                 for code in MATRIX_CODES:
                     records.append(
                         {
@@ -360,13 +381,21 @@ def construct_control_industry_matrix(
                     "fine_control_employment": fine_total,
                     "residual_employment": residual_total,
                     "district_total_employment": district_total,
-                    "residual_class": district_residual["residual_class"],
+                    "residual_class": (
+                        district_residual["residual_class"]
+                        if district_residual is not None
+                        else "none"
+                    ),
                     "residual_finance_fixed_employment": fixed_residual["J"],
                     "residual_other_fixed_employment": fixed_residual["OTHER"],
                     "residual_composition_method": (
                         "bulletin-compatible finance assignment"
                         if residual_is_fixed
-                        else "maximum-entropy district composition"
+                        else (
+                            "maximum-entropy district composition"
+                            if district_residual is not None
+                            else "no residual stratum"
+                        )
                     ),
                     "ipf_iterations": fitted.iterations,
                     "ipf_maximum_margin_error": fitted.maximum_margin_error,
