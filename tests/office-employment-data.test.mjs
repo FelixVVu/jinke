@@ -134,6 +134,11 @@ test('UI layers office heatmap above reach fill and below outline and stations',
   assert.match(mainSource, /Show office workplace density/);
   assert.match(mainSource, /data-limit="\$\{limit\}"/);
   assert.match(mainSource, /All reach contours · 10–50 minutes/);
+  assert.match(
+    mainSource,
+    /id="allReachLegend" class="all-reach-key"[^>]*hidden/,
+  );
+  assert.match(mainSource, /10 min darkest → 50 min lightest/);
   assert.match(mainSource, /reach-office-employment\.json/);
   assert.match(mainSource, /office-density-display\.geojson/);
 });

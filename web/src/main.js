@@ -263,6 +263,18 @@ document.querySelector('#app').innerHTML = `
             }" aria-pressed="false">${limit === 'all' ? 'All' : limit}</button>`,
         ).join('')}
       </div>
+      <div id="allReachLegend" class="all-reach-key" aria-label="All reach time bands" hidden>
+        <div class="all-reach-key-header">
+          <strong>Reach bands</strong>
+          <span>10 min darkest → 50 min lightest</span>
+        </div>
+        <div class="time-band-scale">
+          ${ALL_REACH_BANDS.map(
+            band =>
+              `<span class="time-band-item"><span class="time-band-swatch" style="background:${band.legendFill};border-color:${band.borderColor};border-width:${band.borderWidth}px"></span><span>${band.start}–${band.end}${band.end === 50 ? ' min' : ''}</span></span>`,
+          ).join('')}
+        </div>
+      </div>
       <div id="panelControls" class="panel-controls">
         <p class="journey-note">
           Total time = transit time from 金科路 + remaining walking time.
@@ -394,15 +406,6 @@ document.querySelector('#app').innerHTML = `
             <li><span class="legend-mark boundary"></span><span><strong>White</strong> — boundary station</span></li>
             <li><span class="legend-mark outside"></span><span><strong>Gray</strong> — outside selected time</span></li>
             <li id="singleReachLegend"><span class="legend-mark area"></span><span><strong>Turquoise area</strong> — reachable area</span></li>
-            <li id="allReachLegend" class="all-reach-legend" hidden>
-              <span class="all-reach-legend-title"><strong>Reach bands</strong> — darker means closer</span>
-              <span class="time-band-scale">
-                ${ALL_REACH_BANDS.map(
-                  band =>
-                    `<span class="time-band-item"><span class="time-band-swatch" style="background:${band.legendFill};border-color:${band.borderColor}"></span><span>${band.label}</span></span>`,
-                ).join('')}
-              </span>
-            </li>
             <li id="officeDensityLegend" hidden><span class="legend-mark office-density"></span><span><strong>Purple glow</strong> — modelled office workplace density</span></li>
           </ul>
         </details>
@@ -843,12 +846,14 @@ function applyMapState() {
   setPaintProperty(
     'all-reach-outer-boundary',
     'line-width',
-    showAllContours ? 3 : 0,
+    showAllContours
+      ? ALL_REACH_BANDS[ALL_REACH_BANDS.length - 1].borderWidth
+      : 0,
   );
   setPaintProperty(
     'all-reach-outer-boundary',
     'line-opacity',
-    showAllContours ? 0.96 : 0,
+    showAllContours ? 1 : 0,
   );
   setPaintProperty(
     'office-density-heatmap',
@@ -1385,7 +1390,7 @@ function restoreCustomLayers() {
     type: 'line',
     source: 'reach-contours',
     paint: {
-      'line-color': contourStyleExpression('borderColor', '#72c1ba'),
+      'line-color': contourStyleExpression('borderColor', '#91d6d2'),
       'line-width': 0,
       'line-opacity': 0,
     },

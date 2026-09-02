@@ -458,7 +458,19 @@ test('All reach view derives five non-overlapping nested bands', () => {
   );
   assert.deepEqual(
     ALL_REACH_BANDS.map(band => band.fillOpacity),
-    [0.1, 0.085, 0.07, 0.055, 0.04],
+    [0.07, 0.06, 0.05, 0.04, 0.03],
+  );
+  assert.deepEqual(
+    ALL_REACH_BANDS.map(band => band.borderWidth),
+    [2.4, 2.1, 1.8, 1.6, 1.9],
+  );
+  assert.deepEqual(
+    ALL_REACH_BANDS.map(band => band.borderColor),
+    ['#004f54', '#0a7075', '#218e8e', '#55b4ae', '#91d6d2'],
+  );
+  assert.deepEqual(
+    ALL_REACH_BANDS.map(band => band.fillColor),
+    ['#006f73', '#138a8c', '#2fa3a0', '#6bc6bf', '#b9e8e4'],
   );
   assert.deepEqual(bandStyleExpression('fillOpacity', 0).slice(0, 2), [
     'match',
