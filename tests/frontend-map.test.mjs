@@ -32,6 +32,14 @@ import {
   methodologyText,
   validateEconomyPayload,
 } from '../web/src/economy.js';
+import '../web/src/vendor/polygon-clipping.umd.min.js';
+import {
+  ALL_REACH_BANDS,
+  bandStyleExpression,
+  buildReachBandCollection,
+  buildReachBandView,
+  contourStyleExpression,
+} from '../web/src/reach-bands.js';
 
 const reachEconomy = JSON.parse(
   readFileSync(
@@ -388,6 +396,78 @@ test('limit selection updates both normal and inverse collections', () => {
     selectedFeatureCollection(collection, 20).features[0].properties.limit,
     20,
   );
+});
+
+
+test('All reach view derives five non-overlapping nested bands', () => {
+  const square = (limit, radius) => ({
+    type: 'Feature',
+    properties: { limit },
+    geometry: {
+      type: 'Polygon',
+      coordinates: [[
+        [-radius, -radius],
+        [radius, -radius],
+        [radius, radius],
+        [-radius, radius],
+        [-radius, -radius],
+      ]],
+    },
+  });
+  const collection = {
+    type: 'FeatureCollection',
+    features: [
+      square(10, 1),
+      square(20, 2),
+      square(30, 3),
+      square(40, 4),
+      square(50, 5),
+    ],
+  };
+  const before = JSON.stringify(collection);
+  const view = buildReachBandView(collection);
+  const bands = buildReachBandCollection(collection);
+  const ringArea = ring => Math.abs(
+    ring.reduce((sum, point, index) => {
+      const next = ring[(index + 1) % ring.length];
+      return sum + point[0] * next[1] - next[0] * point[1];
+    }, 0) / 2,
+  );
+  const multiPolygonArea = coordinates => coordinates.reduce(
+    (total, polygon) =>
+      total + ringArea(polygon[0]) - polygon.slice(1).reduce(
+        (holes, ring) => holes + ringArea(ring),
+        0,
+      ),
+    0,
+  );
+
+  assert.equal(JSON.stringify(collection), before);
+  assert.equal(bands.features.length, 5);
+  assert.deepEqual(
+    view.contours.features.map(feature => feature.properties.limit),
+    [10, 20, 30, 40, 50],
+  );
+  assert.deepEqual(
+    bands.features.map(feature => feature.properties.band_label),
+    ['0–10 min', '10–20 min', '20–30 min', '30–40 min', '40–50 min'],
+  );
+  assert.deepEqual(
+    bands.features.map(feature => multiPolygonArea(feature.geometry.coordinates)),
+    [4, 12, 20, 28, 36],
+  );
+  assert.deepEqual(
+    ALL_REACH_BANDS.map(band => band.fillOpacity),
+    [0.1, 0.085, 0.07, 0.055, 0.04],
+  );
+  assert.deepEqual(bandStyleExpression('fillOpacity', 0).slice(0, 2), [
+    'match',
+    ['get', 'band_end'],
+  ]);
+  assert.deepEqual(contourStyleExpression('borderWidth', 0).slice(0, 2), [
+    'match',
+    ['get', 'limit'],
+  ]);
 });
 
 

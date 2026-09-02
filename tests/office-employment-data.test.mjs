@@ -97,8 +97,13 @@ test('UI layers office heatmap above reach fill and below outline and stations',
   const mainSource = readFileSync(resolve(sourceDirectory, 'main.js'), 'utf8');
   const outsideLayerIndex = mainSource.indexOf("id: 'outside-fill'");
   const reachFillLayerIndex = mainSource.indexOf("id: 'reach-fill'");
+  const allBandsLayerIndex = mainSource.indexOf("id: 'all-reach-bands-fill'");
   const densityLayerIndex = mainSource.indexOf("id: 'office-density-heatmap'");
   const reachLineLayerIndex = mainSource.indexOf("id: 'reach-line'");
+  const allContoursLayerIndex = mainSource.indexOf("id: 'all-reach-contours'");
+  const outerBoundaryLayerIndex = mainSource.indexOf(
+    "id: 'all-reach-outer-boundary'",
+  );
   const stationLayerIndex = mainSource.indexOf("id: 'station-circle'");
   const densityLayerDefinition = mainSource.slice(
     densityLayerIndex,
@@ -111,9 +116,12 @@ test('UI layers office heatmap above reach fill and below outline and stations',
 
   assert.ok(outsideLayerIndex >= 0);
   assert.ok(reachFillLayerIndex > outsideLayerIndex);
-  assert.ok(densityLayerIndex > reachFillLayerIndex);
+  assert.ok(allBandsLayerIndex > reachFillLayerIndex);
+  assert.ok(densityLayerIndex > allBandsLayerIndex);
   assert.ok(reachLineLayerIndex > densityLayerIndex);
-  assert.ok(stationLayerIndex > reachLineLayerIndex);
+  assert.ok(allContoursLayerIndex > reachLineLayerIndex);
+  assert.ok(outerBoundaryLayerIndex > allContoursLayerIndex);
+  assert.ok(stationLayerIndex > outerBoundaryLayerIndex);
   assert.doesNotMatch(densityLayerDefinition, /maxzoom/);
   assert.match(weightExpression, /\['get', 'j'\]/);
   assert.doesNotMatch(weightExpression, /\['get', 'w'\]/);
@@ -124,6 +132,8 @@ test('UI layers office heatmap above reach fill and below outline and stations',
   assert.match(mainSource, /data-economic-metric="gdp"/);
   assert.match(mainSource, /data-economic-metric="office"/);
   assert.match(mainSource, /Show office workplace density/);
+  assert.match(mainSource, /data-limit="\$\{limit\}"/);
+  assert.match(mainSource, /All reach contours · 10–50 minutes/);
   assert.match(mainSource, /reach-office-employment\.json/);
   assert.match(mainSource, /office-density-display\.geojson/);
 });

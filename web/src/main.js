@@ -35,6 +35,12 @@ import {
   validateOfficeDensityPayload,
   validateOfficeEmploymentPayload,
 } from './office-employment.js';
+import {
+  ALL_REACH_BANDS,
+  bandStyleExpression,
+  buildReachBandView,
+  contourStyleExpression,
+} from './reach-bands.js';
 
 const LIMITS = [10, 20, 30, 40, 50];
 const base = window.JINKE_BASE || '/';
@@ -81,6 +87,9 @@ function savedAppearance() {
 }
 
 const state = { ...defaults, ...savedAppearance() };
+const isAllReachView = () => state.limit === 'all';
+const activeLimit = () =>
+  isAllReachView() ? LIMITS[LIMITS.length - 1] : Number(state.limit);
 
 const osmAttribution =
   '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors';
@@ -178,7 +187,11 @@ const basemaps = {
 };
 
 if (!basemaps[state.basemap]) state.basemap = defaults.basemap;
-if (!LIMITS.includes(Number(state.limit))) state.limit = defaults.limit;
+if (state.limit !== 'all' && !LIMITS.includes(Number(state.limit))) {
+  state.limit = defaults.limit;
+} else if (state.limit !== 'all') {
+  state.limit = Number(state.limit);
+}
 if (!['relevant', 'all'].includes(state.stationDisplay)) {
   state.stationDisplay = defaults.stationDisplay;
 }
@@ -243,9 +256,11 @@ document.querySelector('#app').innerHTML = `
         </div>
       </header>
       <div class="segments" role="group" aria-label="Total time limit">
-        ${LIMITS.map(
+        ${[...LIMITS, 'all'].map(
           limit =>
-            `<button type="button" data-limit="${limit}" aria-label="${limit} minutes" aria-pressed="false">${limit}</button>`,
+            `<button type="button" data-limit="${limit}" aria-label="${
+              limit === 'all' ? 'All reach bands' : `${limit} minutes`
+            }" aria-pressed="false">${limit === 'all' ? 'All' : limit}</button>`,
         ).join('')}
       </div>
       <div id="panelControls" class="panel-controls">
@@ -378,7 +393,16 @@ document.querySelector('#app').innerHTML = `
             <li><span class="legend-mark reachable"></span><span><strong>Green</strong> — reachable station</span></li>
             <li><span class="legend-mark boundary"></span><span><strong>White</strong> — boundary station</span></li>
             <li><span class="legend-mark outside"></span><span><strong>Gray</strong> — outside selected time</span></li>
-            <li><span class="legend-mark area"></span><span><strong>Turquoise area</strong> — reachable area</span></li>
+            <li id="singleReachLegend"><span class="legend-mark area"></span><span><strong>Turquoise area</strong> — reachable area</span></li>
+            <li id="allReachLegend" class="all-reach-legend" hidden>
+              <span class="all-reach-legend-title"><strong>Reach bands</strong> — darker means closer</span>
+              <span class="time-band-scale">
+                ${ALL_REACH_BANDS.map(
+                  band =>
+                    `<span class="time-band-item"><span class="time-band-swatch" style="background:${band.legendFill};border-color:${band.borderColor}"></span><span>${band.label}</span></span>`,
+                ).join('')}
+              </span>
+            </li>
             <li id="officeDensityLegend" hidden><span class="legend-mark office-density"></span><span><strong>Purple glow</strong> — modelled office workplace density</span></li>
           </ul>
         </details>
@@ -464,6 +488,8 @@ let officeEmploymentMethodology;
 let officeEmploymentLoadState = 'loading';
 let officeDensityData;
 let officeDensityLoadState = 'loading';
+let reachBandData;
+let reachContourData;
 
 const mobileQuery = window.matchMedia('(max-width: 760px)');
 const byId = id => document.getElementById(id);
@@ -476,14 +502,14 @@ function save() {
   }
 }
 
-const selectedAreas = () => selectedFeatureCollection(areas, state.limit);
+const selectedAreas = () => selectedFeatureCollection(areas, activeLimit());
 const selectedOutsideAreas = () =>
-  selectedFeatureCollection(outsideAreas, state.limit);
+  selectedFeatureCollection(outsideAreas, activeLimit());
 
 function stationData() {
   return stationFeatureCollection(
     stations,
-    state.limit,
+    activeLimit(),
     state.stationDisplay,
   );
 }
@@ -512,7 +538,8 @@ function hideEconomicDetails() {
 
 function renderGdpSummary() {
   const estimate = byId('economicEstimate');
-  const record = economyData?.recordsByLimit?.get(Number(state.limit));
+  const limit = activeLimit();
+  const record = economyData?.recordsByLimit?.get(limit);
 
   if (economyLoadState === 'loading') {
     estimate.textContent = 'Loading GDP estimate…';
@@ -535,11 +562,11 @@ function renderGdpSummary() {
   share.hidden = false;
 
   const increment = byId('economicIncrement');
-  if (Number(state.limit) === LIMITS[0]) {
+  if (limit === LIMITS[0]) {
     increment.hidden = true;
   } else {
     increment.textContent =
-      `Added vs ${Number(state.limit) - 10} minutes: ` +
+      `Added vs ${limit - 10} minutes: ` +
       `+${formatTrillionCny(record.incremental_gdp_100m_cny)}`;
     increment.hidden = false;
   }
@@ -552,10 +579,11 @@ function renderGdpSummary() {
 
 function renderOfficeEmploymentSummary() {
   const estimate = byId('economicEstimate');
+  const limit = activeLimit();
   const benchmark = officeEmploymentData?.benchmarksByKey?.get(
     state.officeBenchmark,
   );
-  const record = benchmark?.recordsByLimit?.get(Number(state.limit));
+  const record = benchmark?.recordsByLimit?.get(limit);
 
   if (officeEmploymentLoadState === 'loading') {
     estimate.textContent = 'Loading office-employment estimate…';
@@ -578,11 +606,11 @@ function renderOfficeEmploymentSummary() {
   share.hidden = false;
 
   const increment = byId('economicIncrement');
-  if (Number(state.limit) === LIMITS[0]) {
+  if (limit === LIMITS[0]) {
     increment.hidden = true;
   } else {
     increment.textContent =
-      `Added vs ${Number(state.limit) - 10} minutes: ` +
+      `Added vs ${limit - 10} minutes: ` +
       `+${formatOfficeEmployment(record.incremental_employment)}`;
     increment.hidden = false;
   }
@@ -707,12 +735,19 @@ function renderState() {
   byId('stationDisplay').value = state.stationDisplay;
   byId('stationScaling').value = state.stationScaling;
   document.documentElement.style.setProperty('--reach-color', state.fill);
+  const allView = isAllReachView();
+  byId('singleReachLegend').hidden = allView;
+  byId('allReachLegend').hidden = !allView;
+  ['fill', 'outline', 'opacity', 'width'].forEach(id => {
+    byId(id).disabled = allView;
+  });
 
   if (areas) {
     const feature = selectedAreas().features[0];
     if (feature) {
-      byId('summaryTitle').textContent =
-        `${state.limit}-minute total journey`;
+      byId('summaryTitle').textContent = allView
+        ? 'All reach contours · 10–50 minutes'
+        : `${state.limit}-minute total journey`;
       byId('summaryCounts').textContent =
         `${feature.properties.included_stations} reachable stations · ` +
         `${feature.properties.boundary_stations} boundary stations`;
@@ -763,15 +798,20 @@ function applyMapState() {
 
   map.getSource('areas')?.setData(selectedAreas());
   map.getSource('outside-areas')?.setData(selectedOutsideAreas());
+  map.getSource('reach-bands')?.setData(reachBandData);
+  map.getSource('reach-contours')?.setData(reachContourData);
   map.getSource('stations')?.setData(stationData());
   map.getSource('station-highlight')?.setData(highlightedStationData());
 
   const polygonPaint = polygonPaintForState(state);
+  const allView = isAllReachView();
+  const showAllFills = allView && state.showPoly && !state.invertFill;
+  const showAllContours = allView && state.showPoly;
   setPaintProperty('reach-fill', 'fill-color', state.fill);
   setPaintProperty(
     'reach-fill',
     'fill-opacity',
-    polygonPaint.reachFillOpacity,
+    allView ? 0 : polygonPaint.reachFillOpacity,
   );
   setPaintProperty('outside-fill', 'fill-color', state.fill);
   setPaintProperty(
@@ -780,7 +820,36 @@ function applyMapState() {
     polygonPaint.inverseFillOpacity,
   );
   setPaintProperty('reach-line', 'line-color', state.outline);
-  setPaintProperty('reach-line', 'line-width', polygonPaint.outlineWidth);
+  setPaintProperty(
+    'reach-line',
+    'line-width',
+    allView ? 0 : polygonPaint.outlineWidth,
+  );
+  setPaintProperty(
+    'all-reach-bands-fill',
+    'fill-opacity',
+    showAllFills ? bandStyleExpression('fillOpacity', 0.04) : 0,
+  );
+  setPaintProperty(
+    'all-reach-contours',
+    'line-width',
+    showAllContours ? contourStyleExpression('borderWidth', 1.5) : 0,
+  );
+  setPaintProperty(
+    'all-reach-contours',
+    'line-opacity',
+    showAllContours ? 0.94 : 0,
+  );
+  setPaintProperty(
+    'all-reach-outer-boundary',
+    'line-width',
+    showAllContours ? 3 : 0,
+  );
+  setPaintProperty(
+    'all-reach-outer-boundary',
+    'line-opacity',
+    showAllContours ? 0.96 : 0,
+  );
   setPaintProperty(
     'office-density-heatmap',
     'heatmap-opacity',
@@ -1130,7 +1199,8 @@ async function initializeLocationSearch() {
 
 function openStationPopup(feature) {
   if (!map) return;
-  const enriched = enrichStationFeature(feature, state.limit);
+  const limit = activeLimit();
+  const enriched = enrichStationFeature(feature, limit);
   const properties = enriched.properties;
   activePopup?.remove();
   activePopup = new maplibregl.Popup()
@@ -1140,7 +1210,9 @@ function openStationPopup(feature) {
         `<dl class="station-popup">` +
         `<div><dt>Transit from 金科路</dt><dd>${properties.apple} min</dd></div>` +
         `<div><dt>Remaining walk</dt><dd>${properties.remaining_walk_minutes} min</dd></div>` +
-        `<div><dt>Selected total</dt><dd>${state.limit} min</dd></div>` +
+        `<div><dt>Selected total</dt><dd>${
+          isAllReachView() ? `Up to ${limit} min` : `${limit} min`
+        }</dd></div>` +
         `</dl>`,
     )
     .addTo(map);
@@ -1158,7 +1230,7 @@ function clearHighlight() {
 }
 
 function highlightStation(feature) {
-  highlightedStation = enrichStationFeature(feature, state.limit);
+  highlightedStation = enrichStationFeature(feature, activeLimit());
   map?.getSource('station-highlight')?.setData(highlightedStationData());
   window.clearTimeout(highlightTimer);
   highlightTimer = window.setTimeout(clearHighlight, 4500);
@@ -1177,6 +1249,14 @@ function restoreCustomLayers() {
       'Shanghai boundary: <a href="https://openfreemap.org/">OpenFreeMap</a> / ' +
       '<a href="https://openmaptiles.org/">OpenMapTiles</a> · © ' +
       '<a href="https://www.openstreetmap.org/copyright">OpenStreetMap contributors</a> (ODbL)',
+  });
+  addSourceOnce('reach-bands', {
+    type: 'geojson',
+    data: reachBandData,
+  });
+  addSourceOnce('reach-contours', {
+    type: 'geojson',
+    data: reachContourData,
   });
   addSourceOnce('stations', { type: 'geojson', data: stationData() });
   addSourceOnce('station-highlight', {
@@ -1211,6 +1291,16 @@ function restoreCustomLayers() {
       'fill-antialias': true,
       'fill-color': state.fill,
       'fill-opacity': state.opacity,
+    },
+  });
+  addLayerOnce({
+    id: 'all-reach-bands-fill',
+    type: 'fill',
+    source: 'reach-bands',
+    paint: {
+      'fill-antialias': true,
+      'fill-color': bandStyleExpression('fillColor', '#93d3cd'),
+      'fill-opacity': 0,
     },
   });
   if (officeDensityData) {
@@ -1289,6 +1379,27 @@ function restoreCustomLayers() {
     type: 'line',
     source: 'areas',
     paint: { 'line-color': state.outline, 'line-width': state.width },
+  });
+  addLayerOnce({
+    id: 'all-reach-contours',
+    type: 'line',
+    source: 'reach-contours',
+    paint: {
+      'line-color': contourStyleExpression('borderColor', '#72c1ba'),
+      'line-width': 0,
+      'line-opacity': 0,
+    },
+  });
+  addLayerOnce({
+    id: 'all-reach-outer-boundary',
+    type: 'line',
+    source: 'reach-contours',
+    filter: ['==', ['get', 'limit'], LIMITS[LIMITS.length - 1]],
+    paint: {
+      'line-color': ALL_REACH_BANDS[ALL_REACH_BANDS.length - 1].borderColor,
+      'line-width': 0,
+      'line-opacity': 0,
+    },
   });
   const stationPaint = stationPaintForState(state);
   addLayerOnce({
@@ -1469,11 +1580,12 @@ function wireControls() {
 
   document.querySelectorAll('[data-limit]').forEach(button => {
     button.onclick = () => {
-      state.limit = Number(button.dataset.limit);
+      state.limit =
+        button.dataset.limit === 'all' ? 'all' : Number(button.dataset.limit);
       if (highlightedStation) {
         highlightedStation = enrichStationFeature(
           highlightedStation,
-          state.limit,
+          activeLimit(),
         );
       }
       applyMapState();
@@ -1729,6 +1841,9 @@ Promise.all([
       metroStationData,
     ]) => {
       areas = reachData;
+      const reachView = buildReachBandView(areas);
+      reachBandData = reachView.bands;
+      reachContourData = reachView.contours;
       outsideAreas = outsideData;
       stations = stationDataValue;
       manifest = manifestValue;

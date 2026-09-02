@@ -193,7 +193,7 @@ h1 {
 
 .segments {
   display: grid;
-  grid-template-columns: repeat(5, 1fr);
+  grid-template-columns: repeat(6, minmax(0, 1fr));
   gap: 6px;
   margin: 14px 0 16px;
 }
@@ -580,6 +580,50 @@ output {
 
 .legend-list li:last-child {
   grid-column: 1 / -1;
+}
+
+.legend-list .all-reach-legend {
+  display: grid;
+  grid-column: 1 / -1;
+  align-items: stretch;
+  gap: 7px;
+}
+
+.legend-list .all-reach-legend[hidden] {
+  display: none;
+}
+
+.all-reach-legend-title {
+  color: #38505a;
+}
+
+.time-band-scale {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 5px;
+}
+
+.time-band-item {
+  display: grid;
+  min-width: 0;
+  gap: 4px;
+  color: #52636d;
+  font-size: 10px;
+  font-weight: 700;
+  text-align: center;
+  white-space: nowrap;
+}
+
+.time-band-swatch {
+  width: 100%;
+  height: 12px;
+  border: 1.5px solid;
+  border-radius: 4px;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.34);
+}
+
+.time-band-item:last-child .time-band-swatch {
+  border-width: 2.5px;
 }
 
 .legend-mark {
