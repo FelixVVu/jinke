@@ -1000,3 +1000,14 @@ output {
     animation-iteration-count: 1 !important;
   }
 }
+
+.company-access-note {
+  font-size: 0.875rem;
+  line-height: 1.5;
+  color: #57646a;
+}
+#companyAccessStatus, #companyAccessSelection {
+  font-size: 0.875rem;
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+}

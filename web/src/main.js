@@ -1,3 +1,5 @@
+import { CompanyAccessLayers } from './company-access/layers.js';
+import { companyPanelMarkup, renderCompanyPanel } from './company-access/panel.js';
 import {
   StyleSwitchCoordinator,
   bindLayerHandlerOnce,
@@ -276,6 +278,7 @@ document.querySelector('#app').innerHTML = `
         </div>
       </div>
       <div id="panelControls" class="panel-controls">
+        ${companyPanelMarkup}
         <p class="journey-note">
           Total time = transit time from 金科路 + remaining walking time.
         </p>
@@ -491,6 +494,10 @@ let officeEmploymentMethodology;
 let officeEmploymentLoadState = 'loading';
 let officeDensityData;
 let officeDensityLoadState = 'loading';
+// Company inventory is intentionally not loaded in this scaffolding release.
+let companyAccessOutput = null;
+let companyAccessLayers;
+let showCompanyOffices = false;
 let reachBandData;
 let reachContourData;
 
@@ -793,6 +800,8 @@ function setPaintProperty(layerId, property, value) {
 
 function applyMapState() {
   renderState();
+  renderCompanyPanel(document, companyAccessOutput, state.limit);
+  companyAccessLayers?.setState({ output: companyAccessOutput, limit: state.limit, visible: showCompanyOffices });
   updateAppearanceOutputs();
   byId('officeDensityLegend').hidden = !(
     state.showOfficeDensity && officeDensityLoadState === 'ready'
@@ -1455,6 +1464,15 @@ function restoreCustomLayers() {
     paint: { 'text-halo-color': '#ffffff', 'text-halo-width': 1 },
   });
 
+  if (!companyAccessLayers) {
+    companyAccessLayers = new CompanyAccessLayers(map, office => {
+      const selection = byId('companyAccessSelection');
+      selection.textContent = `${office.company_name} · ${office.address}`;
+      selection.hidden = false;
+      byId('companyAccess').open = true;
+      if (mobileQuery.matches) setSheetExpanded(true);
+    });
+  }
   bindLayerHandlerOnce(map, 'click', 'station-circle', handleStationClick);
   applyMapState();
   initializeLocationSelection();
@@ -1530,6 +1548,11 @@ function wireControls() {
   if (controlsWired) return;
   controlsWired = true;
 
+  renderCompanyPanel(document, companyAccessOutput, state.limit);
+  byId('showCompanyOffices').onchange = event => {
+    showCompanyOffices = event.target.checked;
+    applyMapState();
+  };
   setControlValues();
   byId('legend').open = !mobileQuery.matches;
   setSheetExpanded(!mobileQuery.matches);

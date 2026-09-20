@@ -51,7 +51,10 @@ def test_inverse_checkbox_is_immediately_after_show_polygon_and_persisted():
     assert "OpenFreeMap</a> / " in MAIN
     assert "OpenMapTiles</a> · © " in MAIN
     assert "OpenStreetMap contributors</a> (ODbL)" in MAIN
-    assert MAIN.count("'fill-antialias': true") == 2
+    # The existing All-reach view adds a third antialiased fill layer.
+    for layer in ["outside-fill", "reach-fill", "all-reach-bands-fill"]:
+        definition = MAIN.split(f"id: '{layer}'", 1)[1].split("addLayerOnce(", 1)[0]
+        assert "'fill-antialias': true" in definition
 
 
 def test_mobile_panel_is_a_collapsed_bottom_sheet_by_default():
@@ -73,8 +76,8 @@ def test_summary_legend_and_journey_explanation_are_clear():
     )
     assert "Estimated GDP within reach:" in MAIN
     assert "of Shanghai GDP" in MAIN
-    assert "Added vs ${Number(state.limit) - 10} minutes:" in MAIN
-    assert "Number(state.limit) === LIMITS[0]" in MAIN
+    assert "Added vs ${limit - 10} minutes:" in MAIN
+    assert "limit === LIMITS[0]" in MAIN
     assert "Sensitivity scenarios:" in MAIN
     for label in [
         "Orange</strong> — 金科路 origin",
