@@ -25,8 +25,27 @@ export function validateReachAreas(areas) {
   return byLimit;
 }
 
+// Bboxes only shortlist polygons; the existing exact containment code is authoritative.
+export function prepareReachAreas(areas) {
+  const byLimit = validateReachAreas(areas);
+  const polygons = new Map([...byLimit].map(([limit, feature]) => [limit,
+    (feature.geometry.type === 'Polygon' ? [feature.geometry.coordinates] : feature.geometry.coordinates).map(coordinates => {
+      const box = [Infinity, Infinity, -Infinity, -Infinity];
+      for (const [x, y] of coordinates[0]) {
+        box[0] = Math.min(box[0], x); box[1] = Math.min(box[1], y);
+        box[2] = Math.max(box[2], x); box[3] = Math.max(box[3], y);
+      }
+      return { box, geometry: { type: 'Polygon', coordinates } };
+    })]));
+  byLimit.contains = ([x, y], limit) => polygons.get(limit).some(({box, geometry}) =>
+    x >= box[0] - 1e-8 && y >= box[1] - 1e-8 && x <= box[2] + 1e-8 && y <= box[3] + 1e-8 && pointInGeoJson([x, y], geometry));
+  return byLimit;
+}
+
 export function reachMemberships(office, byLimit) {
-  return REACH_MINUTES.filter(limit => pointInGeoJson([office.longitude, office.latitude], byLimit.get(limit)));
+  const point = [office.longitude, office.latitude];
+  return REACH_MINUTES.filter(limit => byLimit.contains
+    ? byLimit.contains(point, limit) : pointInGeoJson(point, byLimit.get(limit)));
 }
 
 /** Pure, deterministic derivation. No imports from economic or density models. */
@@ -37,7 +56,7 @@ export function deriveCompanyAccess(offices, areas, provenance) {
       !/^[a-f0-9]{64}$/.test(provenance.reach_sha256 || '') ||
       !/^[a-f0-9]{64}$/.test(provenance.inventory_sha256 || '')) throw new TypeError('Dataset version and SHA-256 provenance are required.');
   if (provenance.status === 'not_loaded' && offices.length) throw new TypeError('Unloaded inventory cannot contain offices.');
-  const byLimit = validateReachAreas(areas);
+  const byLimit = prepareReachAreas(areas);
   const ids = new Set();
   const sourceLocations = new Set();
   const hubNames = new Map();
@@ -58,8 +77,15 @@ export function deriveCompanyAccess(offices, areas, provenance) {
     if (office.min_reach_minutes !== (reach_minutes[0] ?? null)) throw new TypeError(`Stale min_reach_minutes for ${office.id}.`);
     return point(office.id, [office.longitude, office.latitude], { ...office, reach_minutes });
   }).sort((a, b) => a.id.localeCompare(b.id));
+  const hubMembers = new Map();
+  for (const feature of features) {
+    const id = feature.properties.hub_id;
+    if (id === null) continue;
+    if (!hubMembers.has(id)) hubMembers.set(id, []);
+    hubMembers.get(id).push(feature);
+  }
   const hubFeatures = [...hubNames.entries()].sort(([a], [b]) => a.localeCompare(b)).map(([id, hub_name]) => {
-    const members = features.filter(f => f.properties.hub_id === id);
+    const members = hubMembers.get(id);
     // Representative office coordinate, NOT a new geocoded building centroid.
     return point(id, [...members[0].geometry.coordinates], {
       hub_id: id, hub_name, representative_office_id: members[0].id,

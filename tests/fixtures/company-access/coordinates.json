@@ -1,0 +1,8 @@
+{
+  "description": "Fixed numerical regression vectors, not surveyed geodetic accuracy claims. Jinke vector freezes the pre-existing AMap conversion; Beijing vector is the conventional BD-09 formula reference.",
+  "vectors": [
+    {"name":"Jinke existing AMap transform", "raw":[121.6020353173734,31.204188903093062],"crs":"GCJ02","expected":[121.597836,31.2064028],"tolerance_degrees":0.0000001},
+    {"name":"BD09 to GCJ02 reference", "raw":[116.41036949371029,39.92133699351021],"crs":"BD09","expected_gcj02":[116.404,39.915],"tolerance_degrees":0.000001},
+    {"name":"WGS84 identity", "raw":[121.597836,31.2064028],"crs":"WGS84","expected":[121.597836,31.2064028],"tolerance_degrees":0}
+  ]
+}

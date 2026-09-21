@@ -7,3 +7,6 @@ dist/
 .venv/
 audit_outputs/*.zip
 audit_outputs/web-data.zip
+
+# Offline candidate artifacts are never frontend/production data.
+offline-output/

@@ -1,0 +1,450 @@
+{
+  "schema_version": 1,
+  "dataset_kind": "synthetic",
+  "dataset_version": "synthetic-pilot-v1",
+  "records": [
+    {
+      "source_namespace": "synthetic-pilot",
+      "address": "SYNTHETIC ADDRESS a-office-10",
+      "district": "Pudong New Area",
+      "building_name": null,
+      "coordinate_system": "WGS84",
+      "industry_code": "I",
+      "sector": "SYNTHETIC information services",
+      "source_type": "company_website",
+      "source_url": "https://example.invalid/synthetic-offices",
+      "source_evidence": {
+        "kind": "official_office",
+        "description": "SYNTHETIC TEST EVIDENCE ONLY — not a real company or office.",
+        "reviewed": true
+      },
+      "collected_at": "2026-09-20T00:00:00Z",
+      "verified_at": "2026-09-19T00:00:00Z",
+      "source_record_id": "a-office-10",
+      "company_name": "合成测试甲有限公司",
+      "longitude": 121.585,
+      "latitude": 31.205,
+      "company_identity": {
+        "id": "synthetic-company-a",
+        "reviewed": true,
+        "source_url": "https://example.invalid/synthetic-identity"
+      },
+      "name_variants": [
+        "SYNTHETIC COMPANY A LTD"
+      ],
+      "hub_candidates": [
+        {
+          "id": "synthetic-building-a",
+          "name": "SYNTHETIC BUILDING A",
+          "kind": "verified_building",
+          "source_url": "https://example.invalid/synthetic-building",
+          "reviewed": true
+        }
+      ],
+      "classification_evidence": {
+        "scheme": "GB/T 4754-2017",
+        "kind": "source_classification",
+        "reviewed": true,
+        "source_url": "https://example.invalid/synthetic-classification"
+      }
+    },
+    {
+      "source_namespace": "synthetic-pilot",
+      "address": "SYNTHETIC ADDRESS a-office-20",
+      "district": "Pudong New Area",
+      "building_name": null,
+      "coordinate_system": "WGS84",
+      "industry_code": null,
+      "sector": null,
+      "source_type": "company_website",
+      "source_url": "https://example.invalid/synthetic-offices",
+      "source_evidence": {
+        "kind": "official_office",
+        "description": "SYNTHETIC TEST EVIDENCE ONLY — not a real company or office.",
+        "reviewed": true
+      },
+      "collected_at": "2026-09-20T00:00:00Z",
+      "verified_at": "2026-09-19T00:00:00Z",
+      "source_record_id": "a-office-20",
+      "company_name": "SYNTHETIC COMPANY A LTD",
+      "longitude": 121.585,
+      "latitude": 31.195,
+      "company_identity": {
+        "id": "synthetic-company-a",
+        "reviewed": true,
+        "source_url": "https://example.invalid/synthetic-identity"
+      },
+      "name_variants": [
+        "合成测试甲有限公司"
+      ]
+    },
+    {
+      "source_namespace": "synthetic-pilot",
+      "address": "SYNTHETIC ADDRESS b-same-building",
+      "district": "Pudong New Area",
+      "building_name": null,
+      "coordinate_system": "WGS84",
+      "industry_code": "J",
+      "sector": null,
+      "source_type": "company_website",
+      "source_url": "https://example.invalid/synthetic-offices",
+      "source_evidence": {
+        "kind": "official_office",
+        "description": "SYNTHETIC TEST EVIDENCE ONLY — not a real company or office.",
+        "reviewed": true
+      },
+      "collected_at": "2026-09-20T00:00:00Z",
+      "verified_at": "2026-09-19T00:00:00Z",
+      "source_record_id": "b-same-building",
+      "company_name": "SYNTHETIC COMPANY b-same-building",
+      "longitude": 121.585,
+      "latitude": 31.205,
+      "hub_candidates": [
+        {
+          "id": "synthetic-building-a",
+          "name": "SYNTHETIC BUILDING A",
+          "kind": "verified_building",
+          "source_url": "https://example.invalid/synthetic-building",
+          "reviewed": true
+        }
+      ],
+      "classification_evidence": {
+        "scheme": "GB/T 4754-2017",
+        "kind": "source_classification",
+        "reviewed": true,
+        "source_url": "https://example.invalid/synthetic-classification"
+      }
+    },
+    {
+      "source_namespace": "synthetic-pilot",
+      "address": "SYNTHETIC ADDRESS threshold-30-gcj",
+      "district": "Pudong New Area",
+      "building_name": null,
+      "coordinate_system": "GCJ02",
+      "industry_code": "7210",
+      "sector": null,
+      "source_type": "company_website",
+      "source_url": "https://example.invalid/synthetic-offices",
+      "source_evidence": {
+        "kind": "official_office",
+        "description": "SYNTHETIC TEST EVIDENCE ONLY — not a real company or office.",
+        "reviewed": true
+      },
+      "collected_at": "2026-09-20T00:00:00Z",
+      "verified_at": "2026-09-19T00:00:00Z",
+      "source_record_id": "threshold-30-gcj",
+      "company_name": "SYNTHETIC COMPANY threshold-30-gcj",
+      "longitude": 121.59419821780506,
+      "latitude": 31.15276149294894,
+      "classification_evidence": {
+        "scheme": "GB/T 4754-2017",
+        "kind": "source_classification",
+        "reviewed": true,
+        "source_url": "https://example.invalid/synthetic-classification"
+      }
+    },
+    {
+      "source_namespace": "synthetic-pilot",
+      "address": "SYNTHETIC ADDRESS threshold-40-campus",
+      "district": "Pudong New Area",
+      "building_name": null,
+      "coordinate_system": "WGS84",
+      "industry_code": "M",
+      "sector": null,
+      "source_type": "company_website",
+      "source_url": "https://example.invalid/synthetic-offices",
+      "source_evidence": {
+        "kind": "official_office",
+        "description": "SYNTHETIC TEST EVIDENCE ONLY — not a real company or office.",
+        "reviewed": true
+      },
+      "collected_at": "2026-09-20T00:00:00Z",
+      "verified_at": "2026-09-19T00:00:00Z",
+      "source_record_id": "threshold-40-campus",
+      "company_name": "SYNTHETIC COMPANY threshold-40-campus",
+      "longitude": 121.605,
+      "latitude": 31.08,
+      "hub_candidates": [
+        {
+          "id": "synthetic-campus",
+          "name": "SYNTHETIC TEST CAMPUS",
+          "kind": "reviewed_campus",
+          "source_url": "https://example.invalid/synthetic-building",
+          "reviewed": true
+        }
+      ],
+      "classification_evidence": {
+        "scheme": "GB/T 4754-2017",
+        "kind": "source_classification",
+        "reviewed": true,
+        "source_url": "https://example.invalid/synthetic-classification"
+      }
+    },
+    {
+      "source_namespace": "synthetic-pilot",
+      "address": "SYNTHETIC ADDRESS threshold-50",
+      "district": "Pudong New Area",
+      "building_name": null,
+      "coordinate_system": "WGS84",
+      "industry_code": null,
+      "sector": null,
+      "source_type": "company_website",
+      "source_url": "https://example.invalid/synthetic-offices",
+      "source_evidence": {
+        "kind": "official_office",
+        "description": "SYNTHETIC TEST EVIDENCE ONLY — not a real company or office.",
+        "reviewed": true
+      },
+      "collected_at": "2026-09-20T00:00:00Z",
+      "verified_at": "2026-09-19T00:00:00Z",
+      "source_record_id": "threshold-50",
+      "company_name": "SYNTHETIC COMPANY threshold-50",
+      "longitude": 121.645,
+      "latitude": 31.045
+    },
+    {
+      "source_namespace": "synthetic-pilot",
+      "address": "SYNTHETIC ADDRESS outside-50",
+      "district": "Pudong New Area",
+      "building_name": null,
+      "coordinate_system": "WGS84",
+      "industry_code": null,
+      "sector": null,
+      "source_type": "company_website",
+      "source_url": "https://example.invalid/synthetic-offices",
+      "source_evidence": {
+        "kind": "official_office",
+        "description": "SYNTHETIC TEST EVIDENCE ONLY — not a real company or office.",
+        "reviewed": true
+      },
+      "collected_at": "2026-09-20T00:00:00Z",
+      "verified_at": "2026-09-19T00:00:00Z",
+      "source_record_id": "outside-50",
+      "company_name": "SYNTHETIC COMPANY outside-50",
+      "longitude": 121,
+      "latitude": 30.8
+    },
+    {
+      "source_namespace": "synthetic-pilot",
+      "address": "SYNTHETIC ADDRESS registered",
+      "district": "Pudong New Area",
+      "building_name": null,
+      "coordinate_system": "WGS84",
+      "industry_code": null,
+      "sector": null,
+      "source_type": "company_website",
+      "source_url": "https://example.invalid/synthetic-offices",
+      "source_evidence": {
+        "kind": "registered_address",
+        "reviewed": true,
+        "description": "SYNTHETIC registration record, no physical-office evidence"
+      },
+      "collected_at": "2026-09-20T00:00:00Z",
+      "verified_at": "2026-09-19T00:00:00Z",
+      "source_record_id": "registered",
+      "company_name": "SYNTHETIC COMPANY registered",
+      "longitude": 121.585,
+      "latitude": 31.205
+    },
+    {
+      "source_namespace": "synthetic-pilot",
+      "address": "SYNTHETIC ADDRESS unknown-crs",
+      "district": "Pudong New Area",
+      "building_name": null,
+      "coordinate_system": "unknown",
+      "industry_code": null,
+      "sector": null,
+      "source_type": "company_website",
+      "source_url": "https://example.invalid/synthetic-offices",
+      "source_evidence": {
+        "kind": "official_office",
+        "description": "SYNTHETIC TEST EVIDENCE ONLY — not a real company or office.",
+        "reviewed": true
+      },
+      "collected_at": "2026-09-20T00:00:00Z",
+      "verified_at": "2026-09-19T00:00:00Z",
+      "source_record_id": "unknown-crs",
+      "company_name": "SYNTHETIC COMPANY unknown-crs",
+      "longitude": 121.585,
+      "latitude": 31.205
+    },
+    {
+      "source_namespace": "synthetic-pilot",
+      "address": "SYNTHETIC ADDRESS invalid-coordinates",
+      "district": "Pudong New Area",
+      "building_name": null,
+      "coordinate_system": "WGS84",
+      "industry_code": null,
+      "sector": null,
+      "source_type": "company_website",
+      "source_url": "https://example.invalid/synthetic-offices",
+      "source_evidence": {
+        "kind": "official_office",
+        "description": "SYNTHETIC TEST EVIDENCE ONLY — not a real company or office.",
+        "reviewed": true
+      },
+      "collected_at": "2026-09-20T00:00:00Z",
+      "verified_at": "2026-09-19T00:00:00Z",
+      "source_record_id": "invalid-coordinates",
+      "company_name": "SYNTHETIC COMPANY invalid-coordinates",
+      "longitude": 121.6,
+      "latitude": 100
+    },
+    {
+      "source_namespace": "synthetic-pilot",
+      "address": "SYNTHETIC ADDRESS bd09-test",
+      "district": "Pudong New Area",
+      "building_name": null,
+      "coordinate_system": "BD09",
+      "industry_code": null,
+      "sector": null,
+      "source_type": "company_website",
+      "source_url": "https://example.invalid/synthetic-offices",
+      "source_evidence": {
+        "kind": "official_office",
+        "description": "SYNTHETIC TEST EVIDENCE ONLY — not a real company or office.",
+        "reviewed": true
+      },
+      "collected_at": "2026-09-20T00:00:00Z",
+      "verified_at": "2026-09-19T00:00:00Z",
+      "source_record_id": "bd09-test",
+      "company_name": "SYNTHETIC COMPANY bd09-test",
+      "longitude": 121.6106,
+      "latitude": 31.2036
+    },
+    {
+      "source_namespace": "synthetic-pilot",
+      "address": "SYNTHETIC ADDRESS a-office-10",
+      "district": "Pudong New Area",
+      "building_name": null,
+      "coordinate_system": "WGS84",
+      "industry_code": "I",
+      "sector": "SYNTHETIC information services",
+      "source_type": "licensed_poi",
+      "source_url": "https://example.invalid/synthetic-offices",
+      "source_evidence": {
+        "kind": "map_poi",
+        "reviewed": true,
+        "description": "SYNTHETIC duplicate POI evidence"
+      },
+      "collected_at": "2026-09-20T00:00:00Z",
+      "verified_at": "2026-09-19T00:00:00Z",
+      "source_record_id": "duplicate-poi",
+      "company_name": "合成测试甲有限公司",
+      "longitude": 121.585,
+      "latitude": 31.205,
+      "company_identity": {
+        "id": "synthetic-company-a",
+        "reviewed": true,
+        "source_url": "https://example.invalid/synthetic-identity"
+      },
+      "name_variants": [
+        "SYNTHETIC COMPANY A LTD"
+      ],
+      "hub_candidates": [
+        {
+          "id": "synthetic-building-a",
+          "name": "SYNTHETIC BUILDING A",
+          "kind": "verified_building",
+          "source_url": "https://example.invalid/synthetic-building",
+          "reviewed": true
+        }
+      ],
+      "classification_evidence": {
+        "scheme": "GB/T 4754-2017",
+        "kind": "source_classification",
+        "reviewed": true,
+        "source_url": "https://example.invalid/synthetic-classification"
+      }
+    },
+    {
+      "source_namespace": "synthetic-pilot",
+      "address": "SYNTHETIC ADDRESS a-office-10",
+      "district": "Pudong New Area",
+      "building_name": null,
+      "coordinate_system": "WGS84",
+      "industry_code": "I",
+      "sector": "SYNTHETIC information services",
+      "source_type": "company_website",
+      "source_url": "https://example.invalid/synthetic-offices",
+      "source_evidence": {
+        "kind": "official_office",
+        "description": "SYNTHETIC TEST EVIDENCE ONLY — not a real company or office.",
+        "reviewed": true
+      },
+      "collected_at": "2026-09-20T00:00:00Z",
+      "verified_at": "2026-09-19T00:00:00Z",
+      "source_record_id": "a-office-10",
+      "company_name": "合成测试甲有限公司",
+      "longitude": 121.585,
+      "latitude": 31.205,
+      "company_identity": {
+        "id": "synthetic-company-a",
+        "reviewed": true,
+        "source_url": "https://example.invalid/synthetic-identity"
+      },
+      "name_variants": [
+        "SYNTHETIC COMPANY A LTD"
+      ],
+      "hub_candidates": [
+        {
+          "id": "synthetic-building-a",
+          "name": "SYNTHETIC BUILDING A",
+          "kind": "verified_building",
+          "source_url": "https://example.invalid/synthetic-building",
+          "reviewed": true
+        }
+      ],
+      "classification_evidence": {
+        "scheme": "GB/T 4754-2017",
+        "kind": "source_classification",
+        "reviewed": true,
+        "source_url": "https://example.invalid/synthetic-classification"
+      }
+    },
+    {
+      "source_namespace": "synthetic-pilot",
+      "address": "SYNTHETIC ADDRESS source-id-conflict",
+      "district": "Pudong New Area",
+      "building_name": null,
+      "coordinate_system": "WGS84",
+      "industry_code": null,
+      "sector": null,
+      "source_type": "company_website",
+      "source_url": "https://example.invalid/synthetic-offices",
+      "source_evidence": {
+        "kind": "official_office",
+        "description": "SYNTHETIC TEST EVIDENCE ONLY — not a real company or office.",
+        "reviewed": true
+      },
+      "collected_at": "2026-09-20T00:00:00Z",
+      "verified_at": "2026-09-19T00:00:00Z",
+      "source_record_id": "source-id-conflict",
+      "company_name": "SYNTHETIC COMPANY source-id-conflict",
+      "longitude": 121.585,
+      "latitude": 31.205
+    },
+    {
+      "source_namespace": "synthetic-pilot",
+      "address": "SYNTHETIC ADDRESS source-id-conflict",
+      "district": "Pudong New Area",
+      "building_name": null,
+      "coordinate_system": "WGS84",
+      "industry_code": null,
+      "sector": null,
+      "source_type": "company_website",
+      "source_url": "https://example.invalid/synthetic-offices",
+      "source_evidence": {
+        "kind": "official_office",
+        "description": "SYNTHETIC TEST EVIDENCE ONLY — not a real company or office.",
+        "reviewed": true
+      },
+      "collected_at": "2026-09-20T00:00:00Z",
+      "verified_at": "2026-09-19T00:00:00Z",
+      "source_record_id": "source-id-conflict",
+      "company_name": "SYNTHETIC COMPANY source-id-conflict",
+      "longitude": 121.645,
+      "latitude": 31.045
+    }
+  ]
+}

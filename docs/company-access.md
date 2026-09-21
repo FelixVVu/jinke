@@ -1,5 +1,7 @@
 # Company Access — review scaffold
 
+Phase 2 adds an offline preparation pipeline on the same PR. See [offline ingestion, input contract and pilot guide](company-access-ingestion.md). Phase-1 schema/UI constraints below remain in force; the browser still loads no company inventory.
+
 Review base: `83bf441` on `FelixVVu/jinke/main`. No company inventory, production deployment, replacement application, dependency additions, or analytical recalculation is part of this change.
 
 ## 1. Structure and existing architecture
@@ -69,7 +71,7 @@ Hubs use the first stable member office's coordinate as an explicitly identified
 
 Metadata includes unverified and approximate counts, offices outside 50 minutes, repeated normalized names, and non-nested membership IDs. No citywide company denominator or completeness percentage is invented. `employment_estimation_permitted` is always false; coverage is `source_inventory_only`.
 
-Provenance requires `status`, `dataset_version`, `inventory_sha256`, `reach_sha256`. A future ingestion runner must compute those hashes from the exact input bytes, review source licensing, retain source-specific raw evidence and coordinate-conversion audit, and use `validateCompanyAccessOutput` before publication. The validator recomputes all four artifacts against canonical input, rejecting stale counts, geometries, metadata or reach assignment. Hash syntax is validated here; it is not proof that external source evidence is truthful. No fetcher, geocoder, crawler or import workflow is enabled in this PR.
+Provenance requires `status`, `dataset_version`, `inventory_sha256`, `reach_sha256`. A future ingestion runner must compute those hashes from the exact input bytes, review source licensing, retain source-specific raw evidence and coordinate-conversion audit, and use `validateCompanyAccessOutput` before publication. The validator recomputes all four artifacts against canonical input, rejecting stale counts, geometries, metadata or reach assignment. Hash syntax is validated here; it is not proof that external source evidence is truthful. The phase-2 offline runner computes input hashes and validates candidate outputs. No fetcher, geocoder, crawler or browser import workflow is enabled.
 
 ## 4. UI architecture
 
@@ -103,4 +105,4 @@ Hub aggregation is a separate data output, not MapLibre visual clustering and ne
 
 The baseline is intentionally a review guard. A future approved analytical change must explicitly review any baseline update; Company Access development must not refresh it to conceal altered economic data.
 
-Local frontend tests: 44 passed. Full Python suite: 111 passed after synchronizing two pre-existing stale frontend assertions (also reproduced on unmodified base `83bf441`) with the existing All-reach fill layers and `activeLimit()` variable. Only tests changed for that repair. Static builds pass for both `/jinke/` and `/` base paths. Browser visual QA could not run because the available browser blocked the local preview URL (`ERR_BLOCKED_BY_CLIENT`); mobile layout and real browser style switching are not claimed as visually verified. CI runs the existing Python suite and frontend tests on the PR; the existing workflow excludes PRs from deployment.
+Phase-1 validation: 44 frontend tests passed. Full Python suite: 111 passed after synchronizing two pre-existing stale frontend assertions (also reproduced on unmodified base `83bf441`) with the existing All-reach fill layers and `activeLimit()` variable. Only tests changed for that repair. Static builds pass for both `/jinke/` and `/` base paths. Browser visual QA could not run because the available browser blocked the local preview URL (`ERR_BLOCKED_BY_CLIENT`); mobile layout and real browser style switching are not claimed as visually verified. CI runs the existing Python suite and frontend tests on the PR; the existing workflow excludes PRs from deployment.
