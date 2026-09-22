@@ -228,3 +228,9 @@ No real review CSV or real inventory has been generated. The paths above are
 output locations, not claims that a real pilot exists. The automated examples
 use unmistakably synthetic names and credentials and remove their file outputs.
 No second AMap key was created; no merge or production deployment occurred.
+
+## GitHub Actions alternative (Phase 3B)
+
+The same credential can be supplied through the existing-named repository secret
+without a Site runtime change. See [manual Actions execution](company-access-actions-pilot.md)
+for the implemented workflow, safe artifact layout and GitHub dispatch prerequisites.
