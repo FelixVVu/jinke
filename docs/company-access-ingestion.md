@@ -153,3 +153,9 @@ Provide a small source export or spreadsheet we can adapt to this raw JSON contr
 6. The chosen pilot scope and confirmation that the source permits the intended export/use and eventual display. No API key is needed for this offline pipeline.
 
 A reasonable first review is 50–200 supplied records from one or two sources. Raw data can then be assessed, ambiguities resolved and only a reviewed candidate proposed for later UI integration. No real companies were acquired in phase 2.
+
+## AMap candidate acquisition and human review
+
+See [the Phase 3A pilot workflow](company-access-amap-pilot.md). Acquisition keeps
+unreviewed map records quarantined and uses this pipeline unchanged after human
+review. No production inventory is connected.
