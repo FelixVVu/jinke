@@ -46,7 +46,7 @@ test('pagination does not interpret v5 count as a total; pauses each call; cache
 test('provider failures retry only transient errors and are sanitized',async()=>{
   let n=0;const waits=[];
   const retry=await acquire({env,areas,collectedAt,sleep:async ms=>waits.push(ms),fetchFn:async()=>++n===1?new Response('',{status:503}):response([])});
-  assert.equal(retry.execution.api_requests_total,17);assert.equal(waits[1],2200);
+  assert.equal(retry.execution.api_requests_total,17);assert.equal(waits[1],2200);assert.equal(retry.execution.stop_reason,'PLAN_COMPLETE');
   for(const mock of [async()=>new Response('',{status:429}),async()=>Response.json({status:'0',info:env.JINKE_AMAP_KEY}),async()=>Response.json({status:'1',pois:[],echo:env.JINKE_AMAP_KEY})]){
     const result=await acquire({env,areas,collectedAt,sleep:async()=>{},fetchFn:mock});assert.equal(result.execution.api_requests_this_execution,1);assert.ok(!stable(result).includes(env.JINKE_AMAP_KEY));
     const resume=await acquire({env,areas,previous:result.snapshot,sleep:async()=>{},fetchFn:async()=>assert.fail('fatal resume')});assert.equal(resume.execution.api_requests_this_execution,0);
