@@ -112,7 +112,7 @@ test('unloaded differs from genuine zero; counts never represent employment or c
   assert.equal(companyPanelState(null,50).enabled,false);
   const empty = deriveCompanyAccess([],areas,provenance);
   assert.equal(empty.summary.records[0].office_count,0);
-  assert.match(companyPanelState(empty,'all').message,/0 sourced offices/);
+  assert.match(companyPanelState(empty,'all').message,/0 identified offices/);
   assert.equal(empty.metadata.employment_estimation_permitted,false);
   assert.equal(empty.metadata.coverage,'source_inventory_only');
   assert.throws(() => deriveCompanyAccess([office()],areas,{...provenance,status:'not_loaded'}));
@@ -174,4 +174,33 @@ test('company scaffold never modifies approved data or economic/reach model code
   assert.equal(fifty.percentage_of_shanghai.toFixed(7),'37.6335253');
   const actualAreas=JSON.parse(readFileSync(new URL('../web/public/data/reach-areas.geojson',import.meta.url)));
   deriveCompanyAccess([],actualAreas,{...provenance,status:'not_loaded'});
+});
+
+test('cluster sources contain only exact selected reach members; stale leaf requests are ignored', async()=>{
+  const {CLUSTER_LAYER,COUNT_LAYER}=await import('../web/src/company-access/layers.js');
+  const data=deriveCompanyAccess([office(),office({id:'b',source_id:'b',longitude:2.5,min_reach_minutes:30})],areas,provenance);
+  const map=fakeMap(),selected=[],controller=new CompanyAccessLayers(map,x=>selected.push(x));
+  controller.setState({output:data,limit:20,visible:true});
+  assert.equal(map.getSource(COMPANY_SOURCE).cluster,true);assert.equal(map.getSource(COMPANY_SOURCE).data.features.length,1);
+  assert.deepEqual(map.getLayer(COUNT_LAYER).layout['text-field'],['to-string',['get','point_count']]);
+  controller.setState({limit:30});assert.equal(map.getSource(COMPANY_SOURCE).data.features.length,2);
+  let resolve;map.getSource(COMPANY_SOURCE).getClusterLeaves=()=>new Promise(r=>{resolve=r;});
+  const click=map.events.find(e=>e[0]==='click'&&e[1]===CLUSTER_LAYER)[2];
+  const pending=click({features:[{properties:{cluster_id:1}}]});controller.setState({limit:10});resolve(data.offices.features);await pending;assert.equal(selected.length,0);
+  map.getSource(COMPANY_SOURCE).getClusterLeaves=async()=>data.offices.features;
+  await click({features:[{properties:{cluster_id:2}}]});assert.equal(selected[0].office_count,1);
+  controller.setState({limit:'all'});assert.equal(map.getSource(COMPANY_SOURCE).data.features.length,2);
+  controller.destroy();assert.equal(map.events.length,0);
+});
+test('review loader is inactive in normal builds and analytics use exact membership differences',async()=>{
+  const {loadCompanyReview}=await import('../web/src/company-access/review-loader.js');
+  const {companyAnalytics}=await import('../web/src/company-access/panel.js');
+  assert.equal(await loadCompanyReview({enabled:false,fetchJson:()=>assert.fail('Production must not fetch pilot data')}),null);
+  const data=deriveCompanyAccess([office(),office({id:'b',source_id:'b',longitude:2.5,min_reach_minutes:30})],areas,provenance);
+  assert.equal(companyAnalytics(data,30).incremental,1);assert.equal(companyAnalytics(data,40).incremental,0);
+  data.metadata.dataset_kind='candidate';data.metadata.ingestion={publication_status:'offline_candidate_not_published'};
+  const files={'company-offices.geojson':data.offices,'company-hubs.geojson':data.hubs,'company-reach-summary.json':data.summary,'company-access-metadata.json':data.metadata};
+  assert.equal((await loadCompanyReview({enabled:true,areas,fetchJson:async n=>files[n]})).offices.features.length,2);
+  const bad=structuredClone(files);bad['company-offices.geojson'].features[0].properties.reach_minutes=[50];
+  await assert.rejects(loadCompanyReview({enabled:true,areas,fetchJson:async n=>bad[n]}),/reconcile/);
 });

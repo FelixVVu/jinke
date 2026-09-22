@@ -6,7 +6,8 @@
     "test": "python -m pytest -q",
     "test:frontend": "node --test tests/frontend-map.test.mjs tests/office-employment-data.test.mjs tests/company-access.test.mjs tests/company-access-ingestion.test.mjs tests/company-access-amap.test.mjs tests/company-access-actions.test.mjs",
     "company-access:build": "node scripts/company-access/build.mjs",
-    "company-access:amap": "node scripts/company-access/amap/files.mjs"
+    "company-access:amap": "node scripts/company-access/amap/files.mjs",
+    "company-access:review-build": "node scripts/company-access/build-review.mjs"
   },
   "dependencies": {},
   "devDependencies": {}

@@ -1011,3 +1011,12 @@ output {
   line-height: 1.5;
   overflow-wrap: anywhere;
 }
+
+/* Company Access review stays inside the existing desktop panel/mobile sheet. */
+.company-analytics { display:grid; gap:6px; margin:12px 0; font-size:13px; }
+.company-analytics p { margin:0; }
+.company-analytics strong { margin-top:6px; }
+.company-selection { max-height:320px; overflow:auto; border-top:1px solid #ded9d5; padding-top:12px; }
+.company-selection article { padding:10px 0; border-bottom:1px solid #eee; }
+.company-selection p { margin:4px 0; font-size:13px; line-height:1.45; }
+#companyAccessStatus { color:#96384b; line-height:1.5; }

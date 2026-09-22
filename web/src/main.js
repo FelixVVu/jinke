@@ -1,5 +1,6 @@
-import { CompanyAccessLayers } from './company-access/layers.js';
-import { companyPanelMarkup, renderCompanyPanel } from './company-access/panel.js';
+import { loadCompanyReview } from './company-access/review-loader.js';
+import { CompanyAccessLayers, withCompanyGlyphs } from './company-access/layers.js';
+import { companyPanelMarkup, renderCompanyPanel, renderCompanySelection } from './company-access/panel.js';
 import {
   StyleSwitchCoordinator,
   bindLayerHandlerOnce,
@@ -1466,9 +1467,7 @@ function restoreCustomLayers() {
 
   if (!companyAccessLayers) {
     companyAccessLayers = new CompanyAccessLayers(map, office => {
-      const selection = byId('companyAccessSelection');
-      selection.textContent = `${office.company_name} · ${office.address}`;
-      selection.hidden = false;
+      renderCompanySelection(document, office);
       byId('companyAccess').open = true;
       if (mobileQuery.matches) setSheetExpanded(true);
     });
@@ -1634,7 +1633,7 @@ function wireControls() {
     renderState();
     if (styleSwitch) {
       setMapMessage('Changing basemap…');
-      styleSwitch.switchTo(state.basemap, basemaps[state.basemap].style());
+      styleSwitch.switchTo(state.basemap, withCompanyGlyphs(basemaps[state.basemap].style()));
     }
   };
 
@@ -1673,7 +1672,7 @@ function wireControls() {
     renderState();
     if (styleSwitch && previousBasemap !== state.basemap) {
       setMapMessage('Changing basemap…');
-      styleSwitch.switchTo(state.basemap, basemaps[state.basemap].style());
+      styleSwitch.switchTo(state.basemap, withCompanyGlyphs(basemaps[state.basemap].style()));
     } else {
       applyMapState();
     }
@@ -1860,7 +1859,7 @@ Promise.all([
   fetchJson('shanghai-metro-stations.geojson'),
 ])
   .then(
-    ([
+    async ([
       reachData,
       outsideData,
       stationDataValue,
@@ -1869,6 +1868,20 @@ Promise.all([
       metroStationData,
     ]) => {
       areas = reachData;
+      if (document.querySelector('meta[name="jinke-company-review"]')?.content === 'pilot-1') {
+        try {
+          companyAccessOutput = await loadCompanyReview({ enabled: true, areas, fetchJson: async name => {
+            const response = await fetch(assetUrl(`data/company-access-review/${name}`));
+            if (!response.ok) throw new Error('Review inventory unavailable');
+            return response.json();
+          }});
+          showCompanyOffices = true;
+          byId('showCompanyOffices').checked = true;
+          byId('companyAccess').open = true;
+        } catch {
+          byId('companyAccessStatus').textContent = 'Review inventory failed validation.';
+        }
+      }
       const reachView = buildReachBandView(areas);
       reachBandData = reachView.bands;
       reachContourData = reachView.contours;
@@ -1895,7 +1908,7 @@ Promise.all([
       try {
         map = new maplibregl.Map({
           container: 'map',
-          style: basemaps[state.basemap].style(),
+          style: withCompanyGlyphs(basemaps[state.basemap].style()),
           center: [121.597836, 31.2064028],
           zoom: 10,
         });
