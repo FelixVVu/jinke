@@ -88,7 +88,7 @@ export async function acquire({env,areas,collectedAt,previous=null,fetchFn=fetch
         const payload=await requestAmap(env,'polygon',q.parameters,fetchFn);
         if(payload.pois.length>POLICY.page_size)fail('INVALID_PAGE_SIZE');
         const entry={query_id:q.id,payload,payload_sha256:sha256(stable(payload))};
-        snapshot.responses.push(entry);cached.set(q.id,entry);snapshot.attempts.push({query_id:q.id,outcome:'success'});success=true;
+        snapshot.responses.push(entry);cached.set(q.id,entry);snapshot.attempts.push({query_id:q.id,outcome:'success'});success=true;stop='PLAN_COMPLETE';
       }catch(error){
         // Fixed local codes only; never stringify provider exceptions.
         const code=/^(AMAP_|INVALID_PAGE_SIZE)/.test(error.code||'')?error.code:'AMAP_REQUEST_FAILED';
