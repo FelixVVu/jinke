@@ -1,0 +1,44 @@
+name: Company Access AMap Pilot 1 (manual review only)
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: company-access-amap-pilot-1
+  cancel-in-progress: false
+
+jobs:
+  pilot:
+    if: >-
+      github.event_name == 'workflow_dispatch' &&
+      github.repository == 'FelixVVu/jinke' &&
+      github.ref == 'refs/heads/review/company-access-scaffold' &&
+      github.run_attempt == 1
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version: '22'
+      - name: Mocked tests and economic guards (no provider credential)
+        run: npm run test:frontend
+      - name: Acquire fixed Pilot 1 and prepare pending review files
+        id: pilot
+        env:
+          JINKE_AMAP_KEY: ${{ secrets.JINKE_AMAP_KEY }}
+        run: node scripts/company-access/amap/actions-pilot.mjs
+      - name: Downloadable safe review outputs
+        if: ${{ always() && steps.pilot.outputs.artifact_ready == 'true' }}
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: company-access-amap-pilot-1-${{ github.run_id }}
+          path: offline-output/company-access/pilot-1-artifact/
+          if-no-files-found: error
+          include-hidden-files: false
+          retention-days: 7
