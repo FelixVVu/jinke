@@ -1,0 +1,262 @@
+{
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "source_record_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "source_namespace": {
+      "type": "string",
+      "minLength": 1
+    },
+    "company_name": {
+      "type": "string",
+      "minLength": 1
+    },
+    "name_variants": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "company_identity": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "reviewed": {
+          "const": true
+        },
+        "source_url": {
+          "type": "string",
+          "format": "uri"
+        }
+      },
+      "required": [
+        "id",
+        "reviewed",
+        "source_url"
+      ]
+    },
+    "office_identity": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "reviewed": {
+          "const": true
+        },
+        "source_url": {
+          "type": "string",
+          "format": "uri"
+        }
+      },
+      "required": [
+        "id",
+        "reviewed",
+        "source_url"
+      ]
+    },
+    "address": {
+      "type": "string",
+      "minLength": 1
+    },
+    "district": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "minLength": 1
+    },
+    "building_name": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "minLength": 1
+    },
+    "longitude": {
+      "type": [
+        "number",
+        "null"
+      ],
+      "minimum": -180,
+      "maximum": 180
+    },
+    "latitude": {
+      "type": [
+        "number",
+        "null"
+      ],
+      "minimum": -90,
+      "maximum": 90
+    },
+    "coordinate_system": {
+      "enum": [
+        "WGS84",
+        "GCJ02",
+        "BD09",
+        "unknown"
+      ]
+    },
+    "industry_code": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "minLength": 1
+    },
+    "sector": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "minLength": 1
+    },
+    "classification_evidence": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "scheme": {
+          "type": "string",
+          "minLength": 1
+        },
+        "kind": {
+          "enum": [
+            "source_classification",
+            "reviewed_mapping"
+          ]
+        },
+        "source_url": {
+          "type": "string",
+          "format": "uri"
+        },
+        "reviewed": {
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "scheme",
+        "kind",
+        "source_url",
+        "reviewed"
+      ]
+    },
+    "source_type": {
+      "enum": [
+        "company_website",
+        "building_directory",
+        "government",
+        "licensed_poi",
+        "osm",
+        "other"
+      ]
+    },
+    "source_url": {
+      "type": "string",
+      "format": "uri"
+    },
+    "source_evidence": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "kind": {
+          "enum": [
+            "official_office",
+            "official_recruitment",
+            "tenant_directory",
+            "government_office",
+            "map_poi",
+            "office_building",
+            "registered_address",
+            "weak"
+          ]
+        },
+        "description": {
+          "type": "string",
+          "minLength": 1
+        },
+        "reviewed": {
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "kind",
+        "description",
+        "reviewed"
+      ]
+    },
+    "collected_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "verified_at": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "format": "date-time"
+    },
+    "hub_candidates": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "name": {
+            "type": "string",
+            "minLength": 1
+          },
+          "kind": {
+            "enum": [
+              "verified_building",
+              "mapped_building",
+              "reviewed_campus"
+            ]
+          },
+          "source_url": {
+            "type": "string",
+            "format": "uri"
+          },
+          "reviewed": {
+            "const": true
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "kind",
+          "source_url",
+          "reviewed"
+        ]
+      }
+    }
+  },
+  "required": [
+    "source_record_id",
+    "company_name",
+    "address",
+    "longitude",
+    "latitude",
+    "coordinate_system",
+    "source_type",
+    "source_url",
+    "source_evidence",
+    "collected_at",
+    "verified_at"
+  ],
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Company Access raw office record v1; separate from browser schema"
+}
