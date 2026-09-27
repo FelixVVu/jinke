@@ -1,5 +1,9 @@
 # Jinke Road coverage diagnosis and Pilot 2
 
+Update: Pilot 2 has now been run and reviewed. See
+[the combined import report](company-access-pilots-merged.md). The diagnosis,
+planned grid and pre-execution status below are retained as historical context.
+
 ## Finding: missing inventory, not an empty reach area
 
 Replayed the exact Pilot 1 snapshot and checked every raw POI before category

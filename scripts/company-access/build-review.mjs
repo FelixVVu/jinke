@@ -16,5 +16,5 @@ await rm('dist-review',{recursive:true,force:true});await cp('dist','dist-review
 const target='dist-review/data/company-access-review';await mkdir(target,{recursive:true});
 for(const key of ['offices','hubs','summary','metadata'])await cp(join(root,'frontend',artifactNames[key]),join(target,artifactNames[key]));
 await cp('docs/company-access-sampling-coverage.svg',join(target,'sampling-coverage.svg'));
-let html=await readFile('dist-review/index.html','utf8');html=html.replace('<head>','<head>\n<meta name="jinke-company-review" content="pilot-1">');await writeFile('dist-review/index.html',html);
+let html=await readFile('dist-review/index.html','utf8');html=html.replace('<head>','<head>\n<meta name="jinke-company-review" content="approved-pilots">');await writeFile('dist-review/index.html',html);
 console.log(`Review build ready: ${artifacts.offices.features.length} canonical offices; no raw evidence copied.`);

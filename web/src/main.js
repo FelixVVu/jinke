@@ -1870,7 +1870,7 @@ Promise.all([
       metroStationData,
     ]) => {
       areas = reachData;
-      if (document.querySelector('meta[name="jinke-company-review"]')?.content === 'pilot-1') {
+      if (['pilot-1','approved-pilots'].includes(document.querySelector('meta[name="jinke-company-review"]')?.content)) {
         try {
           companyAccessOutput = await loadCompanyReview({ enabled: true, areas, fetchJson: async name => {
             const response = await fetch(assetUrl(`data/company-access-review/${name}`));

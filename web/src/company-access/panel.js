@@ -5,7 +5,7 @@ export const companyPanelMarkup=`
 <summary>Company Access</summary><div class="details-content">
 <p id="companyAccessStatus" role="status" aria-live="polite"></p>
 <label class="toggle"><input id="showCompanyOffices" type="checkbox" disabled> Company offices</label>
-<a id="companySamplingCoverage" hidden target="_blank" rel="noopener">View geographic sampling coverage ↗</a>
+<a id="companySamplingCoverage" hidden target="_blank" rel="noopener">Pilot 1 sampling diagnosis ↗</a>
 <div id="companyAccessAnalytics" class="company-analytics"></div>
 <p class="company-access-note">${COMPANY_DISCLOSURE}</p>
 
@@ -21,7 +21,7 @@ export function companyPanelState(output,limit){
   const minutes=limit==='all'?50:limit;
   if(!output||output.metadata.status!=='ready')return {enabled:false,message:'Company-office data has not been connected yet.'};
   const record=output.summary.records.find(r=>r.limit_minutes===minutes);
-  return {enabled:true,message:`Pilot 1 · REVIEW ONLY · ${record.office_count} identified offices · within ${minutes} minutes${limit==='all'?' (All reach view)':''}. Limited sampling; missing inventory does not mean no offices.`};
+  return {enabled:true,message:`Reviewed pilots · REVIEW ONLY · ${record.office_count} identified offices · within ${minutes} minutes${limit==='all'?' (All reach view)':''}. Limited sampling; missing inventory does not mean no offices.`};
 }
 const line=(root,text,tag='p')=>{const el=root.ownerDocument.createElement(tag);el.textContent=text;root.append(el);return el;};
 const confidenceLabel={verified:'Verified physical office',building:'Reviewed mapped office',approximate:'Approximate location'};
