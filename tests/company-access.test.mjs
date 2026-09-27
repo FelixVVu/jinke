@@ -204,3 +204,13 @@ test('review loader is inactive in normal builds and analytics use exact members
   const bad=structuredClone(files);bad['company-offices.geojson'].features[0].properties.reach_minutes=[50];
   await assert.rejects(loadCompanyReview({enabled:true,areas,fetchJson:async n=>bad[n]}),/reconcile/);
 });
+
+test('drawer selection highlight survives style changes and excludes hidden reach members', async()=>{
+  const {SELECTED_SOURCE,SELECTED_LAYER}=await import('../web/src/company-access/layers.js');
+  const map=fakeMap();let camera;map.easeTo=value=>{camera=value;};
+  const data=deriveCompanyAccess([office(),office({id:'b',source_id:'b',longitude:2.5,min_reach_minutes:30})],areas,provenance);
+  const controller=new CompanyAccessLayers(map);controller.setState({output:data,limit:30,visible:true});controller.highlight('b');
+  assert.deepEqual(camera.center,[2.5,0]);assert.equal(map.getSource(SELECTED_SOURCE).data.features[0].id,'b');
+  map.sources.clear();map.layers.clear();map.layers.set('station-circle',{});controller.restore();assert.equal(map.getSource(SELECTED_SOURCE).data.features[0].id,'b');
+  controller.setState({limit:10});assert.equal(map.getSource(SELECTED_SOURCE).data.features.length,0);controller.highlight(null);controller.destroy();assert.equal(map.getLayer(SELECTED_LAYER),undefined);
+});

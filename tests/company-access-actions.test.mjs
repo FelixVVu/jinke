@@ -39,6 +39,18 @@ test('workflow exposes only manual dispatch, no inputs, one step secret, fixed r
   assert.doesNotMatch(yaml,/inputs:|pages: write|id-token: write|deploy-pages|AMAP_WEB_SERVICE_KEY/);
   assert.equal(yaml.match(/secrets\.JINKE_AMAP_KEY/g).length,1);
   assert.match(yaml,/github.run_attempt == 1/);assert.match(yaml,/persist-credentials: false/);
-  assert.match(yaml,/path: offline-output\/company-access\/pilot-1-artifact\//);
+  assert.match(yaml,/path: offline-output\/company-access\/pilot-2-artifact\//);
   assert.match(yaml,/steps.pilot.outputs.artifact_ready == 'true'/);
+  assert.match(yaml,/run: node scripts\/company-access\/amap\/actions-pilot2.mjs/);
+});
+test('fixed Pilot 2 adapter generates a key-free pending artifact without touching Pilot 1',async()=>{
+  const folders=['pilot-2-checkpoint','pilot-2','pilot-2-artifact'];
+  for(const folder of folders)await assert.rejects(lstat(new URL(folder+'/',root)),{code:'ENOENT'});
+  try{
+    const result=await executePilot({context,key,pilotVersion:'amap-pilot-2',collectedAt:'2026-09-26T00:00:00Z',dependencies:{sleep:async()=>{},fetchFn:async()=>Response.json({status:'1',pois:[]})}});
+    assert.equal(result.report.api_requests_total,16);assert.match(result.artifact,/pilot-2-artifact$/);
+    const snapshot=JSON.parse(await readFile(new URL('pilot-2-artifact/provider-cache/snapshot.json',root)));
+    assert.equal(snapshot.version,'amap-pilot-2');assert.equal(result.report.accepted_count,0);
+    for(const path of ARTIFACT_FILES)assertKeyFree(await readFile(new URL('pilot-2-artifact/'+path,root)),key);
+  }finally{for(const folder of folders)await rm(new URL(folder+'/',root),{recursive:true,force:true});}
 });

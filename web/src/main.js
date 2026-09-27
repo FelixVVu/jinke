@@ -1,6 +1,7 @@
+import { CompanyDrawer } from './company-access/drawer.js';
 import { loadCompanyReview } from './company-access/review-loader.js';
 import { CompanyAccessLayers, withCompanyGlyphs } from './company-access/layers.js';
-import { companyPanelMarkup, renderCompanyPanel, renderCompanySelection } from './company-access/panel.js';
+import { companyPanelMarkup, renderCompanyPanel } from './company-access/panel.js';
 import {
   StyleSwitchCoordinator,
   bindLayerHandlerOnce,
@@ -498,6 +499,7 @@ let officeDensityLoadState = 'loading';
 // Company inventory is intentionally not loaded in this scaffolding release.
 let companyAccessOutput = null;
 let companyAccessLayers;
+let companyDrawer;
 let showCompanyOffices = false;
 let reachBandData;
 let reachContourData;
@@ -802,6 +804,7 @@ function setPaintProperty(layerId, property, value) {
 function applyMapState() {
   renderState();
   renderCompanyPanel(document, companyAccessOutput, state.limit);
+  companyDrawer?.sync(state.limit, showCompanyOffices);
   companyAccessLayers?.setState({ output: companyAccessOutput, limit: state.limit, visible: showCompanyOffices });
   updateAppearanceOutputs();
   byId('officeDensityLegend').hidden = !(
@@ -1465,11 +1468,10 @@ function restoreCustomLayers() {
     paint: { 'text-halo-color': '#ffffff', 'text-halo-width': 1 },
   });
 
+  if (!companyDrawer) companyDrawer = new CompanyDrawer({root:document.querySelector('.map-shell'),onHighlight:id=>companyAccessLayers.highlight(id),onClose:()=>companyAccessLayers?.highlight(null)});
   if (!companyAccessLayers) {
     companyAccessLayers = new CompanyAccessLayers(map, office => {
-      renderCompanySelection(document, office);
-      byId('companyAccess').open = true;
-      if (mobileQuery.matches) setSheetExpanded(true);
+      companyDrawer.open(office);
     });
   }
   bindLayerHandlerOnce(map, 'click', 'station-circle', handleStationClick);
@@ -1878,6 +1880,8 @@ Promise.all([
           showCompanyOffices = true;
           byId('showCompanyOffices').checked = true;
           byId('companyAccess').open = true;
+          byId('companySamplingCoverage').href = assetUrl('data/company-access-review/sampling-coverage.svg');
+          byId('companySamplingCoverage').hidden = false;
         } catch {
           byId('companyAccessStatus').textContent = 'Review inventory failed validation.';
         }

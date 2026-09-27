@@ -9,7 +9,7 @@ const repo=resolve(dirname(fileURLToPath(import.meta.url)),'../../..');
 export const ARTIFACT_FILES=Object.freeze([
   'review/amap-office-review.csv','review/amap-office-review.json',
   'normalized/candidates.json','normalized/raw-input.json',
-  'audit/pilot-report.json','audit/pilot-report.md','audit/acquisition-exclusions.json',
+  'audit/query-coverage.geojson','audit/pilot-report.json','audit/pilot-report.md','audit/acquisition-exclusions.json',
   'provider-cache/snapshot.json',
 ]);
 export function requireManualReviewRun(context){
@@ -35,28 +35,30 @@ export async function stageArtifact({source,target,key}){
   await mkdir(target); // fresh directory only
   for(const [path,bytes] of safe){await mkdir(dirname(join(target,path)),{recursive:true});await writeFile(join(target,path),bytes,{flag:'wx',mode:0o600});}
 }
-export async function executePilot({key,context,collectedAt=new Date().toISOString(),dependencies={}}){
+export async function executePilot({key,context,collectedAt=new Date().toISOString(),dependencies={},pilotVersion='amap-pilot-1'}){
   requireManualReviewRun(context);
+  if(!['amap-pilot-1','amap-pilot-2'].includes(pilotVersion))fail('UNKNOWN_FIXED_PILOT');
+  const pilot=pilotVersion==='amap-pilot-2'?'pilot-2':'pilot-1';
   if(typeof key!=='string'||!key.trim())fail('AMAP_NOT_CONFIGURED');
   const root=join(repo,'offline-output/company-access');
   await mkdir(root,{recursive:true});
-  const checkpointDir=join(root,'pilot-1-checkpoint');await mkdir(checkpointDir);
+  const checkpointDir=join(root,`${pilot}-checkpoint`);await mkdir(checkpointDir);
   const snapshotPath=join(checkpointDir,'snapshot.json');
   const areas=JSON.parse(await readFile(join(repo,'web/public/data/reach-areas.geojson'),'utf8'));
   const result=await runCompanyAccessPilot({JINKE_AMAP_KEY:key},{reachAreas:areas,collectedAt,checkpoint:async snapshot=>{
     const bytes=stable(snapshot)+'\n';assertKeyFree(bytes,key);
     const temporary=join(checkpointDir,'snapshot.next');await writeFile(temporary,bytes,{mode:0o600});await rename(temporary,snapshotPath);
-  }},dependencies);
-  const output=join(root,'pilot-1');
+  }},{...dependencies,pilotVersion});
+  const output=join(root,pilot);
   await prepareFiles({snapshotPath,output});
-  const artifact=join(root,'pilot-1-artifact');await stageArtifact({source:output,target:artifact,key});
+  const artifact=join(root,`${pilot}-artifact`);await stageArtifact({source:output,target:artifact,key});
   const report=JSON.parse(await readFile(join(output,'audit/pilot-report.json'),'utf8'));
   return {report,artifact,providerStopped:!['PLAN_COMPLETE','CANDIDATE_CAP','REQUEST_BUDGET'].includes(result.execution.stop_reason)};
 }
-async function main(){
+export async function main(pilotVersion='amap-pilot-1'){
   if(process.argv.length!==2)fail('NO_PILOT_ARGUMENTS_ALLOWED');
   // Pass a narrow binding object; never serialize process.env or log provider data.
-  const result=await executePilot({key:process.env.JINKE_AMAP_KEY,context:process.env});
+  const result=await executePilot({key:process.env.JINKE_AMAP_KEY,context:process.env,pilotVersion});
   if(process.env.GITHUB_OUTPUT)await appendFile(process.env.GITHUB_OUTPUT,'artifact_ready=true\n');
   // Numeric summary only. Full key-scanned QA lives inside the downloadable artifact.
   const r=result.report;

@@ -1,4 +1,6 @@
 import { selectCompanyOffices } from './model.js';
+export const SELECTED_SOURCE='company-access-selected';
+export const SELECTED_LAYER='company-access-selected-ring';
 export const COMPANY_SOURCE = 'company-access-offices';
 export const COMPANY_LAYER = 'company-access-circles';
 export const CLUSTER_LAYER = 'company-access-clusters';
@@ -33,6 +35,11 @@ export class CompanyAccessLayers {
     if(output!==this.output||limit!==this.limit||visible!==this.visible)this.generation++;
     Object.assign(this,{output,limit,visible:Boolean(visible&&output?.metadata.status==='ready')});this.restore();
   }
+  highlight(id){
+    const office=selectCompanyOffices(this.output,this.limit).features.find(f=>f.id===id);
+    this.selectedId=office?.id||null;this.restore();
+    if(office)this.map.easeTo({center:office.geometry.coordinates,zoom:Math.max(this.map.getZoom(),15),padding:{right:globalThis.innerWidth>760?Math.min(440,globalThis.innerWidth/3):0,bottom:globalThis.innerWidth<=760?globalThis.innerHeight*0.4:0},duration:500,retainPadding:false});
+  }
   restore(){
     const map=this.map;if(!map.getStyle()||!map.getLayer('station-circle'))return false;
     const data=selectCompanyOffices(this.output,this.limit),minutes=this.limit==='all'?50:this.limit;
@@ -41,7 +48,10 @@ export class CompanyAccessLayers {
     this.lastOutput=this.output;this.lastLimit=this.limit;
     const hubs={type:'FeatureCollection',features:(this.output?.hubs.features||[]).filter(f=>f.properties.counts_by_reach[minutes]>0&&f.properties.hub_kind!=='spatial_cluster')};
     if(!map.getSource(HUB_SOURCE))map.addSource(HUB_SOURCE,{type:'geojson',data:hubs});else map.getSource(HUB_SOURCE).setData(hubs);
+    const selected={type:'FeatureCollection',features:data.features.filter(f=>f.id===this.selectedId)};
+    if(!map.getSource(SELECTED_SOURCE))map.addSource(SELECTED_SOURCE,{type:'geojson',data:selected});else map.getSource(SELECTED_SOURCE).setData(selected);
     const layers=[
+      {id:SELECTED_LAYER,type:'circle',source:SELECTED_SOURCE,paint:{'circle-radius':13,'circle-color':'#fff','circle-opacity':0.25,'circle-stroke-color':'#70283a','circle-stroke-width':3}},
       {id:CLUSTER_LAYER,type:'circle',source:COMPANY_SOURCE,filter:['has','point_count'],paint:{'circle-color':'#bd3f55','circle-radius':['step',['get','point_count'],19,10,24,25,29],'circle-stroke-color':'#fff','circle-stroke-width':3,'circle-opacity':0.96}},
       {id:COUNT_LAYER,type:'symbol',source:COMPANY_SOURCE,filter:['has','point_count'],layout:{'text-field':['to-string',['get','point_count']],'text-font':['Noto Sans Regular'],'text-size':15,'text-allow-overlap':true},paint:{'text-color':'#fff'}},
       {id:COMPANY_LAYER,type:'circle',source:COMPANY_SOURCE,filter:['!',['has','point_count']],paint:{'circle-color':'#bd3f55','circle-radius':6,'circle-stroke-color':'#fff','circle-stroke-width':2}},
@@ -55,7 +65,7 @@ export class CompanyAccessLayers {
     this.generation++;
     if(this.bound)for(const [layer,handlers] of [[COMPANY_LAYER,this.handlers],[CLUSTER_LAYER,this.clusterHandlers]])for(const [event,handler] of Object.entries(handlers))this.map.off(event,layer,handler);
     this.bound=false;this.map.getCanvas().style.cursor='';
-    for(const id of [HUB_LAYER,COMPANY_LAYER,COUNT_LAYER,CLUSTER_LAYER])if(this.map.getLayer(id))this.map.removeLayer(id);
-    for(const id of [HUB_SOURCE,COMPANY_SOURCE])if(this.map.getSource(id))this.map.removeSource(id);
+    for(const id of [SELECTED_LAYER,HUB_LAYER,COMPANY_LAYER,COUNT_LAYER,CLUSTER_LAYER])if(this.map.getLayer(id))this.map.removeLayer(id);
+    for(const id of [SELECTED_SOURCE,HUB_SOURCE,COMPANY_SOURCE])if(this.map.getSource(id))this.map.removeSource(id);
   }
 }

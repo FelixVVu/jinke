@@ -5,9 +5,10 @@ import { validateRawRecord } from '../validate.mjs';
 import { normalizeCompanyName } from '../../../web/src/company-access/schema.js';
 import { addressKey } from '../normalize.mjs';
 import { compare, fail, sha256, stable } from '../common.mjs';
-import { planQueries, POLICY } from './plan.mjs';
+import { planQueries, POLICY, policyFor, reachLimitFor } from './plan.mjs';
 const text=value=>typeof value==='string'?value.trim():'';
 export function candidatesFromCache(snapshot, areas) {
+  const POLICY=policyFor(snapshot.version),limit=reachLimitFor(snapshot.version);
   const reach=prepareReachAreas(areas), groups=new Map(), exclusions=[], candidates=[];
   let rawCount=0;
   for(const entry of snapshot.responses) for(const poi of entry.payload.pois){
@@ -31,10 +32,10 @@ export function candidatesFromCache(snapshot, areas) {
         source_evidence:{kind:'map_poi',description:'Unreviewed AMap company POI; physical office requires human review.',reviewed:false},
         collected_at:snapshot.collected_at,verified_at:null};
       const converted=normalizeCoordinates(raw);
-      if(!reach.contains(converted.coordinates,30)){exclusions.push({amap_poi_id:id,reason:'OUTSIDE_30_MINUTES',occurrences,coordinate_provenance:converted.audit});continue;}
+      if(!reach.contains(converted.coordinates,limit)){exclusions.push({amap_poi_id:id,reason:`OUTSIDE_${limit}_MINUTES`,occurrences,coordinate_provenance:converted.audit});continue;}
       validateRawRecord(raw);
       candidates.push({amap_poi_id:id,raw,longitude_wgs84:converted.coordinates[0],latitude_wgs84:converted.coordinates[1],coordinate_provenance:converted.audit,
-        provider:poi,query_ids:references,inside_30_minute_reach:true,possible_duplicate:false,duplicate_group:''});
+        provider:poi,query_ids:references,inside_30_minute_reach:reach.contains(converted.coordinates,30),inside_10_minute_reach:reach.contains(converted.coordinates,10),possible_duplicate:false,duplicate_group:''});
     }catch(error){exclusions.push({amap_poi_id:id,reason:error.code||'INVALID_PROVIDER_RECORD',occurrences});}
   }
   const sameOffice=new Map();
@@ -43,12 +44,12 @@ export function candidatesFromCache(snapshot, areas) {
   const overflow=candidates.splice(POLICY.max_candidates);
   for(const c of overflow)exclusions.push({amap_poi_id:c.amap_poi_id,reason:'PILOT_CANDIDATE_CAP',candidate:c});
   return {candidates,exclusions,counts:{raw_poi_results:rawCount,unique_amap_ids:groups.size,overlap_duplicates:[...groups.values()].reduce((n,g)=>n+g.length-1,0),
-    candidate_review_count:candidates.length,outside_30_minute_rejects:exclusions.filter(e=>e.reason==='OUTSIDE_30_MINUTES').length,
+    candidate_review_count:candidates.length,outside_target_reach_rejects:exclusions.filter(e=>e.reason===`OUTSIDE_${limit}_MINUTES`).length,outside_30_minute_rejects:exclusions.filter(e=>e.reason==='OUTSIDE_30_MINUTES').length,
     coordinate_failures:exclusions.filter(e=>['INVALID_COORDINATES','CONVERSION_OUTSIDE_SUPPORTED_REGION'].includes(e.reason)).length,
     provider_id_conflicts:exclusions.filter(e=>e.reason==='POI_ID_CONFLICT').length}};
 }
 export function validateSnapshot(snapshot, areas) {
-  const plan=planQueries(areas);
+  const POLICY=policyFor(snapshot?.version),plan=planQueries(areas,POLICY.version);
   if(snapshot?.version!==POLICY.version||stable(snapshot.plan)!==stable(plan)||!Array.isArray(snapshot.responses)||!Array.isArray(snapshot.attempts)||
     !/^\d{4}-\d{2}-\d{2}T.*Z$/.test(snapshot.collected_at)||!Number.isFinite(Date.parse(snapshot.collected_at))) fail('INVALID_SNAPSHOT');
   const queries=new Map(plan.queries.map(q=>[q.id,q])),seen=new Set();
@@ -64,8 +65,10 @@ export function validateSnapshot(snapshot, areas) {
  * checkpoint receives only sanitized, key-free state after every request.
  * One serialized job per run; retries count against the lifetime request budget.
  */
-export async function acquire({env,areas,collectedAt,previous=null,fetchFn=fetch,sleep=ms=>new Promise(r=>setTimeout(r,ms)),checkpoint=async()=>{}}){
-  const snapshot=previous?structuredClone(validateSnapshot(previous,areas)):{version:POLICY.version,collected_at:collectedAt,plan:planQueries(areas),responses:[],attempts:[]};
+export async function acquire({env,areas,collectedAt,previous=null,fetchFn=fetch,sleep=ms=>new Promise(r=>setTimeout(r,ms)),checkpoint=async()=>{},pilotVersion=POLICY.version}){
+  const POLICY=policyFor(pilotVersion);
+  const snapshot=previous?structuredClone(validateSnapshot(previous,areas)):{version:POLICY.version,collected_at:collectedAt,plan:planQueries(areas,POLICY.version),responses:[],attempts:[]};
+  if(snapshot.version!==POLICY.version)fail('PILOT_VERSION_MISMATCH');
   validateSnapshot(snapshot,areas);
   const cached=new Map(snapshot.responses.map(r=>[r.query_id,r]));
   let calls=0,hits=0,stop='PLAN_COMPLETE';

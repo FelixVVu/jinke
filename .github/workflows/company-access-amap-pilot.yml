@@ -1,4 +1,4 @@
-name: Company Access AMap Pilot 1 (manual review only)
+name: Company Access AMap Pilot 2 (manual review only)
 
 on:
   workflow_dispatch:
@@ -7,7 +7,7 @@ permissions:
   contents: read
 
 concurrency:
-  group: company-access-amap-pilot-1
+  group: company-access-amap-pilot-2
   cancel-in-progress: false
 
 jobs:
@@ -28,17 +28,17 @@ jobs:
           node-version: '22'
       - name: Mocked tests and economic guards (no provider credential)
         run: npm run test:frontend
-      - name: Acquire fixed Pilot 1 and prepare pending review files
+      - name: Acquire fixed Pilot 2 and prepare pending review files
         id: pilot
         env:
           JINKE_AMAP_KEY: ${{ secrets.JINKE_AMAP_KEY }}
-        run: node scripts/company-access/amap/actions-pilot.mjs
+        run: node scripts/company-access/amap/actions-pilot2.mjs
       - name: Downloadable safe review outputs
         if: ${{ always() && steps.pilot.outputs.artifact_ready == 'true' }}
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         with:
-          name: company-access-amap-pilot-1-${{ github.run_id }}
-          path: offline-output/company-access/pilot-1-artifact/
+          name: company-access-amap-pilot-2-${{ github.run_id }}
+          path: offline-output/company-access/pilot-2-artifact/
           if-no-files-found: error
           include-hidden-files: false
           retention-days: 7

@@ -30,6 +30,10 @@ export async function prepareFiles({snapshotPath,output,reach=defaultReach}){
   await json(join(target,'review/amap-office-review.json'),reviewRows(prepared.candidates));
   await writeFile(join(target,'review/amap-office-review.csv'),toCSV(reviewRows(prepared.candidates)),{flag:'wx'});
   await json(join(target,'audit/acquisition-exclusions.json'),prepared.exclusions);
+  await json(join(target,'audit/query-coverage.geojson'),{type:'FeatureCollection',features:snapshot.plan.cells.map(c=>{
+    const [w,s,e,n]=c.bbox_wgs84;const queries=snapshot.plan.queries.filter(q=>q.cell_id===c.id);
+    return {type:'Feature',geometry:{type:'Polygon',coordinates:[[[w,s],[e,s],[e,n],[w,n],[w,s]]]},properties:{cell_id:c.id,pages_returned:snapshot.responses.filter(r=>queries.some(q=>q.id===r.query_id)).length,attempts:snapshot.attempts.filter(a=>queries.some(q=>q.id===a.query_id)).length,scope:snapshot.version,coverage:'queried_rectangle_not_exhaustive_inventory'}};
+  })});
   await json(join(target,'audit/pilot-report.json'),qaReport(bundle));
   await writeFile(join(target,'audit/pilot-report.md'),reportMarkdown(qaReport(bundle)),{flag:'wx'});
   return {output:target,...prepared.counts};

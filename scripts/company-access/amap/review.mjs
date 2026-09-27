@@ -7,7 +7,7 @@ const safeCell=value=>{const s=String(value??'');return /^[\s]*[=+\-@\t\r]/u.tes
 export function reviewRows(candidates){return candidates.map(c=>({review_status:'pending',company_name:c.raw.company_name,amap_poi_id:c.amap_poi_id,
   amap_type:c.provider.type||'',amap_typecode:c.provider.typecode,address:c.raw.address,district:c.raw.district||'',adcode:c.provider.adcode||'',
   building_name_if_available:c.raw.building_name||'',longitude_gcj02:c.raw.longitude,latitude_gcj02:c.raw.latitude,longitude_wgs84:c.longitude_wgs84,latitude_wgs84:c.latitude_wgs84,
-  inside_30_minute_reach:true,possible_duplicate:c.possible_duplicate,duplicate_group:c.duplicate_group,source_reference:c.raw.source_url,review_notes:''}));}
+  inside_30_minute_reach:c.inside_30_minute_reach,possible_duplicate:c.possible_duplicate,duplicate_group:c.duplicate_group,source_reference:c.raw.source_url,review_notes:''}));}
 export function toCSV(rows){return [COLUMNS,...rows.map(row=>COLUMNS.map(key=>safeCell(row[key])))].map(row=>row.map(s=>'"'+String(s).replaceAll('"','""')+'"').join(',')).join('\r\n')+'\r\n';}
 export function parseCSV(csv){
   const rows=[];let row=[],value='',quoted=false,closed=false;

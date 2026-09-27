@@ -1,5 +1,9 @@
 # Phase 3C — approved Pilot 1 review
 
+Follow-up: [Pilot 2 coverage diagnosis and dedicated drawer](company-access-pilot2.md).
+The original in-panel details below have been replaced by a separate map drawer;
+Pilot 1 data and decisions remain unchanged.
+
 Imported the user's exact `amap-office-review_proposed(1).csv` against the exact
 snapshot inside `company-access-amap-pilot-1-35691688121(1).zip`, using the existing
 import-review command. Review notes and decisions are unchanged. The importer

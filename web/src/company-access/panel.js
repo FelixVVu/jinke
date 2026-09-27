@@ -5,9 +5,10 @@ export const companyPanelMarkup=`
 <summary>Company Access</summary><div class="details-content">
 <p id="companyAccessStatus" role="status" aria-live="polite"></p>
 <label class="toggle"><input id="showCompanyOffices" type="checkbox" disabled> Company offices</label>
+<a id="companySamplingCoverage" hidden target="_blank" rel="noopener">View geographic sampling coverage ↗</a>
 <div id="companyAccessAnalytics" class="company-analytics"></div>
 <p class="company-access-note">${COMPANY_DISCLOSURE}</p>
-<div id="companyAccessSelection" class="company-selection" hidden></div>
+
 </div></details>`;
 export function companyAnalytics(output,limit){
   const minutes=limit==='all'?50:limit,offices=selectCompanyOffices(output,limit).features.map(f=>f.properties);
@@ -20,7 +21,7 @@ export function companyPanelState(output,limit){
   const minutes=limit==='all'?50:limit;
   if(!output||output.metadata.status!=='ready')return {enabled:false,message:'Company-office data has not been connected yet.'};
   const record=output.summary.records.find(r=>r.limit_minutes===minutes);
-  return {enabled:true,message:`Pilot 1 · REVIEW ONLY · ${record.office_count} identified offices · within ${minutes} minutes${limit==='all'?' (All reach view)':''}. Source-dependent coverage.`};
+  return {enabled:true,message:`Pilot 1 · REVIEW ONLY · ${record.office_count} identified offices · within ${minutes} minutes${limit==='all'?' (All reach view)':''}. Limited sampling; missing inventory does not mean no offices.`};
 }
 const line=(root,text,tag='p')=>{const el=root.ownerDocument.createElement(tag);el.textContent=text;root.append(el);return el;};
 const confidenceLabel={verified:'Verified physical office',building:'Reviewed mapped office',approximate:'Approximate location'};
@@ -33,13 +34,5 @@ export function renderCompanyPanel(root,output,limit){
     line(analytics,'Location confidence','strong');for(const [confidence,n] of Object.entries(a.confidence))line(analytics,`${confidenceLabel[confidence]||confidence} · ${n} / ${a.count}`);
     line(analytics,'Known hubs','strong');if(!a.hubs.length)line(analytics,'No reviewed hub assignments');for(const hub of a.hubs)line(analytics,`${hub.name} · ${hub.count}`);
   }
-  const selection=root.querySelector('#companyAccessSelection');selection.hidden=true;selection.replaceChildren();
-}
-export function renderCompanySelection(root,selection){
-  const container=root.querySelector('#companyAccessSelection');container.replaceChildren();container.hidden=false;
-  const offices=selection.kind==='cluster'?selection.offices:[selection];
-  line(container,selection.kind==='cluster'?`${offices.length} identified offices in this cluster`:'Office location','strong');
-  for(const office of offices){const card=line(container,'','article');line(card,office.company_name,'strong');line(card,office.address);line(card,`${office.district||'Unknown district'} · ${confidenceLabel[office.location_confidence]||office.location_confidence}`);
-    if(office.building_name||office.hub_name)line(card,office.building_name||office.hub_name);
-  }
+
 }
