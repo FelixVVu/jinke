@@ -14,9 +14,10 @@ export class CompanyAccessLayers {
   constructor(map,onSelect=()=>{}){
     Object.assign(this,{map,onSelect,output:null,limit:50,visible:false,bound:false,generation:0});
     this.handlers={mouseenter:()=>{map.getCanvas().style.cursor='pointer';},mouseleave:()=>{map.getCanvas().style.cursor='';},click:event=>{
-      const id=event.features?.[0]?.id;
+      // Rendered tile IDs need not preserve canonical string GeoJSON IDs.
+      const id=event.features?.[0]?.properties?.id??event.features?.[0]?.id;
       const office=selectCompanyOffices(this.output,this.limit).features.find(f=>f.id===id);
-      if(office&&this.visible)this.onSelect(office.properties);
+      if(office&&this.visible){this.selectedId=office.id;this.restore();this.onSelect(office.properties);}
     }};
     this.clusterHandlers={...this.handlers,click:async event=>{
       const feature=event.features?.[0],source=map.getSource(COMPANY_SOURCE),generation=this.generation;
@@ -24,7 +25,7 @@ export class CompanyAccessLayers {
       try{
         const leaves=await source.getClusterLeaves(feature.properties.cluster_id,this.output.offices.features.length,0);
         if(generation!==this.generation||source!==map.getSource(COMPANY_SOURCE)||!this.visible)return;
-        const ids=new Set(leaves.map(f=>f.id));
+        const ids=new Set(leaves.map(f=>f.properties?.id??f.id));
         const offices=selectCompanyOffices(this.output,this.limit).features.filter(f=>ids.has(f.id)).map(f=>f.properties);
         this.onSelect({kind:'cluster',office_count:offices.length,offices});
       }catch{/* Style replacement invalidates pending cluster queries. */}

@@ -1,4 +1,5 @@
 import { CompanyDrawer } from './company-access/drawer.js';
+import { selectCompanyOffices } from './company-access/model.js';
 import { loadCompanyReview } from './company-access/review-loader.js';
 import { CompanyAccessLayers, withCompanyGlyphs } from './company-access/layers.js';
 import { companyPanelMarkup, renderCompanyPanel } from './company-access/panel.js';
@@ -1882,6 +1883,14 @@ Promise.all([
           byId('companyAccess').open = true;
           byId('companySamplingCoverage').href = assetUrl('data/company-access-review/sampling-coverage.svg');
           byId('companySamplingCoverage').hidden = false;
+          byId('companyReviewConsole').href = assetUrl('company-review.html');
+          byId('companyReviewConsole').hidden = false;
+          byId('companyInventorySearch').hidden = false;
+          byId('companyInventorySearch').onclick = () => {
+            const offices = selectCompanyOffices(companyAccessOutput, state.limit).features.map(f=>f.properties);
+            companyDrawer?.open({kind:'cluster',offices});
+            if (companyDrawer) companyDrawer.heading.textContent = 'Identified offices in this reach';
+          };
         } catch {
           byId('companyAccessStatus').textContent = 'Review inventory failed validation.';
         }

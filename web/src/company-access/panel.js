@@ -6,6 +6,8 @@ export const companyPanelMarkup=`
 <p id="companyAccessStatus" role="status" aria-live="polite"></p>
 <label class="toggle"><input id="showCompanyOffices" type="checkbox" disabled> Company offices</label>
 <a id="companySamplingCoverage" hidden target="_blank" rel="noopener">Pilot 1 sampling diagnosis ↗</a>
+<button id="companyInventorySearch" hidden type="button">Search identified offices</button>
+<a id="companyReviewConsole" hidden>Company Review Console ↗</a>
 <div id="companyAccessAnalytics" class="company-analytics"></div>
 <p class="company-access-note">${COMPANY_DISCLOSURE}</p>
 

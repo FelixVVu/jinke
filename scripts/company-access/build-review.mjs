@@ -3,6 +3,7 @@ import {readFile,writeFile,mkdir,cp,rm} from 'node:fs/promises';
 import {resolve,join} from 'node:path';
 import {spawnSync} from 'node:child_process';
 import {artifactNames,validateArtifacts} from './ingest.mjs';
+import {writeReviewBundle} from './amap/console.mjs';
 const input=process.argv[2];if(!input)throw Error('Approved import directory required');
 const root=resolve(input),artifacts={};
 for(const [key,name] of Object.entries(artifactNames))artifacts[key]=JSON.parse(await readFile(join(root,['audit','rejected','review'].includes(key)?'audit':'frontend',name),'utf8'));
@@ -16,5 +17,7 @@ await rm('dist-review',{recursive:true,force:true});await cp('dist','dist-review
 const target='dist-review/data/company-access-review';await mkdir(target,{recursive:true});
 for(const key of ['offices','hubs','summary','metadata'])await cp(join(root,'frontend',artifactNames[key]),join(target,artifactNames[key]));
 await cp('docs/company-access-sampling-coverage.svg',join(target,'sampling-coverage.svg'));
+await writeReviewBundle(root,join(target,'review-bundle.json'));
+await cp('scripts/company-access/review-console.html','dist-review/company-review.html');
 let html=await readFile('dist-review/index.html','utf8');html=html.replace('<head>','<head>\n<meta name="jinke-company-review" content="approved-pilots">');await writeFile('dist-review/index.html',html);
 console.log(`Review build ready: ${artifacts.offices.features.length} canonical offices; no raw evidence copied.`);

@@ -1,0 +1,70 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import {readFileSync} from 'node:fs';
+import {reviewedAliases,aliasTerms} from '../web/src/company-access/aliases.js';
+import {searchOffices} from '../web/src/company-access/drawer.js';
+import {suggest,createSession,decide,validateSession,exportRows,rowsToCSV} from '../web/src/company-access/review-state.js';
+import {toCSV,COLUMNS,parseCSV} from '../scripts/company-access/amap/review.mjs';
+import {makeReviewBundle,validateConsoleImport} from '../scripts/company-access/amap/console.mjs';
+import {acquire} from '../scripts/company-access/amap/acquire.mjs';
+import {wgs84ToGcj02} from '../web/src/location-search.js';
+const row={amap_poi_id:'synthetic-only',company_name:'TEST 有限公司',amap_type:'公司企业;公司',amap_typecode:'170200',address:'测试路1号',longitude_wgs84:121.6,latitude_wgs84:31.2,review_status:'pending',review_notes:''};
+const batch={id:'synthetic',columns:COLUMNS,rows:[{key:'synthetic:synthetic-only',row,locked:false}]};
+const bundle={schema_version:1,bundle_id:'synthetic-only',batches:[batch]};
+test('reviewed alias matching is exact-bound, local, NFKC and case insensitive',()=>{
+  const offices=reviewedAliases.map(r=>({id:r.office_id,company_name:r.canonical_name}));
+  assert.equal(searchOffices(offices,'ｓａｐ')[0].company_name,'思爱普有限公司');
+  assert.equal(searchOffices(offices,'NVIDIA')[0].company_name,'英伟达半导体科技(上海)有限公司');
+  assert.equal(searchOffices(offices,'英伟达').length,1);
+  assert.deepEqual(aliasTerms({...offices[0],id:'unreviewed-office'}),[]);
+  assert.deepEqual(aliasTerms({...offices[0],company_name:'Changed identity'}),[]);
+  assert.equal(searchOffices([], 'SAP').length,0);
+});
+test('deterministic suggestion precedence: conflict > exclusion > ambiguity > mapped company',()=>{
+  assert.equal(suggest(row).disposition,'accept');
+  for(const name of ['测试餐厅','测试健身','测试项目部','测试工厂','测试公共平台'])assert.equal(suggest({...row,company_name:name}).disposition,'reject');
+  for(const patch of [{address:'张江'},{company_name:'TEST 制造公司'},{company_name:'TEST 已关闭'},{amap_type:'商务住宅'},{longitude_wgs84:null}])assert.equal(suggest({...row,...patch}).disposition,'needs_review');
+  assert.equal(suggest({...row,company_name:'工厂',possible_duplicate:true}).reason,'DUPLICATE_OR_CONFLICT');
+  assert.deepEqual(suggest(row),suggest(structuredClone(row)));
+  assert.equal(createSession(bundle).decisions[batch.rows[0].key].status,'pending');
+});
+test('explicit human actions preserve notes/history; locked bulk action fails atomically',()=>{
+  const key=batch.rows[0].key,s=createSession(bundle);s.reviewer='Test human';
+  const next=decide(bundle,s,[key],'accept','Mapped office reviewed','2026-10-02T12:00:00Z');
+  assert.equal(s.decisions[key].status,'pending');assert.equal(next.decisions[key].history.length,1);
+  assert.equal(exportRows(bundle,next,'synthetic')[0].review_status,'accept');
+  const tampered=structuredClone(s);tampered.decisions[key].status='accept';assert.throws(()=>validateSession(bundle,tampered),/explicit review/);
+  const locked=structuredClone(bundle);locked.batches[0].rows[0].locked=true;const ls=createSession(locked);ls.reviewer='Human';
+  assert.throws(()=>decide(locked,ls,[key],'reject',''),/locked/);
+  assert.throws(()=>validateSession(locked,next),/locked/);
+  assert.throws(()=>validateSession({...bundle,bundle_id:'different'},next),/Wrong/);
+  const noted=decide(bundle,next,[key],'accept','Updated note','2026-10-02T12:01:00Z');assert.equal(noted.decisions[key].history.length,2);
+});
+test('CSV export is compatible with unchanged import and formula safe',()=>{
+  const rows=[{...row,review_notes:'=NOT_A_FORMULA',company_name:'TEST "quoted", name'}];
+  assert.equal(rowsToCSV(rows,COLUMNS),toCSV(rows));
+  assert.equal(parseCSV(rowsToCSV(rows,COLUMNS))[0].review_notes,"'=NOT_A_FORMULA");
+});
+test('console is explicitly review-packaged, never a normal-build page or provider proxy',()=>{
+  const build=readFileSync('scripts/build.mjs','utf8'),review=readFileSync('scripts/company-access/build-review.mjs','utf8'),ui=readFileSync('web/src/company-access/review-console.js','utf8');
+  assert.doesNotMatch(build,/review-console.html|review-bundle.json/);assert.match(review,/writeReviewBundle/);
+  assert.doesNotMatch(ui,/JINKE_AMAP_KEY|restapi\.amap|new.*Marker/);
+});
+test('console import rebuilds trusted bundle, enforces history/locks and canonical mapped confidence',async()=>{
+  const areas=JSON.parse(readFileSync('web/public/data/reach-areas.geojson'));
+  let calls=0;const {snapshot}=await acquire({pilotVersion:'amap-pilot-2',env:{JINKE_AMAP_KEY:'SYNTHETIC_TEST_CREDENTIAL'},areas,collectedAt:'2026-09-26T00:00:00Z',sleep:async()=>{},fetchFn:async()=>Response.json({status:'1',pois:calls++===0?[{id:'SYNTHETIC-CONSOLE',name:row.company_name,address:row.address,type:row.amap_type,typecode:'170200',location:wgs84ToGcj02(121.597836,31.2064028).join(',')}]:[]})});
+  const prepared=makeReviewBundle([snapshot],areas,[]),key=prepared.batches[0].rows[0].key;
+  const session=createSession(prepared);session.reviewer='Synthetic human';
+  const options={snapshot,areas,priorDecisions:[],reviewedAt:'2026-10-02T12:00:00Z'};
+  assert.equal(validateConsoleImport({...options,session}).approved.artifacts.offices.features.length,0);
+  const accepted=decide(prepared,session,[key],'accept','Explicit mapped-office review','2026-10-02T12:00:00Z');
+  const result=validateConsoleImport({...options,session:accepted});
+  assert.equal(result.approved.artifacts.offices.features.length,1);
+  assert.equal(result.approved.artifacts.offices.features[0].properties.location_confidence,'building');
+  const locked=makeReviewBundle([snapshot],areas,result.approved.decisions);assert.equal(locked.batches[0].rows[0].locked,true);
+  assert.throws(()=>validateConsoleImport({...options,priorDecisions:result.approved.decisions,session:accepted}),/Wrong/);
+  const reject=decide(prepared,session,[key],'reject','Not an office','2026-10-02T12:00:00Z');assert.equal(validateConsoleImport({...options,session:reject}).approved.artifacts.offices.features.length,0);
+  const pending=decide(prepared,session,[key],'needs_review','Ambiguous','2026-10-02T12:00:00Z');assert.equal(validateConsoleImport({...options,session:pending}).approved.artifacts.offices.features.length,0);
+  const matched=makeReviewBundle([snapshot],areas,[],result.approved.artifacts.offices.features.map(f=>f.properties));assert.equal(matched.batches[0].rows[0].suggestion.reason,'PRIOR_INVENTORY_MATCH');
+  assert.equal(matched.batches[0].rows[0].row.possible_duplicate,prepared.batches[0].rows[0].row.possible_duplicate);
+});

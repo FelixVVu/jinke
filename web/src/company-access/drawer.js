@@ -1,7 +1,8 @@
+import {aliasTerms} from './aliases.js';
 const confidence={verified:'Verified physical office',building:'Reviewed mapped office',approximate:'Approximate location'};
 export function searchOffices(offices,query){
   const q=query.normalize('NFKC').trim().toLocaleLowerCase();
-  return offices.filter(o=>[o.company_name,o.address,o.district,o.building_name,o.sector].filter(Boolean).join(' ').normalize('NFKC').toLocaleLowerCase().includes(q));
+  return offices.filter(o=>[o.company_name,...aliasTerms(o),o.address,o.district,o.building_name,o.sector].filter(Boolean).join(' ').normalize('NFKC').toLocaleLowerCase().includes(q));
 }
 /** Dedicated map overlay; only the list scrolls. Provider text is never HTML. */
 export class CompanyDrawer {
@@ -19,7 +20,7 @@ export class CompanyDrawer {
   }
   open(selection){
     if(this.element.hidden)this.previousFocus=this.element.ownerDocument.activeElement;
-    this.offices=selection.kind==='cluster'?selection.offices:[selection];this.selected=null;
+    this.offices=selection.kind==='cluster'?selection.offices:[selection];this.selected=selection.kind==='cluster'?null:selection.id;
     this.heading.textContent=selection.kind==='cluster'?`${this.offices.length} offices in this cluster`:'Office details';
     this.input.value='';this.element.hidden=false;this.render();this.input.focus({preventScroll:true});
   }

@@ -176,6 +176,19 @@ test('company scaffold never modifies approved data or economic/reach model code
   deriveCompanyAccess([],actualAreas,{...provenance,status:'not_loaded'});
 });
 
+test('visible individual points resolve canonical properties IDs and highlight exact office after style replacement',()=>{
+  const map=fakeMap(),selected=[],controller=new CompanyAccessLayers(map,o=>selected.push(o));
+  controller.setState({output:output(),limit:10,visible:true});
+  const click=()=>map.events.find(e=>e[0]==='click'&&e[1]===COMPANY_LAYER)[2];
+  click()({features:[{id:0,properties:{id:'test-office-a',company_name:'Untrusted rendered label'}}]});
+  assert.equal(selected[0].company_name,' TEST A ');assert.equal(controller.selectedId,'test-office-a');
+  map.sources.clear();map.layers.clear();map.layers.set('station-circle',{});controller.restore();controller.restore();
+  click()({features:[{properties:{id:'test-office-a'}}]});assert.equal(selected.length,2);
+  assert.equal(map.events.filter(e=>e[0]==='click'&&e[1]===COMPANY_LAYER).length,1);
+  click()({features:[{id:0,properties:{id:'unknown'}}]});assert.equal(selected.length,2);
+  controller.setState({visible:false});click()({features:[{properties:{id:'test-office-a'}}]});assert.equal(selected.length,2);
+});
+
 test('cluster sources contain only exact selected reach members; stale leaf requests are ignored', async()=>{
   const {CLUSTER_LAYER,COUNT_LAYER}=await import('../web/src/company-access/layers.js');
   const data=deriveCompanyAccess([office(),office({id:'b',source_id:'b',longitude:2.5,min_reach_minutes:30})],areas,provenance);
