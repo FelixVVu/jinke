@@ -19,6 +19,17 @@ reviewed English names, brands, acronyms and aliases without changing canonical
 names. “Search identified offices” searches approved offices in the selected reach,
 not general location search. Cluster search remains scoped to its cluster.
 
+Both interfaces now use `search.js` and the same reviewed metadata in `aliases.js`.
+Console candidate rows bind through their stable AMap POI IDs; canonical records
+can bind through office IDs or their provider/source identity. A matching reviewed
+canonical name is also required, preventing aliases from following a conflicting
+identity. Case, Unicode width, whitespace and punctuation are normalized only in
+the search index. No aliases are inferred from name similarity, and records are
+never merged. The index is rebuilt when opening a new console batch; historical
+and new records share the same matching rules. Queue/status/reason filters still
+apply: use “All / locked history” to find SAP or NVIDIA in the current reviewed
+inventory. Searching in the empty “New candidates only” queue correctly finds none.
+
 ## Human workflow and persistence
 
 The supplied Pilot 1 + 2 archive contains **166 prior decisions** (104 accept,

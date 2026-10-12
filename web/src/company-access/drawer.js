@@ -1,8 +1,7 @@
-import {aliasTerms} from './aliases.js';
+import {createCompanySearchIndex} from './search.js';
 const confidence={verified:'Verified physical office',building:'Reviewed mapped office',approximate:'Approximate location'};
 export function searchOffices(offices,query){
-  const q=query.normalize('NFKC').trim().toLocaleLowerCase();
-  return offices.filter(o=>[o.company_name,...aliasTerms(o),o.address,o.district,o.building_name,o.sector].filter(Boolean).join(' ').normalize('NFKC').toLocaleLowerCase().includes(q));
+  return createCompanySearchIndex(offices)(query);
 }
 /** Dedicated map overlay; only the list scrolls. Provider text is never HTML. */
 export class CompanyDrawer {

@@ -1,6 +1,8 @@
 import {createSession,validateBundle,validateSession,decide,exportRows,rowsToCSV,suggest} from './review-state.js';
+import {createReviewSearchIndex} from './search.js';
 const $=id=>document.getElementById(id),text=(tag,value)=>{const e=document.createElement(tag);e.textContent=value;return e;};
 let bundle,session,items=[],visible=[],active=null,checked=new Set(),map,ready=false,page=0;
+let searchCandidates=()=>[];
 const draftKey=()=>`jinke-company-review:${bundle.bundle_id}`;
 function status(message){$('saveStatus').textContent=message;}
 function save(){try{localStorage.setItem(draftKey(),JSON.stringify(session));status('Draft saved locally. Export decisions & history before leaving / changing browser.');}catch{status('Browser storage unavailable. Export your session now to preserve decisions.');}}
@@ -9,19 +11,20 @@ function load(value){
   validateBundle(value);bundle=value;session=createSession(bundle);checked.clear();active=null;
   // Recompute suggestions; imported suggestions can never become decisions.
   items=bundle.batches.flatMap(b=>b.rows.map(i=>({...i,batch:b.id,suggestion:['PRIOR_SOURCE_CHANGED','PRIOR_INVENTORY_MATCH'].includes(i.suggestion?.reason)?{...i.suggestion,disposition:'needs_review'}:suggest(i.row)})));
+  searchCandidates=createReviewSearchIndex(items);
   try{const saved=localStorage.getItem(draftKey());if(saved)session=validateSession(bundle,JSON.parse(saved));}catch{status('Stored draft failed validation; unchanged source decisions loaded.');}
   $('reviewer').value=session.reviewer;$('queue').value='new';$('reason').replaceChildren(new Option('All reasons',''),...[...new Set(items.map(i=>i.suggestion.reason))].sort().map(r=>new Option(r,r)));
   render();
 }
 function render(){
-  if(!bundle)return;const q=$('search').value.normalize('NFKC').toLowerCase().trim(),queue=$('queue').value;
-  visible=items.filter(i=>(queue==='all'||(queue==='new'?!i.locked:session.decisions[i.key].status===queue))&&(!$('suggestion').value||i.suggestion.disposition===$('suggestion').value)&&(!$('reason').value||i.suggestion.reason===$('reason').value)&&[i.row.company_name,i.row.address,i.row.district,i.row.amap_poi_id].join(' ').normalize('NFKC').toLowerCase().includes(q));
+  if(!bundle)return;const queue=$('queue').value;
+  visible=searchCandidates($('search').value).filter(i=>(queue==='all'||(queue==='new'?!i.locked:session.decisions[i.key].status===queue))&&(!$('suggestion').value||i.suggestion.disposition===$('suggestion').value)&&(!$('reason').value||i.suggestion.reason===$('reason').value));
   // Bulk actions are scoped to current results, never stale hidden selections.
   const visibleKeys=new Set(visible.map(i=>i.key));checked=new Set([...checked].filter(k=>visibleKeys.has(k)));
   if(!visible.some(i=>i.key===active)){active=visible[0]?.key||null;$('notes').value=active?session.decisions[active].notes:'';}
   $('status').textContent=`${visible.length} results · ${items.filter(i=>!i.locked).length} new candidates · ${items.filter(i=>i.locked).length} locked prior decisions · ${checked.size} selected`;
   const list=$('list');list.replaceChildren();
-  if(!visible.length)list.append(text('p','No new candidates in this batch. Choose “All / locked history” to inspect prior reviews, or open a prepared new batch.'));
+  if(!visible.length)list.append(text('p',queue==='new'?'No matching new candidates. Choose “All / locked history” to search reviewed companies, or open a prepared new batch.':'No matches in the current filters. Try a company name, reviewed alias, address or provider ID.'));
   page=Math.min(page,Math.max(0,Math.ceil(visible.length/100)-1));
   if(visible.length>100){const nav=text('div',`Page ${page+1} / ${Math.ceil(visible.length/100)} `);for(const [label,step] of [['Previous',-1],['Next',1]]){const b=text('button',label);b.disabled=step<0?page===0:(page+1)*100>=visible.length;b.onclick=()=>{page+=step;render();};nav.append(b);}list.append(nav);}
   for(const i of visible.slice(page*100,(page+1)*100)){const row=text('div','');row.className=`candidate${active===i.key?' active':''}`;

@@ -3,6 +3,7 @@ import assert from 'node:assert/strict';
 import {readFileSync} from 'node:fs';
 import {reviewedAliases,aliasTerms} from '../web/src/company-access/aliases.js';
 import {searchOffices} from '../web/src/company-access/drawer.js';
+import {createCompanySearchIndex,createReviewSearchIndex} from '../web/src/company-access/search.js';
 import {suggest,createSession,decide,validateSession,exportRows,rowsToCSV} from '../web/src/company-access/review-state.js';
 import {toCSV,COLUMNS,parseCSV} from '../scripts/company-access/amap/review.mjs';
 import {makeReviewBundle,validateConsoleImport} from '../scripts/company-access/amap/console.mjs';
@@ -19,6 +20,35 @@ test('reviewed alias matching is exact-bound, local, NFKC and case insensitive',
   assert.deepEqual(aliasTerms({...offices[0],id:'unreviewed-office'}),[]);
   assert.deepEqual(aliasTerms({...offices[0],company_name:'Changed identity'}),[]);
   assert.equal(searchOffices([], 'SAP').length,0);
+});
+test('both interfaces search SAP/NVIDIA through reviewed stable identities without changing decisions',()=>{
+  const offices=reviewedAliases.map(r=>({id:r.office_id,company_name:r.canonical_name}));
+  const items=reviewedAliases.flatMap(r=>[true,false].map(locked=>({key:`${locked}:${r.source_identity.poi_id}`,locked,row:{amap_poi_id:r.source_identity.poi_id,company_name:r.canonical_name,review_status:locked?'accept':'pending',review_notes:'Unchanged note'}})));
+  const before=structuredClone(items),search=createReviewSearchIndex(items);
+  for(const [queries,index] of [[['SAP','ｓａｐ',' S . A - P ','思爱普'],0],[['NVIDIA','nvidia','ＮＶＩＤＩＡ','NV-IDIA','英 伟 达'],1]])for(const q of queries){
+    assert.deepEqual(searchOffices(offices,q),[offices[index]]);
+    assert.equal(search(q).length,2);assert.ok(search(q).every(i=>i.row.amap_poi_id===reviewedAliases[index].source_identity.poi_id));
+  }
+  assert.deepEqual(items,before);
+  const impostor={row:{...items[0].row,amap_poi_id:'different-poi'}};
+  assert.deepEqual(createReviewSearchIndex([impostor])('SAP'),[]);
+  const changed={row:{...items[0].row,company_name:'Different company'}};
+  assert.deepEqual(createReviewSearchIndex([changed])('SAP'),[]);
+  const providerOffice={...offices[0],id:'new-canonical-id',source_type:'licensed_poi',source_id:JSON.stringify(['amap','B0FFG951GY'])};
+  assert.equal(searchOffices([providerOffice],'SAP').length,1);
+  assert.equal(searchOffices([{...providerOffice,source_id:JSON.stringify(['other','B0FFG951GY'])}],'SAP').length,0);
+  assert.equal(searchOffices([{...providerOffice,source_id:'invalid-json'}],'SAP').length,0);
+  assert.equal(search('B0FFG951GY').length,2);
+  assert.equal(searchOffices([offices[0],{...offices[0]}],'SAP').length,2,'Search must not collapse records');
+  const ui=readFileSync('web/src/company-access/review-console.js','utf8');
+  assert.match(ui,/searchCandidates=createReviewSearchIndex\(items\)/);assert.match(ui,/visible=searchCandidates\(/);
+});
+test('search supports only reviewed English names, brands, acronyms and aliases with punctuation normalization',()=>{
+  const office={id:'synthetic-only',company_name:'测试（合成）公司',address:'测试路 1 号'};
+  const metadata=[{office_id:office.id,canonical_name:'测试(合成)公司',english_name:'Synthetic Office',brand_name:'Test Brand',acronym:'XYZ',aliases:['测试别名'],reviewed_by:'Synthetic test only'}];
+  const search=createCompanySearchIndex([office],r=>r,metadata);
+  for(const q of ['SYNTHETIC-OFFICE','Test.Brand','x y z','测试 别名','测试路1号'])assert.equal(search(q).length,1);
+  assert.equal(createCompanySearchIndex([office],r=>r,[{...metadata[0],reviewed_by:null}])('XYZ').length,0);
 });
 test('deterministic suggestion precedence: conflict > exclusion > ambiguity > mapped company',()=>{
   assert.equal(suggest(row).disposition,'accept');
