@@ -5,6 +5,8 @@ import { fileURLToPath, pathToFileURL } from 'node:url';
 import { runCompanyAccessPilot } from '../../../hosting/server/company-access-job.mjs';
 import { prepareFiles } from './files.mjs';
 import { stable, fail } from '../common.mjs';
+import {makeReviewBundle} from './console.mjs';
+import {coverageReport} from './pilot3-workflow.mjs';
 const repo=resolve(dirname(fileURLToPath(import.meta.url)),'../../..');
 export const ARTIFACT_FILES=Object.freeze([
   'review/amap-office-review.csv','review/amap-office-review.json',
@@ -22,10 +24,10 @@ export function assertKeyFree(bytes,key){
   const forbidden=[key,encodeURIComponent(key),JSON.stringify(key).slice(1,-1),Buffer.from(key).toString('base64')];
   if(!key||forbidden.some(value=>value&&content.includes(value)))fail('UNSAFE_ARTIFACT');
 }
-export async function stageArtifact({source,target,key}){
+export async function stageArtifact({source,target,key,extraFiles=[]}){
   const safe=[];
   // Validate all files before creating anything in the upload directory.
-  for(const path of ARTIFACT_FILES){
+  for(const path of [...ARTIFACT_FILES,...extraFiles]){
     const file=join(source,path);
     if(!(await lstat(file)).isFile()||(await lstat(dirname(file))).isSymbolicLink())fail('UNSAFE_ARTIFACT');
     const bytes=await readFile(file);assertKeyFree(bytes,key);safe.push([path,bytes]);
@@ -35,25 +37,31 @@ export async function stageArtifact({source,target,key}){
   await mkdir(target); // fresh directory only
   for(const [path,bytes] of safe){await mkdir(dirname(join(target,path)),{recursive:true});await writeFile(join(target,path),bytes,{flag:'wx',mode:0o600});}
 }
-export async function executePilot({key,context,collectedAt=new Date().toISOString(),dependencies={},pilotVersion='amap-pilot-1'}){
+export async function executePilot({key,context,collectedAt=new Date().toISOString(),dependencies={},pilotVersion='amap-pilot-1',previous=null}){
   requireManualReviewRun(context);
-  if(!['amap-pilot-1','amap-pilot-2'].includes(pilotVersion))fail('UNKNOWN_FIXED_PILOT');
-  const pilot=pilotVersion==='amap-pilot-2'?'pilot-2':'pilot-1';
+  if(!['amap-pilot-1','amap-pilot-2','amap-pilot-3'].includes(pilotVersion))fail('UNKNOWN_FIXED_PILOT');
+  const pilot=pilotVersion.replace('amap-','');
   if(typeof key!=='string'||!key.trim())fail('AMAP_NOT_CONFIGURED');
   const root=join(repo,'offline-output/company-access');
   await mkdir(root,{recursive:true});
   const checkpointDir=join(root,`${pilot}-checkpoint`);await mkdir(checkpointDir);
   const snapshotPath=join(checkpointDir,'snapshot.json');
   const areas=JSON.parse(await readFile(join(repo,'web/public/data/reach-areas.geojson'),'utf8'));
-  const result=await runCompanyAccessPilot({JINKE_AMAP_KEY:key},{reachAreas:areas,collectedAt,checkpoint:async snapshot=>{
+  const result=await runCompanyAccessPilot({JINKE_AMAP_KEY:key},{reachAreas:areas,collectedAt,previous,checkpoint:async snapshot=>{
     const bytes=stable(snapshot)+'\n';assertKeyFree(bytes,key);
     const temporary=join(checkpointDir,'snapshot.next');await writeFile(temporary,bytes,{mode:0o600});await rename(temporary,snapshotPath);
   }},{...dependencies,pilotVersion});
   const output=join(root,pilot);
   await prepareFiles({snapshotPath,output});
-  const artifact=join(root,`${pilot}-artifact`);await stageArtifact({source:output,target:artifact,key});
+  const extraFiles=[];
+  if(pilotVersion==='amap-pilot-3'){
+    const coverage=coverageReport(areas,result.snapshot);
+    const files={'review/review-bundle.json':{...makeReviewBundle([result.snapshot],areas),coverage},'audit/pilot3-coverage.geojson':coverage};
+    for(const [file,value]of Object.entries(files)){await writeFile(join(output,file),stable(value)+'\n');extraFiles.push(file);}
+  }
+  const artifact=join(root,`${pilot}-artifact`);await stageArtifact({source:output,target:artifact,key,extraFiles});
   const report=JSON.parse(await readFile(join(output,'audit/pilot-report.json'),'utf8'));
-  return {report,artifact,providerStopped:!['PLAN_COMPLETE','CANDIDATE_CAP','REQUEST_BUDGET'].includes(result.execution.stop_reason)};
+  return {report,artifact,providerStopped:!['PLAN_COMPLETE','CANDIDATE_CAP','REQUEST_BUDGET','EXECUTION_BUDGET'].includes(result.execution.stop_reason)};
 }
 export async function main(pilotVersion='amap-pilot-1'){
   if(process.argv.length!==2)fail('NO_PILOT_ARGUMENTS_ALLOWED');

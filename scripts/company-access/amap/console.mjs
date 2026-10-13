@@ -43,7 +43,8 @@ export async function writeReviewBundle(approvedRoot,target){
   const read=async p=>JSON.parse(await fs.readFile(p,'utf8'));
   const areas=await read('web/public/data/reach-areas.geojson');
   const prior=(await read(path.join(approvedRoot,'audit/human-review.json'))).decisions;
-  const snapshots=await Promise.all(['pilot-1','pilot-2'].map(p=>read(path.join(approvedRoot,`source-imports/${p}/provider-cache/snapshot.json`))));
+  const pilots=(await fs.readdir(path.join(approvedRoot,'source-imports'))).filter(p=>/^pilot-\d+$/.test(p)).sort((a,b)=>Number(a.slice(6))-Number(b.slice(6)));
+  const snapshots=await Promise.all(pilots.map(p=>read(path.join(approvedRoot,`source-imports/${p}/provider-cache/snapshot.json`))));
   const offices=(await read(path.join(approvedRoot,'frontend/company-offices.geojson'))).features.map(f=>f.properties);
   const bundle=makeReviewBundle(snapshots,areas,prior,offices);
   await fs.writeFile(target,stable(bundle)+'\n');return bundle;

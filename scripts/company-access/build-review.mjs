@@ -4,6 +4,7 @@ import {resolve,join} from 'node:path';
 import {spawnSync} from 'node:child_process';
 import {artifactNames,validateArtifacts} from './ingest.mjs';
 import {writeReviewBundle} from './amap/console.mjs';
+import {coverageReport} from './amap/pilot3-workflow.mjs';
 const input=process.argv[2];if(!input)throw Error('Approved import directory required');
 const root=resolve(input),artifacts={};
 for(const [key,name] of Object.entries(artifactNames))artifacts[key]=JSON.parse(await readFile(join(root,['audit','rejected','review'].includes(key)?'audit':'frontend',name),'utf8'));
@@ -18,6 +19,9 @@ const target='dist-review/data/company-access-review';await mkdir(target,{recurs
 for(const key of ['offices','hubs','summary','metadata'])await cp(join(root,'frontend',artifactNames[key]),join(target,artifactNames[key]));
 await cp('docs/company-access-sampling-coverage.svg',join(target,'sampling-coverage.svg'));
 await writeReviewBundle(root,join(target,'review-bundle.json'));
+let pilot3Snapshot=null;
+try{pilot3Snapshot=JSON.parse(await readFile(join(root,'source-imports/pilot-3/provider-cache/snapshot.json'),'utf8'));}catch(e){if(e.code!=='ENOENT')throw e;}
+await writeFile(join(target,'pilot3-coverage.geojson'),JSON.stringify(coverageReport(areas,pilot3Snapshot)));
 await cp('scripts/company-access/review-console.html','dist-review/company-review.html');
 let html=await readFile('dist-review/index.html','utf8');html=html.replace('<head>','<head>\n<meta name="jinke-company-review" content="approved-pilots">');await writeFile('dist-review/index.html',html);
 console.log(`Review build ready: ${artifacts.offices.features.length} canonical offices; no raw evidence copied.`);

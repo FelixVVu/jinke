@@ -58,7 +58,7 @@ export function validateSnapshot(snapshot, areas) {
     if(!snapshot.attempts.some(a=>a.query_id===r.query_id&&a.outcome==='success'))fail('CACHE_WITHOUT_REQUEST_LINEAGE');
     seen.add(r.query_id);
   }
-  if(snapshot.attempts.length>POLICY.max_requests||snapshot.attempts.some(a=>!queries.has(a.query_id)||!['success','failure'].includes(a.outcome)))fail('INVALID_ATTEMPT_LEDGER');
+  if(snapshot.attempts.length>POLICY.max_requests||snapshot.attempts.some(a=>!queries.has(a.query_id)||!['success','failure',...(POLICY.version==='amap-pilot-3'?['uncertain']:[])].includes(a.outcome)))fail('INVALID_ATTEMPT_LEDGER');
   return snapshot;
 }
 /** Private server job; env is the existing Worker binding, never serialized.
@@ -78,24 +78,31 @@ export async function acquire({env,areas,collectedAt,previous=null,fetchFn=fetch
     if(cached.has(q.id)){hits++;continue;}
     if(candidatesFromCache(snapshot,areas).candidates.length>=POLICY.max_candidates){stop='CANDIDATE_CAP';break;}
     if(snapshot.attempts.length>=POLICY.max_requests){stop='REQUEST_BUDGET';break;}
+    if(calls>=(POLICY.max_requests_per_execution??Infinity)){stop='EXECUTION_BUDGET';break;}
+    if(snapshot.attempts.some(a=>a.query_id===q.id&&a.outcome==='uncertain'))continue;
     if(!env?.JINKE_AMAP_KEY){stop='AMAP_NOT_CONFIGURED';break;}
     // Fatal failures are sticky across resume; no retrying quota/auth rejections.
     if(snapshot.attempts.some(a=>a.query_id===q.id&&a.outcome==='failure'&&!a.retryable)){stop='PROVIDER_STOP';break;}
     let success=false;
     for(let attempt=0;attempt<2;attempt++){
       const priorFailures=snapshot.attempts.filter(a=>a.query_id===q.id&&a.outcome==='failure').length;
+      if(calls>=(POLICY.max_requests_per_execution??Infinity)){stop='EXECUTION_BUDGET';break;}
       if(priorFailures>=2||snapshot.attempts.length>=POLICY.max_requests){stop='REQUEST_BUDGET_OR_RETRY_CAP';break;}
       await sleep(priorFailures?POLICY.retry_ms:POLICY.pacing_ms);
       calls++;
+      // Pilot 3 reserves before network I/O. An interrupted request is never free
+      // or retried blindly after restoring a checkpoint.
+      const reservation=POLICY.version==='amap-pilot-3'?{query_id:q.id,outcome:'uncertain'}:null;
+      if(reservation){snapshot.attempts.push(reservation);await checkpointSafe();}
       try{
         const payload=await requestAmap(env,'polygon',q.parameters,fetchFn);
         if(payload.pois.length>POLICY.page_size)fail('INVALID_PAGE_SIZE');
         const entry={query_id:q.id,payload,payload_sha256:sha256(stable(payload))};
-        snapshot.responses.push(entry);cached.set(q.id,entry);snapshot.attempts.push({query_id:q.id,outcome:'success'});success=true;stop='PLAN_COMPLETE';
+        snapshot.responses.push(entry);cached.set(q.id,entry);if(reservation)reservation.outcome='success';else snapshot.attempts.push({query_id:q.id,outcome:'success'});success=true;stop='PLAN_COMPLETE';
       }catch(error){
         // Fixed local codes only; never stringify provider exceptions.
         const code=/^(AMAP_|INVALID_PAGE_SIZE)/.test(error.code||'')?error.code:'AMAP_REQUEST_FAILED';
-        snapshot.attempts.push({query_id:q.id,outcome:'failure',code,retryable:error.retryable===true});
+        const failure={query_id:q.id,outcome:'failure',code,retryable:error.retryable===true};if(reservation)Object.assign(reservation,failure);else snapshot.attempts.push(failure);
         stop=code;
         await checkpointSafe();
         if(!error.retryable)break;

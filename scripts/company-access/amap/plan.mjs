@@ -1,17 +1,20 @@
 import { prepareReachAreas } from '../../../web/src/company-access/model.js';
 import { wgs84ToGcj02 } from '../../../web/src/location-search.js';
 import { sha256, stable } from '../common.mjs';
+import {PILOT3_POLICY,planPilot3} from './pilot3-plan.mjs';
 export const POLICY = Object.freeze({ version: 'amap-pilot-1', rows: 4, columns: 4, types: '170200', page_size: 25, max_pages: 3, max_requests: 24, max_candidates: 200, pacing_ms: 1100, retry_ms: 2200 });
 export const PILOT2_POLICY = Object.freeze({...POLICY, version:'amap-pilot-2'});
 export function policyFor(version=POLICY.version){
   if(version===POLICY.version)return POLICY;
   if(version===PILOT2_POLICY.version)return PILOT2_POLICY;
+  if(version===PILOT3_POLICY.version)return PILOT3_POLICY;
   throw new TypeError('Unknown fixed pilot');
 }
 export const reachLimitFor = version => policyFor(version).version===PILOT2_POLICY.version?10:30;
 export function planQueries(areas,version=POLICY.version) {
   const POLICY=policyFor(version);
   prepareReachAreas(areas);
+  if(version===PILOT3_POLICY.version)return planPilot3(areas);
   const feature = areas.features.find(f => f.properties.limit === reachLimitFor(version));
   const points = feature.geometry.coordinates.flat(feature.geometry.type === 'MultiPolygon' ? 2 : 1);
   const xs=points.map(p=>p[0]), ys=points.map(p=>p[1]);

@@ -39,9 +39,10 @@ test('workflow exposes only manual dispatch, no inputs, one step secret, fixed r
   assert.doesNotMatch(yaml,/inputs:|pages: write|id-token: write|deploy-pages|AMAP_WEB_SERVICE_KEY/);
   assert.equal(yaml.match(/secrets\.JINKE_AMAP_KEY/g).length,1);
   assert.match(yaml,/github.run_attempt == 1/);assert.match(yaml,/persist-credentials: false/);
-  assert.match(yaml,/path: offline-output\/company-access\/pilot-2-artifact\//);
+  assert.match(yaml,/path: offline-output\/company-access\/pilot-3-artifact\//);
   assert.match(yaml,/steps.pilot.outputs.artifact_ready == 'true'/);
-  assert.match(yaml,/run: node scripts\/company-access\/amap\/actions-pilot2.mjs/);
+  assert.match(yaml,/run: node scripts\/company-access\/amap\/actions-pilot3.mjs/);
+  assert.match(yaml,/run: node scripts\/company-access\/amap\/resume-pilot3.mjs/);
 });
 test('fixed Pilot 2 adapter generates a key-free pending artifact without touching Pilot 1',async()=>{
   const folders=['pilot-2-checkpoint','pilot-2','pilot-2-artifact'];

@@ -1,14 +1,17 @@
 import {createSession,validateBundle,validateSession,decide,exportRows,rowsToCSV,suggest} from './review-state.js';
 import {createReviewSearchIndex} from './search.js';
+import {attachReviewHistory} from './review-history.js';
 const $=id=>document.getElementById(id),text=(tag,value)=>{const e=document.createElement(tag);e.textContent=value;return e;};
 let bundle,session,items=[],visible=[],active=null,checked=new Set(),map,ready=false,page=0;
 let searchCandidates=()=>[];
+let historyBundle,coverageData={type:'FeatureCollection',features:[]};
 const draftKey=()=>`jinke-company-review:${bundle.bundle_id}`;
 function status(message){$('saveStatus').textContent=message;}
 function save(){try{localStorage.setItem(draftKey(),JSON.stringify(session));status('Draft saved locally. Export decisions & history before leaving / changing browser.');}catch{status('Browser storage unavailable. Export your session now to preserve decisions.');}}
 function download(name,value,type='application/json'){const url=URL.createObjectURL(new Blob([typeof value==='string'?value:JSON.stringify(value,null,2)],{type}));const a=document.createElement('a');a.href=url;a.download=name;a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);}
 function load(value){
   validateBundle(value);bundle=value;session=createSession(bundle);checked.clear();active=null;
+  if(value.coverage)coverageData=value.coverage;
   // Recompute suggestions; imported suggestions can never become decisions.
   items=bundle.batches.flatMap(b=>b.rows.map(i=>({...i,batch:b.id,suggestion:['PRIOR_SOURCE_CHANGED','PRIOR_INVENTORY_MATCH'].includes(i.suggestion?.reason)?{...i.suggestion,disposition:'needs_review'}:suggest(i.row)})));
   searchCandidates=createReviewSearchIndex(items);
@@ -22,7 +25,9 @@ function render(){
   // Bulk actions are scoped to current results, never stale hidden selections.
   const visibleKeys=new Set(visible.map(i=>i.key));checked=new Set([...checked].filter(k=>visibleKeys.has(k)));
   if(!visible.some(i=>i.key===active)){active=visible[0]?.key||null;$('notes').value=active?session.decisions[active].notes:'';}
-  $('status').textContent=`${visible.length} results · ${items.filter(i=>!i.locked).length} new candidates · ${items.filter(i=>i.locked).length} locked prior decisions · ${checked.size} selected`;
+  const remaining=items.filter(i=>!i.locked&&session.decisions[i.key].status==='pending').length;
+  $('status').textContent=`${visible.length} results · ${items.filter(i=>!i.locked).length} new candidates · ${remaining} awaiting a decision · ${items.filter(i=>i.locked).length} locked historical rows · ${checked.size} selected`;
+  if(ready&&map.getSource('pilot3-coverage'))map.getSource('pilot3-coverage').setData(coverageData);
   const list=$('list');list.replaceChildren();
   if(!visible.length)list.append(text('p',queue==='new'?'No matching new candidates. Choose “All / locked history” to search reviewed companies, or open a prepared new batch.':'No matches in the current filters. Try a company name, reviewed alias, address or provider ID.'));
   page=Math.min(page,Math.max(0,Math.ceil(visible.length/100)-1));
@@ -41,7 +46,14 @@ function details(){const root=$('details');root.replaceChildren();const i=items.
   for(const button of document.querySelectorAll('[data-decision],#saveNote'))button.disabled=checked.size===0&&i.locked;
 }
 function validLocation(i){return i&&Number.isFinite(+i.row.longitude_wgs84)&&Number.isFinite(+i.row.latitude_wgs84)&&Math.abs(+i.row.longitude_wgs84)<=180&&Math.abs(+i.row.latitude_wgs84)<=90;}
-function mapData(){if(!ready)return;map.getSource('candidates').setData({type:'FeatureCollection',features:visible.filter(validLocation).map(i=>({type:'Feature',geometry:{type:'Point',coordinates:[+i.row.longitude_wgs84,+i.row.latitude_wgs84]},properties:{key:i.key,status:session.decisions[i.key].status,selected:i.key===active}}))});}
+function mapData(){if(!ready)return;
+  if(!map.getSource('pilot3-coverage')){
+    map.addSource('pilot3-coverage',{type:'geojson',data:coverageData});
+    map.addLayer({id:'pilot3-cells',type:'fill',source:'pilot3-coverage',paint:{'fill-color':['case',['>', ['get','pages_returned'],0],'#23856f',['==',['get','prior_poi_observations'],0],'#d28b33','#849097'],'fill-opacity':.12}},'candidate-points');
+    map.addLayer({id:'pilot3-cell-outlines',type:'line',source:'pilot3-coverage',paint:{'line-color':'#9a8067','line-width':.7}},'candidate-points');
+  }
+  map.getSource('pilot3-coverage').setData(coverageData);
+  map.getSource('candidates').setData({type:'FeatureCollection',features:visible.filter(validLocation).map(i=>({type:'Feature',geometry:{type:'Point',coordinates:[+i.row.longitude_wgs84,+i.row.latitude_wgs84]},properties:{key:i.key,status:session.decisions[i.key].status,selected:i.key===active}}))});}
 function decision(value){try{session.reviewer=$('reviewer').value.trim();session=decide(bundle,session,checked.size?[...checked]:[active],value,$('notes').value);save();render();}catch(e){status(e.message);}}
 for(const id of ['search','queue','suggestion','reason'])$(id).addEventListener('input',()=>{page=0;render();});
 $('reviewer').onchange=()=>{session.reviewer=$('reviewer').value.trim();save();};
@@ -51,10 +63,11 @@ $('saveNote').onclick=()=>{if(checked.size){status('Save notes one candidate at 
 $('exportSession').onclick=()=>{validateSession(bundle,session);download(`company-review-session-${bundle.bundle_id.slice(0,12)}.json`,session);};
 $('exportCSV').onclick=()=>{for(const b of bundle.batches)download(`amap-office-review-${b.id.slice(0,12)}.csv`,rowsToCSV(exportRows(bundle,session,b.id),b.columns),'text/csv;charset=utf-8');};
 async function readFile(event){const file=event.target.files[0];if(!file)return null;if(file.size>20*1024*1024)throw Error('Bundle exceeds 20 MB');return JSON.parse(await file.text());}
-$('openBundle').onchange=async e=>{try{const value=await readFile(e);if(value){if(bundle)download(`company-review-session-${bundle.bundle_id.slice(0,12)}.json`,session);load(value);}}catch(error){status(error.message);}};
+$('openBundle').onchange=async e=>{try{const value=await readFile(e);if(value){validateBundle(value);if(!historyBundle)throw Error('Historical decisions must load first');if(bundle)download(`company-review-session-${bundle.bundle_id.slice(0,12)}.json`,session);load(value.batches.some(b=>b.label==='amap-pilot-3')?attachReviewHistory(value,historyBundle):value);}}catch(error){status(error.message);}};
 $('restoreSession').onchange=async e=>{try{const value=await readFile(e);if(value){session=validateSession(bundle,value);$('reviewer').value=session.reviewer;save();render();}}catch(error){status(error.message);}};
 document.addEventListener('keydown',e=>{if(e.ctrlKey||e.metaKey||e.altKey||/INPUT|TEXTAREA|SELECT|BUTTON/.test(e.target.tagName))return;const key=e.key.toLowerCase(),index=visible.findIndex(i=>i.key===active);if(key==='j'||key==='k'){e.preventDefault();const next=visible[Math.max(0,Math.min(visible.length-1,index+(key==='j'?1:-1)))];if(next)select(next.key);}else if(['a','r','n'].includes(key)){e.preventDefault();decision({a:'accept',r:'reject',n:'needs_review'}[key]);}else if(key===' '&&active&&!items.find(i=>i.key===active).locked){e.preventDefault();checked.has(active)?checked.delete(active):checked.add(active);render();}});
-try{const response=await fetch('data/company-access-review/review-bundle.json');if(!response.ok)throw Error('Review bundle unavailable');load(await response.json());
+try{const response=await fetch('data/company-access-review/review-bundle.json');if(!response.ok)throw Error('Review bundle unavailable');historyBundle=await response.json();load(historyBundle);
+  try{const r=await fetch('data/company-access-review/pilot3-coverage.geojson');if(r.ok)coverageData=await r.json();}catch{}
   if(globalThis.maplibregl){map=new maplibregl.Map({container:'map',style:'https://tiles.openfreemap.org/styles/positron',center:[121.604,31.205],zoom:12});map.on('load',()=>{map.addSource('candidates',{type:'geojson',data:{type:'FeatureCollection',features:[]}});map.addLayer({id:'candidate-points',type:'circle',source:'candidates',paint:{'circle-radius':['case',['get','selected'],10,6],'circle-color':['match',['get','status'],'accept','#285a50','reject','#888','needs_review','#b57c24','#bd3f55'],'circle-stroke-color':'#fff','circle-stroke-width':2}});ready=true;mapData();});map.on('click','candidate-points',e=>{if(e.features?.[0])select(e.features[0].properties.key);});}
   else status('Map unavailable; list review and export remain available.');
 }catch(e){status(e.message);}
