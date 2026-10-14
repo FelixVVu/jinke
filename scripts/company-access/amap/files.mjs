@@ -4,7 +4,7 @@ import { resolve, dirname, join, relative } from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 import { stable, fail } from '../common.mjs';
 import { artifactNames } from '../ingest.mjs';
-import { validateSnapshot, candidatesFromCache } from './acquire.mjs';
+import { validateSnapshot, candidatesFromCache, pilot3RecoveryState } from './acquire.mjs';
 import { approvedFromReview, reviewRows, toCSV, qaReport, reportMarkdown } from './review.mjs';
 const repo=resolve(dirname(fileURLToPath(import.meta.url)),'../../..');
 const defaultReach=join(repo,'web/public/data/reach-areas.geojson');
@@ -30,9 +30,10 @@ export async function prepareFiles({snapshotPath,output,reach=defaultReach}){
   await json(join(target,'review/amap-office-review.json'),reviewRows(prepared.candidates));
   await writeFile(join(target,'review/amap-office-review.csv'),toCSV(reviewRows(prepared.candidates)),{flag:'wx'});
   await json(join(target,'audit/acquisition-exclusions.json'),prepared.exclusions);
+  const incomplete=snapshot.version==='amap-pilot-3'?pilot3RecoveryState(snapshot).incomplete_queries:[];
   await json(join(target,'audit/query-coverage.geojson'),{type:'FeatureCollection',features:snapshot.plan.cells.map(c=>{
     const [w,s,e,n]=c.bbox_wgs84;const queries=snapshot.plan.queries.filter(q=>q.cell_id===c.id);
-    return {type:'Feature',geometry:{type:'Polygon',coordinates:[[[w,s],[e,s],[e,n],[w,n],[w,s]]]},properties:{cell_id:c.id,pages_returned:snapshot.responses.filter(r=>queries.some(q=>q.id===r.query_id)).length,attempts:snapshot.attempts.filter(a=>queries.some(q=>q.id===a.query_id)).length,scope:snapshot.version,coverage:'queried_rectangle_not_exhaustive_inventory'}};
+    return {type:'Feature',geometry:{type:'Polygon',coordinates:[[[w,s],[e,s],[e,n],[w,n],[w,s]]]},properties:{cell_id:c.id,pages_returned:snapshot.responses.filter(r=>queries.some(q=>q.id===r.query_id)).length,attempts:snapshot.attempts.filter(a=>queries.some(q=>q.id===a.query_id)).length,scope:snapshot.version,coverage:'queried_rectangle_not_exhaustive_inventory',...(snapshot.version==='amap-pilot-3'?{incomplete_queries:incomplete.filter(q=>q.cell_id===c.id)}:{})}};
   })});
   await json(join(target,'audit/pilot-report.json'),qaReport(bundle));
   await writeFile(join(target,'audit/pilot-report.md'),reportMarkdown(qaReport(bundle)),{flag:'wx'});

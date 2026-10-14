@@ -3,7 +3,7 @@
 Scope: existing PR #20 and existing review Site only. No production change,
 location-search change, automatic acceptance or 40/50-minute acquisition.
 
-## Validation and current workload
+## Initial implementation validation (2026-10-13)
 
 108 JavaScript tests pass, including reservation/resume ceilings, checkpoint lookup
 failure gates, exact geometry, historical locks, human bulk decisions, canonical
@@ -37,6 +37,48 @@ Live browser QA was unavailable; publication and build validation are separate c
 Even an error-free, uncapped 48-attempt run can sample at most 48 of 83 cells,
 leaving at least 35 for a separately reviewed future plan. Retries and the candidate
 cap can leave more. The plan intentionally does not claim complete coverage.
+
+## Recovery after run 38557699693 (2026-10-14)
+
+The second execution's original artifact validates at 26/48 lifetime attempts:
+24 cached responses, two retryable AMAP_NETWORK failures on one query, and 104
+pending candidates. The original snapshot is retained unchanged. This is separate
+from the 104 previously approved offices and 166 historical review decisions.
+
+The recovery fix derives state from the existing append-only attempt ledger:
+
+- A query with two retryable failures has used its one retry. Skip it permanently
+  for this pilot, record RETRY_EXHAUSTED with its cell/page/query ID, and continue
+  to the next eligible query. Cached successful pages are never requested again;
+  a failed first page never causes a second-page query.
+- Coverage artifacts mark the cell incomplete, including when another page in that
+  cell succeeded. Snapshot/QA record every original failure and incomplete query.
+  Incomplete coverage is never described as an empty office area.
+- Four consecutive retryable transport failures (AMAP_NETWORK or HTTP 5xx) spanning
+  at least two distinct cells trigger AMAP_CONNECTIVITY_STOP. A successful response
+  resets that streak. The streak is derived across executions, so a restored open
+  circuit makes zero further requests. Inspect connectivity before any recovery;
+  no automatic reset, health probe, fresh quota or retry allowance is added.
+- Non-retryable quota/auth/provider failures remain sticky. Unknown interrupted
+  attempts remain counted and skipped. The fixed plan, pacing, candidate cap,
+  24-per-execution ceiling and 48-lifetime ceiling are unchanged.
+
+The next manual dispatch can use at most **22 remaining attempts**. If connectivity
+has recovered, it skips the exhausted query and samples other cells. If the next
+cell also fails both attempts, the cross-cell cutoff stops at 28/48 lifetime attempts.
+Use a fresh Run workflow on review/company-access-scaffold, not Re-run jobs. Keep
+the latest artifact even if the job reports a connectivity failure.
+
+Validation: 113 JavaScript tests pass, including the 26-attempt checkpoint shape,
+isolated failure recovery, cross-cell network/HTTP-5xx cutoff, sticky cutoff on
+resume, partial retry allowance, success resetting the streak, fatal provider
+stops, original cache/ledger preservation, and incomplete-cell reporting. Replayed
+the exact run 38557699693 artifact with mocked responses: cell r12c5 was skipped,
+all 24 responses and 104 pending candidates were preserved, and healthy transport
+used exactly the remaining 22 attempts. A mocked continuing outage stopped after
+two new attempts at 28/48. Zero real AMap calls were made during this validation.
+Existing model/result and review-decision regression guards pass. No new data was
+accepted, committed or deployed; the existing review Site remains unchanged.
 
 ## Manual Actions execution and checkpoints
 

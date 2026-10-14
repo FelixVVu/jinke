@@ -61,6 +61,25 @@ export function validateSnapshot(snapshot, areas) {
   if(snapshot.attempts.length>POLICY.max_requests||snapshot.attempts.some(a=>!queries.has(a.query_id)||!['success','failure',...(POLICY.version==='amap-pilot-3'?['uncertain']:[])].includes(a.outcome)))fail('INVALID_ATTEMPT_LEDGER');
   return snapshot;
 }
+// Derived from the immutable request ledger, including older Pilot 3 checkpoints.
+// These recovery rules do not change the fixed plan or allocate a fresh quota.
+export function pilot3RecoveryState(snapshot){
+  const completed=new Set(snapshot.responses.map(r=>r.query_id)),byQuery=new Map();
+  for(const a of snapshot.attempts){const list=byQuery.get(a.query_id)||[];list.push(a);byQuery.set(a.query_id,list);}
+  const incomplete_queries=snapshot.plan.queries.flatMap(q=>{
+    if(completed.has(q.id))return [];
+    const attempts=byQuery.get(q.id)||[];
+    const reason=attempts.some(a=>a.outcome==='uncertain')?'UNCERTAIN_REQUEST':
+      attempts.filter(a=>a.outcome==='failure'&&a.retryable===true).length>=2?'RETRY_EXHAUSTED':null;
+    return reason?[{query_id:q.id,cell_id:q.cell_id,page:q.page,reason}]:[];
+  });
+  const queryCells=new Map(snapshot.plan.queries.map(q=>[q.id,q.cell_id])),cells=new Set();let failures=0;
+  for(const a of [...snapshot.attempts].reverse()){
+    if(a.outcome!=='failure'||a.retryable!==true||!/^AMAP_(NETWORK|HTTP_5\d{2})$/.test(a.code||''))break;
+    failures++;cells.add(queryCells.get(a.query_id));
+  }
+  return {incomplete_queries,connectivity:{consecutive_failures:failures,cell_ids:[...cells].sort(),open:failures>=4&&cells.size>=2}};
+}
 /** Private server job; env is the existing Worker binding, never serialized.
  * checkpoint receives only sanitized, key-free state after every request.
  * One serialized job per run; retries count against the lifetime request budget.
@@ -71,6 +90,8 @@ export async function acquire({env,areas,collectedAt,previous=null,fetchFn=fetch
   if(snapshot.version!==POLICY.version)fail('PILOT_VERSION_MISMATCH');
   validateSnapshot(snapshot,areas);
   const cached=new Map(snapshot.responses.map(r=>[r.query_id,r]));
+  const pilot3=POLICY.version==='amap-pilot-3';
+  const retryExhausted=q=>snapshot.attempts.filter(a=>a.query_id===q.id&&a.outcome==='failure'&&a.retryable===true).length>=2;
   let calls=0,hits=0,stop='PLAN_COMPLETE';
   const checkpointSafe=async()=>{await checkpoint(structuredClone(snapshot));};
   for(const q of snapshot.plan.queries){
@@ -79,14 +100,17 @@ export async function acquire({env,areas,collectedAt,previous=null,fetchFn=fetch
     if(candidatesFromCache(snapshot,areas).candidates.length>=POLICY.max_candidates){stop='CANDIDATE_CAP';break;}
     if(snapshot.attempts.length>=POLICY.max_requests){stop='REQUEST_BUDGET';break;}
     if(calls>=(POLICY.max_requests_per_execution??Infinity)){stop='EXECUTION_BUDGET';break;}
+    if(pilot3&&pilot3RecoveryState(snapshot).connectivity.open){stop='AMAP_CONNECTIVITY_STOP';break;}
     if(snapshot.attempts.some(a=>a.query_id===q.id&&a.outcome==='uncertain'))continue;
     if(!env?.JINKE_AMAP_KEY){stop='AMAP_NOT_CONFIGURED';break;}
     // Fatal failures are sticky across resume; no retrying quota/auth rejections.
     if(snapshot.attempts.some(a=>a.query_id===q.id&&a.outcome==='failure'&&!a.retryable)){stop='PROVIDER_STOP';break;}
+    if(pilot3&&retryExhausted(q))continue;
     let success=false;
     for(let attempt=0;attempt<2;attempt++){
       const priorFailures=snapshot.attempts.filter(a=>a.query_id===q.id&&a.outcome==='failure').length;
       if(calls>=(POLICY.max_requests_per_execution??Infinity)){stop='EXECUTION_BUDGET';break;}
+      if(pilot3&&pilot3RecoveryState(snapshot).connectivity.open){stop='AMAP_CONNECTIVITY_STOP';break;}
       if(priorFailures>=2||snapshot.attempts.length>=POLICY.max_requests){stop='REQUEST_BUDGET_OR_RETRY_CAP';break;}
       await sleep(priorFailures?POLICY.retry_ms:POLICY.pacing_ms);
       calls++;
@@ -110,11 +134,20 @@ export async function acquire({env,areas,collectedAt,previous=null,fetchFn=fetch
       }
       await checkpointSafe();break;
     }
-    if(!success)break;
+    if(!success){
+      if(pilot3&&pilot3RecoveryState(snapshot).connectivity.open){stop='AMAP_CONNECTIVITY_STOP';break;}
+      if(pilot3&&retryExhausted(q)){
+        // Isolated failures leave this cell incomplete; other cells can proceed.
+        stop='PLAN_COMPLETE';continue;
+      }
+      break;
+    }
   }
   const prepared=candidatesFromCache(snapshot,areas);
+  const recovery=pilot3?pilot3RecoveryState(snapshot):null;
+  if(stop==='PLAN_COMPLETE'&&recovery?.incomplete_queries.length)stop='PLAN_COMPLETE_WITH_GAPS';
   snapshot.execution={api_requests_this_execution:calls,cached_requests_this_execution:hits,api_requests_total:snapshot.attempts.length,
-    provider_failures:snapshot.attempts.filter(a=>a.outcome==='failure'),query_cell_count:snapshot.plan.cells.length,stop_reason:stop};
+    provider_failures:snapshot.attempts.filter(a=>a.outcome==='failure'),query_cell_count:snapshot.plan.cells.length,stop_reason:stop,...(recovery||{})};
   await checkpointSafe();
   return {snapshot,...prepared,execution:snapshot.execution};
 }

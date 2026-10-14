@@ -2,7 +2,7 @@ import fs from 'node:fs/promises';
 import path from 'node:path';
 import {pathToFileURL} from 'node:url';
 import {planQueries} from './plan.mjs';
-import {validateSnapshot} from './acquire.mjs';
+import {validateSnapshot,pilot3RecoveryState} from './acquire.mjs';
 import {makeReviewBundle} from './console.mjs';
 import {validateSession,exportRows} from '../../../web/src/company-access/review-state.js';
 import {attachReviewHistory} from '../../../web/src/company-access/review-history.js';
@@ -12,8 +12,14 @@ import {ingest,artifactNames,validateArtifacts} from '../ingest.mjs';
 import {stable} from '../common.mjs';
 export function coverageReport(areas,snapshot=null){
   const plan=planQueries(areas,'amap-pilot-3');if(snapshot)validateSnapshot(snapshot,areas);
-  const features=plan.cells.map((cell,index)=>{const ids=new Set(plan.queries.filter(q=>q.cell_id===cell.id).map(q=>q.id));const responses=(snapshot?.responses||[]).filter(r=>ids.has(r.query_id));return {type:'Feature',geometry:cell.geometry,properties:{cell_id:cell.id,priority:index+1,prior_poi_observations:cell.prior_poi_observations,attempts:(snapshot?.attempts||[]).filter(a=>ids.has(a.query_id)).length,pages_returned:responses.length,raw_pois:responses.reduce((n,r)=>n+r.payload.pois.length,0),status:responses.length?'sampled_not_complete':'not_sampled_by_pilot3'}};});
-  return {type:'FeatureCollection',features,summary:{cells:features.length,cells_without_prior_poi_observations:features.filter(f=>!f.properties.prior_poi_observations).length,pilot3_cells_sampled:features.filter(f=>f.properties.pages_returned).length,pilot3_cells_remaining:features.filter(f=>!f.properties.pages_returned).length,notice:'Sampling effort, not inventory completeness. No returned offices does not establish an empty reach area.'}};
+  const incomplete=snapshot?pilot3RecoveryState(snapshot).incomplete_queries:[];
+  const features=plan.cells.map((cell,index)=>{
+    const ids=new Set(plan.queries.filter(q=>q.cell_id===cell.id).map(q=>q.id));
+    const responses=(snapshot?.responses||[]).filter(r=>ids.has(r.query_id));
+    const issues=incomplete.filter(q=>q.cell_id===cell.id);
+    return {type:'Feature',geometry:cell.geometry,properties:{cell_id:cell.id,priority:index+1,prior_poi_observations:cell.prior_poi_observations,attempts:(snapshot?.attempts||[]).filter(a=>ids.has(a.query_id)).length,pages_returned:responses.length,raw_pois:responses.reduce((n,r)=>n+r.payload.pois.length,0),incomplete_queries:issues,status:issues.length?'incomplete_acquisition':responses.length?'sampled_not_complete':'not_sampled_by_pilot3'}};
+  });
+  return {type:'FeatureCollection',features,summary:{cells:features.length,cells_without_prior_poi_observations:features.filter(f=>!f.properties.prior_poi_observations).length,pilot3_cells_sampled:features.filter(f=>f.properties.pages_returned).length,pilot3_cells_remaining:features.filter(f=>!f.properties.pages_returned).length,pilot3_cells_incomplete:features.filter(f=>f.properties.incomplete_queries.length).length,notice:'Sampling effort, not inventory completeness. No returned offices does not establish an empty reach area.'}};
 }
 export function importPilot3({snapshot,areas,baseline,historyBundle,session,reviewedAt}){
   if(snapshot.version!=='amap-pilot-3')throw Error('Pilot 3 snapshot required');

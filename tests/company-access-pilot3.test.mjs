@@ -16,6 +16,56 @@ const env={JINKE_AMAP_KEY:'SYNTHETIC_PILOT3_TEST_CREDENTIAL'},date='2026-10-13T0
 const poi=(id,name=id,x=121.597836)=>({id,name,address:'合成测试路1号',type:'公司企业;公司',typecode:'170200',location:wgs84ToGcj02(x,31.2064028).join(',')});
 const mock=pois=>{let calls=0;return async()=>Response.json({status:'1',pois:calls++===0?pois:[]});};
 const run=options=>acquire({env,areas,collectedAt:date,pilotVersion:'amap-pilot-3',sleep:async()=>{},...options});
+async function failedCheckpoint(failures=2){
+  const {snapshot}=await run({fetchFn:mock([poi('SYNTHETIC-CACHED')])});
+  const query=snapshot.plan.queries[24];
+  for(let i=0;i<failures;i++)snapshot.attempts.push({query_id:query.id,outcome:'failure',code:'AMAP_NETWORK',retryable:true});
+  // Old run metadata is intentionally stale; recovery must derive from the ledger.
+  return snapshot;
+}
+test('26/48 checkpoint skips exhausted query, keeps cache/history and spends only 22 remaining attempts',async()=>{
+  const previous=await failedCheckpoint(),before=structuredClone(previous),visited=[];
+  const result=await run({previous,fetchFn:async url=>{visited.push(Object.fromEntries(new URL(url).searchParams));return Response.json({status:'1',pois:[]});}});
+  assert.equal(result.execution.api_requests_this_execution,22);assert.equal(result.execution.api_requests_total,48);
+  assert.equal(result.execution.cached_requests_this_execution,24);assert.equal(result.execution.stop_reason,'REQUEST_BUDGET');
+  assert.deepEqual(result.snapshot.responses.slice(0,24),before.responses);assert.deepEqual(result.snapshot.attempts.slice(0,26),before.attempts);assert.deepEqual(previous,before);
+  assert.equal(result.candidates.length,1);assert.ok(makeReviewBundle([result.snapshot],areas).batches[0].rows.every(i=>i.row.review_status==='pending'));
+  for(const q of before.plan.queries.slice(0,25))assert.ok(!visited.some(p=>p.polygon===q.parameters.polygon&&p.page_num===q.parameters.page_num));
+  assert.deepEqual(result.execution.incomplete_queries,[{query_id:before.plan.queries[24].id,cell_id:before.plan.queries[24].cell_id,page:1,reason:'RETRY_EXHAUSTED'}]);
+  const coverage=coverageReport(areas,result.snapshot),cell=coverage.features.find(f=>f.properties.cell_id===before.plan.queries[24].cell_id);
+  assert.equal(cell.properties.status,'incomplete_acquisition');assert.equal(cell.properties.pages_returned,0);assert.equal(cell.properties.attempts,2);assert.equal(coverage.summary.pilot3_cells_incomplete,1);
+});
+test('isolated query failure in the current execution skips after one retry and continues other cells',async()=>{
+  let calls=0;const result=await run({fetchFn:async()=>{if(++calls<=2)throw Error('synthetic transport failure');return Response.json({status:'1',pois:[]});}});
+  assert.equal(calls,24);assert.equal(result.snapshot.responses.length,22);assert.equal(result.execution.incomplete_queries.length,1);assert.equal(result.execution.stop_reason,'EXECUTION_BUDGET');
+  assert.equal(result.snapshot.attempts.filter(a=>a.query_id===result.snapshot.plan.queries[0].id).length,2);
+});
+test('broader network/server outage stops across cells and resumes with zero extra provider requests',async()=>{
+  for(const http of [false,true]){
+    const previous=await failedCheckpoint();let calls=0;
+    const result=await run({previous,fetchFn:async()=>{calls++;if(http)return new Response('',{status:503});throw Error('synthetic network down');}});
+    assert.equal(calls,2);assert.equal(result.execution.api_requests_total,28);assert.equal(result.execution.stop_reason,'AMAP_CONNECTIVITY_STOP');
+    assert.equal(result.execution.connectivity.consecutive_failures,4);assert.equal(result.execution.connectivity.cell_ids.length,2);assert.equal(result.execution.incomplete_queries.length,2);
+    assert.deepEqual(result.snapshot.responses,previous.responses);assert.deepEqual(result.snapshot.attempts.slice(0,26),previous.attempts);
+    const resumed=await run({previous:result.snapshot,fetchFn:()=>assert.fail('Open circuit must not call provider')});
+    assert.equal(resumed.execution.api_requests_this_execution,0);assert.equal(resumed.execution.stop_reason,'AMAP_CONNECTIVITY_STOP');assert.deepEqual(resumed.snapshot.attempts,result.snapshot.attempts);
+  }
+});
+test('successful response resets outage streak; a partly used retry allowance never resets on resume',async()=>{
+  const previous=await failedCheckpoint();let calls=0;
+  const result=await run({previous,fetchFn:async()=>{calls++;if(calls===2||calls===3)throw Error('isolated second failure');return Response.json({status:'1',pois:[]});}});
+  assert.equal(calls,22);assert.equal(result.execution.stop_reason,'REQUEST_BUDGET');assert.equal(result.execution.connectivity.open,false);assert.equal(result.execution.incomplete_queries.length,2);
+  const partial=await failedCheckpoint(1);let retried=0;
+  const recovered=await run({previous:partial,fetchFn:async()=>{if(++retried===1)throw Error('second and final attempt');return Response.json({status:'1',pois:[]});}});
+  assert.equal(retried,23);assert.equal(recovered.snapshot.attempts.filter(a=>a.query_id===partial.plan.queries[24].id).length,2);assert.equal(recovered.execution.api_requests_total,48);
+});
+test('non-retryable provider failure remains sticky after skipping an exhausted query',async()=>{
+  const previous=await failedCheckpoint();let calls=0;
+  const stopped=await run({previous,fetchFn:async()=>{calls++;return new Response('',{status:429});}});
+  assert.equal(calls,1);assert.equal(stopped.execution.stop_reason,'AMAP_RATE_LIMIT');
+  const resumed=await run({previous:stopped.snapshot,fetchFn:()=>assert.fail('Do not skip a fatal quota failure')});
+  assert.equal(resumed.execution.api_requests_this_execution,0);assert.equal(resumed.execution.stop_reason,'PROVIDER_STOP');
+});
 test('Actions resume finds only the prior Pilot 3 checkpoint and fails closed on missing history',async()=>{
   const context={GITHUB_ACTIONS:'true',GITHUB_EVENT_NAME:'workflow_dispatch',GITHUB_REPOSITORY:'FelixVVu/jinke',GITHUB_REF:'refs/heads/review/company-access-scaffold',GITHUB_RUN_ATTEMPT:'1',GITHUB_RUN_ID:'30',GITHUB_RUN_NUMBER:'3'};
   const old={id:20,run_number:2,name:'Company Access AMap Pilot 3 (manual review only)',status:'completed'},artifact={id:100,name:'company-access-amap-pilot-3-20',expired:false};

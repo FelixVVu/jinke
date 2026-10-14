@@ -61,7 +61,7 @@ export async function executePilot({key,context,collectedAt=new Date().toISOStri
   }
   const artifact=join(root,`${pilot}-artifact`);await stageArtifact({source:output,target:artifact,key,extraFiles});
   const report=JSON.parse(await readFile(join(output,'audit/pilot-report.json'),'utf8'));
-  return {report,artifact,providerStopped:!['PLAN_COMPLETE','CANDIDATE_CAP','REQUEST_BUDGET','EXECUTION_BUDGET'].includes(result.execution.stop_reason)};
+  return {report,artifact,providerStopped:!['PLAN_COMPLETE','PLAN_COMPLETE_WITH_GAPS','CANDIDATE_CAP','REQUEST_BUDGET','EXECUTION_BUDGET'].includes(result.execution.stop_reason)};
 }
 export async function main(pilotVersion='amap-pilot-1'){
   if(process.argv.length!==2)fail('NO_PILOT_ARGUMENTS_ALLOWED');
