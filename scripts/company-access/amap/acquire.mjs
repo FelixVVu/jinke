@@ -26,7 +26,7 @@ export function prepareCachedCandidates(snapshot,areas,{policy:POLICY,limit,prov
     // Different assertions about one stable ID need review, never first-wins.
     const identity=p=>stable([p.name,p.address,p.location,p.adcode,p.typecode]);
     if(occurrences.some(p=>identity(p.poi)!==identity(poi))){exclusions.push({amap_poi_id:id,reason:'POI_ID_CONFLICT',occurrences});continue;}
-    if(!providerScope(text(poi.typecode))){exclusions.push({amap_poi_id:id,reason:'OUT_OF_PROVIDER_SCOPE',occurrences});continue;}
+    if(!providerScope(text(poi.typecode),poi,occurrences)){exclusions.push({amap_poi_id:id,reason:'OUT_OF_PROVIDER_SCOPE',occurrences});continue;}
     try{
       const parts=text(poi.location).split(',');
       if(parts.length!==2||parts.some(p=>!p.trim()))fail('INVALID_COORDINATES');
@@ -91,18 +91,24 @@ export function pilot3RecoveryState(snapshot){
  */
 export async function acquire({env,areas,collectedAt,previous=null,fetchFn=fetch,sleep=ms=>new Promise(r=>setTimeout(r,ms)),checkpoint=async()=>{},pilotVersion=POLICY.version}){
   const POLICY=policyFor(pilotVersion);
-  const snapshot=previous?structuredClone(validateSnapshot(previous,areas)):{version:POLICY.version,collected_at:collectedAt,plan:planQueries(areas,POLICY.version),responses:[],attempts:[]};
+  return acquirePlan({env,collectedAt,previous,fetchFn,sleep,checkpoint,policy:POLICY,plan:planQueries(areas,POLICY.version),
+    validate:s=>validateSnapshot(s,areas),prepare:s=>candidatesFromCache(s,areas),resumable:POLICY.version==='amap-pilot-3'});
+}
+// Shared bounded executor. Callers supply a fixed, validated server-side plan;
+// this is not exposed as a browser route or an arbitrary provider proxy.
+export async function acquirePlan({env,collectedAt,previous=null,fetchFn=fetch,sleep=ms=>new Promise(r=>setTimeout(r,ms)),checkpoint=async()=>{},policy:POLICY,plan,validate,prepare,resumable=true,assertSafe=()=>{}}){
+  const snapshot=previous?structuredClone(validate(previous)):{version:POLICY.version,collected_at:collectedAt,plan,responses:[],attempts:[]};
   if(snapshot.version!==POLICY.version)fail('PILOT_VERSION_MISMATCH');
-  validateSnapshot(snapshot,areas);
+  validate(snapshot);
   const cached=new Map(snapshot.responses.map(r=>[r.query_id,r]));
-  const pilot3=POLICY.version==='amap-pilot-3';
+  const pilot3=resumable;
   const retryExhausted=q=>snapshot.attempts.filter(a=>a.query_id===q.id&&a.outcome==='failure'&&a.retryable===true).length>=2;
   let calls=0,hits=0,stop='PLAN_COMPLETE';
   const checkpointSafe=async()=>{await checkpoint(structuredClone(snapshot));};
   for(const q of snapshot.plan.queries){
     if(q.page>1){const prev=snapshot.plan.queries.find(p=>p.cell_id===q.cell_id&&p.page===q.page-1);const page=cached.get(prev.id);if(!page||page.payload.pois.length<POLICY.page_size)continue;}
     if(cached.has(q.id)){hits++;continue;}
-    if(candidatesFromCache(snapshot,areas).candidates.length>=POLICY.max_candidates){stop='CANDIDATE_CAP';break;}
+    if(prepare(snapshot).candidates.length>=POLICY.max_candidates){stop='CANDIDATE_CAP';break;}
     if(snapshot.attempts.length>=POLICY.max_requests){stop='REQUEST_BUDGET';break;}
     if(calls>=(POLICY.max_requests_per_execution??Infinity)){stop='EXECUTION_BUDGET';break;}
     if(pilot3&&pilot3RecoveryState(snapshot).connectivity.open){stop='AMAP_CONNECTIVITY_STOP';break;}
@@ -121,11 +127,12 @@ export async function acquire({env,areas,collectedAt,previous=null,fetchFn=fetch
       calls++;
       // Pilot 3 reserves before network I/O. An interrupted request is never free
       // or retried blindly after restoring a checkpoint.
-      const reservation=POLICY.version==='amap-pilot-3'?{query_id:q.id,outcome:'uncertain'}:null;
+      const reservation=resumable?{query_id:q.id,outcome:'uncertain'}:null;
       if(reservation){snapshot.attempts.push(reservation);await checkpointSafe();}
       try{
-        const payload=await requestAmap(env,'polygon',q.parameters,fetchFn);
+        const payload=await requestAmap(env,q.operation||'polygon',q.parameters,fetchFn);
         if(payload.pois.length>POLICY.page_size)fail('INVALID_PAGE_SIZE');
+        assertSafe(payload);
         const entry={query_id:q.id,payload,payload_sha256:sha256(stable(payload))};
         snapshot.responses.push(entry);cached.set(q.id,entry);if(reservation)reservation.outcome='success';else snapshot.attempts.push({query_id:q.id,outcome:'success'});success=true;stop='PLAN_COMPLETE';
       }catch(error){
@@ -148,7 +155,7 @@ export async function acquire({env,areas,collectedAt,previous=null,fetchFn=fetch
       break;
     }
   }
-  const prepared=candidatesFromCache(snapshot,areas);
+  const prepared=prepare(snapshot);
   const recovery=pilot3?pilot3RecoveryState(snapshot):null;
   if(stop==='PLAN_COMPLETE'&&recovery?.incomplete_queries.length)stop='PLAN_COMPLETE_WITH_GAPS';
   snapshot.execution={api_requests_this_execution:calls,cached_requests_this_execution:hits,api_requests_total:snapshot.attempts.length,

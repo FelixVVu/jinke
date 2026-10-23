@@ -35,6 +35,7 @@ if(process.argv[3]){
   for(const name of ['pending-review-bundle.json','second-pass.json','pilot3-coverage.geojson'])await cp(join(pendingRoot,name),join(target,name));
   for(const name of ['coverage-diagnostics.json','discovery-plan.json'])try{await cp(join(pendingRoot,name),join(target,name));}catch(e){if(e.code!=='ENOENT')throw e;}
 }
+if(process.argv[4])await cp(resolve(process.argv[4]),join(target,'targeted-readiness.json'));
 await cp('scripts/company-access/review-console.html','dist-review/company-review.html');
 let html=await readFile('dist-review/index.html','utf8');html=html.replace('<head>','<head>\n<meta name="jinke-company-review" content="approved-pilots">');await writeFile('dist-review/index.html',html);
 console.log(`Review build ready: ${artifacts.offices.features.length} canonical offices; no raw evidence copied.`);
