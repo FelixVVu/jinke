@@ -9,6 +9,11 @@ import { planQueries, POLICY, policyFor, reachLimitFor } from './plan.mjs';
 const text=value=>typeof value==='string'?value.trim():'';
 export function candidatesFromCache(snapshot, areas) {
   const POLICY=policyFor(snapshot.version),limit=reachLimitFor(snapshot.version);
+  // Historical snapshots retain their original scope and hashes. Coverage repair
+  // calls the same coordinate/validation path with an explicit discovery policy.
+  return prepareCachedCandidates(snapshot,areas,{policy:POLICY,limit,providerScope:code=>/^1702\d{2}$/.test(code)});
+}
+export function prepareCachedCandidates(snapshot,areas,{policy:POLICY,limit,providerScope}) {
   const reach=prepareReachAreas(areas), groups=new Map(), exclusions=[], candidates=[];
   let rawCount=0;
   for(const entry of snapshot.responses) for(const poi of entry.payload.pois){
@@ -21,7 +26,7 @@ export function candidatesFromCache(snapshot, areas) {
     // Different assertions about one stable ID need review, never first-wins.
     const identity=p=>stable([p.name,p.address,p.location,p.adcode,p.typecode]);
     if(occurrences.some(p=>identity(p.poi)!==identity(poi))){exclusions.push({amap_poi_id:id,reason:'POI_ID_CONFLICT',occurrences});continue;}
-    if(!/^1702\d{2}$/.test(text(poi.typecode))){exclusions.push({amap_poi_id:id,reason:'OUT_OF_PROVIDER_SCOPE',occurrences});continue;}
+    if(!providerScope(text(poi.typecode))){exclusions.push({amap_poi_id:id,reason:'OUT_OF_PROVIDER_SCOPE',occurrences});continue;}
     try{
       const parts=text(poi.location).split(',');
       if(parts.length!==2||parts.some(p=>!p.trim()))fail('INVALID_COORDINATES');

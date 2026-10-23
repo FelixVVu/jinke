@@ -33,6 +33,7 @@ if(process.argv[3]){
   const pack=JSON.parse(await readFile(join(pendingRoot,'second-pass.json'),'utf8'));
   validateSecondPass(attachReviewHistory(incoming,history),pack);
   for(const name of ['pending-review-bundle.json','second-pass.json','pilot3-coverage.geojson'])await cp(join(pendingRoot,name),join(target,name));
+  for(const name of ['coverage-diagnostics.json','discovery-plan.json'])try{await cp(join(pendingRoot,name),join(target,name));}catch(e){if(e.code!=='ENOENT')throw e;}
 }
 await cp('scripts/company-access/review-console.html','dist-review/company-review.html');
 let html=await readFile('dist-review/index.html','utf8');html=html.replace('<head>','<head>\n<meta name="jinke-company-review" content="approved-pilots">');await writeFile('dist-review/index.html',html);

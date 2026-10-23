@@ -1,7 +1,10 @@
 import http from 'node:http';
 import { createReadStream, existsSync } from 'node:fs';
 import { extname, join, normalize } from 'node:path';
-const port = Number(process.env.PORT || 5173);
+// Honor the managed preview supervisor's explicit port without changing defaults.
+const portFlag = process.argv.indexOf('--port');
+const port = Number(portFlag >= 0 ? process.argv[portFlag + 1] : process.env.PORT || 5173);
+if (!Number.isInteger(port) || port < 1 || port > 65535) throw Error('Invalid development server port');
 const types = {'.html':'text/html','.js':'text/javascript','.css':'text/css','.json':'application/json','.geojson':'application/geo+json'};
 http.createServer((req,res)=>{
   let p = decodeURIComponent((req.url || '/').split('?')[0]);
