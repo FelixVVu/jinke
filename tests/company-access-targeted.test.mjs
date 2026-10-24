@@ -14,7 +14,9 @@ import {wgs84ToGcj02} from '../web/src/location-search.js';
 import {prepareReachAreas} from '../web/src/company-access/model.js';
 import {createSession,decide,validateSession} from '../web/src/company-access/review-state.js';
 import {appendPending} from '../web/src/company-access/review-append.js';
-import {TRIAGE_VERSION,secondPass} from '../web/src/company-access/review-triage.js';
+import {TRIAGE_VERSION,secondPass,triageItems,confirmGroup} from '../web/src/company-access/review-triage.js';
+import {scopeItems,resumeAppended} from '../web/src/company-access/review-scope.js';
+import {analyzeTargeted,continuationPlan} from '../scripts/company-access/discovery/targeted-review.mjs';
 const areas=JSON.parse(await fs.readFile(new URL('../web/public/data/reach-areas.geojson',import.meta.url)));
 const guard=baseline(),date='2026-10-23T00:00:00Z',key='TEST_ONLY_TARGETED_KEY_8d739a';
 const context={GITHUB_ACTIONS:'true',GITHUB_EVENT_NAME:'workflow_dispatch',GITHUB_REPOSITORY:'FelixVVu/jinke',GITHUB_REF:'refs/heads/review/company-access-scaffold',GITHUB_RUN_ATTEMPT:'1',GITHUB_RUN_ID:'30',GITHUB_RUN_NUMBER:'3'};
@@ -124,4 +126,51 @@ test('baseline builder is deterministic and refuses missing source evidence or o
   const p=poi(),s=start();cache(s,s.plan.queries[0],[p]);const pending=targetedBundle(s,prepareTargeted(s,areas)),input={decisions:[],offices:{features:[]},pending,snapshots:[s]};
   assert.equal(stable(buildBaseline(input)),stable(buildBaseline(input)));assert.throws(()=>buildBaseline({...input,snapshots:[]}),/Missing baseline source/);
   assert.throws(()=>buildBaseline({...input,decisions:[{amap_poi_id:p.id}]}),/Overlapping baseline/);
+});
+test('targeted precision excludes facilities even with a company brand or misleading company category',()=>{
+  const row={company_name:'合成公司',address:'合成路100号大厦5楼',amap_typecode:'170200',longitude_wgs84:121.6,latitude_wgs84:31.2},context={seed_flags:['TARGETED_PRECISION_V1']};
+  for(const name of ['合成公司停车场','合成公司食堂','民防工程(合成公司)','合成冒菜公司','合成公司项目部','合成公司充电站'])assert.equal(secondPass({...row,company_name:name},context).group,'exclude',name);
+  assert.equal(secondPass({...row,company_name:'民防工程(合成公司)'},{...context,same_name_multiple:true}).group,'exclude');
+  assert.equal(secondPass({...row,company_name:'合成制造有限公司',amap_typecode:'170100'},context).group,'exception');
+  assert.equal(secondPass({...row,company_name:'合成科技有限公司',amap_typecode:'060000|170200'},context).reason,'MIXED_PROVIDER_CATEGORY');
+  assert.equal(secondPass({...row,company_name:'合成公司1栋',amap_typecode:'120100'},context).reason,'BUILDING_NOT_OFFICE');
+});
+test('targeted evidence never upgrades confidence or merges a related building/office',()=>{
+  const row={company_name:'合成研发科技有限公司',address:'测试路123号',amap_typecode:'170200',longitude_wgs84:121.6,latitude_wgs84:31.2};
+  const context={seed_flags:['TARGETED_PRECISION_V1'],evidence:{assessment:'office_address_match'}};
+  assert.equal(secondPass(row,context).group,'trusted');assert.match(secondPass(row,context).confidence_notice,/仍为 reviewed mapped office/);
+  assert.equal(secondPass(row,{...context,evidence:{assessment:'mixed_site_office_match'}}).group,'exception');
+  assert.equal(secondPass(row,{...context,seed_flags:['TARGETED_PRECISION_V1','POSSIBLE_SHARED_OFFICE']}).reason,'RELATION_UNRESOLVED');
+  assert.equal(secondPass({...row,address:'测试路123号1-2层'}, {seed_flags:['TARGETED_PRECISION_V1']}).reason,'GROUND_OR_BASEMENT');
+});
+test('offline targeted analysis covers every candidate reproducibly, preserves snapshot and pending decisions',()=>{
+  const s=start();cache(s,s.plan.queries[0],[poi('SYNTHETIC-SMIC',{name:'中芯国际合成测试食堂'})]);cache(s,s.plan.queries[3],[poi('SYNTHETIC-OFFICE')]);
+  const before=stable(s),a=analyzeTargeted({snapshot:s,areas}),b=analyzeTargeted({snapshot:s,areas});
+  assert.equal(stable(a),stable(b));assert.equal(stable(s),before);assert.equal(a.report.triage.analyzed,2);assert.equal(a.report.triage.automatic_accepts,0);
+  assert.equal(a.report.triage.groups.exclude,1);assert.equal(a.report.triage.groups.trusted,1);
+  assert(Object.values(createSession(a.bundle).decisions).every(d=>d.status==='pending'&&d.history.length===0));
+  assert.throws(()=>analyzeTargeted({snapshot:s,areas,relations:[{poi_ids:['not-present','other'],reason:'test'}]}));
+});
+test('continuation accounts for full lifetime ledger, skips completed queries and holds original cap',()=>{
+  const s=start();cache(s,s.plan.queries[0],Array.from({length:25},(_,i)=>poi(`SYNTHETIC-${i}`)));cache(s,s.plan.queries[3],[]);
+  s.attempts.push({query_id:s.plan.queries[4].id,outcome:'failure',code:'AMAP_NETWORK',retryable:true});
+  const prepared=prepareTargeted(s,areas),plan=continuationPlan(s,prepared,triageItems(targetedBundle(s,prepared).batches[0].rows));
+  assert.equal(plan.attempts_spent,3);assert.equal(plan.attempts_remaining,45);assert.equal(plan.failed_attempts_preserved.length,1);
+  assert.equal(plan.next_pages.length,1);assert.equal(plan.next_pages[0].next_page,2);assert.equal(plan.execution_enabled,false);assert.equal(plan.original_candidate_cap,300);
+  assert(plan.completed_streams_not_requeried.includes(s.plan.queries[3].cell_id));assert(!plan.next_pages.some(q=>s.responses.some(r=>r.query_id===q.query_id)));
+  assert.match(plan.capacity_gate,/never delete candidates/);
+});
+test('batch confirmation only changes scoped pending rows, preserving recovery and locked history',()=>{
+  const s=start();cache(s,s.plan.queries[3],[poi()]);const first=targetedBundle(s,prepareTargeted(s,areas)),other=structuredClone(first.batches[0]);other.id='new';other.rows[0].key='new:SYNTHETIC-NEW';other.rows[0].row.amap_poi_id='SYNTHETIC-NEW';other.rows[0].row.company_name='SYNTHETIC 新科技有限公司';
+  const b={...first,batches:[...first.batches,other]},session=createSession(b);session.reviewer='Synthetic reviewer';
+  const items=triageItems(b.batches.flatMap(b=>b.rows.map(i=>({...i,batch:b.id}))));
+  const next=confirmGroup(b,session,scopeItems(items,'new'),'trusted',{confirmed:true,at:date});
+  assert.equal(next.decisions[other.rows[0].key].status,'accept');assert.deepEqual(next.decisions[first.batches[0].rows[0].key],session.decisions[first.batches[0].rows[0].key]);
+  assert.equal(scopeItems(items,'all').length,2);
+});
+test('reload/reappend preserves saved composite decisions instead of replacing with pending migration',()=>{
+  const s=start();cache(s,s.plan.queries[3],[poi()]);const b=targetedBundle(s,prepareTargeted(s,areas)),migrated=createSession(b);migrated.reviewer='Synthetic';
+  const saved=decide(b,migrated,[b.batches[0].rows[0].key],'reject','Do not overwrite',date);
+  assert.deepEqual(resumeAppended(b,migrated,JSON.stringify(saved)),saved);assert.deepEqual(resumeAppended(b,migrated,null),migrated);
+  assert.throws(()=>resumeAppended(b,migrated,JSON.stringify({...saved,bundle_id:'wrong'})));
 });

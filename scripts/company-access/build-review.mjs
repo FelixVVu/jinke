@@ -7,6 +7,8 @@ import {writeReviewBundle} from './amap/console.mjs';
 import {coverageReport} from './amap/pilot3-workflow.mjs';
 import {attachReviewHistory} from '../../web/src/company-access/review-history.js';
 import {validateSecondPass} from '../../web/src/company-access/review-triage.js';
+import {appendPending} from '../../web/src/company-access/review-append.js';
+import {createSession} from '../../web/src/company-access/review-state.js';
 const input=process.argv[2];if(!input)throw Error('Approved import directory required');
 const root=resolve(input),artifacts={};
 for(const [key,name] of Object.entries(artifactNames))artifacts[key]=JSON.parse(await readFile(join(root,['audit','rejected','review'].includes(key)?'audit':'frontend',name),'utf8'));
@@ -36,6 +38,14 @@ if(process.argv[3]){
   for(const name of ['coverage-diagnostics.json','discovery-plan.json'])try{await cp(join(pendingRoot,name),join(target,name));}catch(e){if(e.code!=='ENOENT')throw e;}
 }
 if(process.argv[4])await cp(resolve(process.argv[4]),join(target,'targeted-readiness.json'));
+if(process.argv[5]){
+  if(!process.argv[3])throw Error('Recovery queue required before targeted append');
+  const addedRoot=resolve(process.argv[5]),incoming=JSON.parse(await readFile(join(addedRoot,'targeted-review-bundle.json'),'utf8'));
+  const pack=JSON.parse(await readFile(join(addedRoot,'targeted-second-pass.json'),'utf8'));validateSecondPass(incoming,pack);
+  const old=attachReviewHistory(JSON.parse(await readFile(join(target,'pending-review-bundle.json'),'utf8')),history);
+  appendPending(old,incoming,history,createSession(old));
+  for(const name of ['targeted-review-bundle.json','targeted-second-pass.json','targeted-readiness.json'])await cp(join(addedRoot,name),join(target,name));
+}
 await cp('scripts/company-access/review-console.html','dist-review/company-review.html');
 let html=await readFile('dist-review/index.html','utf8');html=html.replace('<head>','<head>\n<meta name="jinke-company-review" content="approved-pilots">');await writeFile('dist-review/index.html',html);
 console.log(`Review build ready: ${artifacts.offices.features.length} canonical offices; no raw evidence copied.`);

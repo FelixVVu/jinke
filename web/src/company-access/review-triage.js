@@ -8,6 +8,7 @@ export const REASONS={
   SAME_NAME_MULTIPLE_POIS:'同名多个 POI，须区分不同办公室与重复点',UNCERTAIN_LOCATION:'坐标或位置不明确',STALE_OR_UNCERTAIN:'存在过期、搬迁或不确定提示',
   PROJECT_SITE:'施工项目部／工地，不是稳定公司办公室',ONSITE_PROPERTY:'小区物业服务点／管理处，不是企业总部办公室',STORE_OR_SERVICE:'名称明确指向门店或到店服务',
   PLACE_NOT_COMPANY:'园区、共享空间、站点或入口，不是可识别的独立公司办公室',FACTORY_SITE:'明确工厂／生产点，不作为办公地点',
+  NON_OFFICE_INFRASTRUCTURE:'停车、充电、出入口或民防设施，不是公司办公室',BUILDING_NOT_OFFICE:'楼栋／园区位置不能单独证明一家公司的办公地点',
   VAGUE_ADDRESS:'地址只有路口、方位、附近或地标，缺少具体办公位置',AMBIGUOUS_IDENTITY:'公司身份不完整或名称像营销关键词',
   INDUSTRIAL_LOCATION:'工业活动与办公用途未区分',SERVICE_OR_HEADQUARTERS:'不能区分门店服务与管理办公室',ADDRESS_DETAIL:'只有门牌／楼宇信息，缺少办公用途依据',
   ADDRESS_CONFLICT:'公开资料与 POI 地址／楼层／机构口径不一致',RELATION_UNRESOLVED:'存在关联名称或重复计数风险，未自动合并',
@@ -34,10 +35,21 @@ export function secondPass(row,context={}){
   if(context.locked)return result('history','HISTORICAL_LOCK');
   if(row.possible_duplicate===true||row.possible_duplicate==='true'||row.duplicate_group||row.provider_conflict)return result('exception','DUPLICATE_OR_CONFLICT');
   if(['PRIOR_SOURCE_CHANGED','PRIOR_INVENTORY_MATCH'].includes(context.prior_reason))return result('exception',context.prior_reason);
-  if(context.same_name_multiple)return result('exception','SAME_NAME_MULTIPLE_POIS');
+  if(context.same_name_multiple&&!context.seed_flags?.includes('TARGETED_PRECISION_V1'))return result('exception','SAME_NAME_MULTIPLE_POIS');
   if(!row.longitude_wgs84||!row.latitude_wgs84||!Number.isFinite(+row.longitude_wgs84)||!Number.isFinite(+row.latitude_wgs84))return result('exception','UNCERTAIN_LOCATION');
   if(evidence&&['address_conflict','identity_conflict','relation_unresolved'].includes(evidence.assessment))return result('exception',evidence.assessment==='relation_unresolved'?'RELATION_UNRESOLVED':'ADDRESS_CONFLICT','public_exception');
   if(/搬迁|注销|关闭|待核实|过期|closed|stale/iu.test(name+' '+(row.review_notes||'')))return result('exception','STALE_OR_UNCERTAIN');
+  // Scoped to the targeted campaign: original recovery suggestions remain stable.
+  // A brand in a facility name does not establish a company office.
+  if(context.seed_flags?.includes('TARGETED_PRECISION_V1')){
+    if(/停车场|充电站|民防工程|人防工程/u.test(name)||providerTypes(row.amap_typecode).some(t=>/^(15090|0111|2004)/.test(t)))return result('exclude','NON_OFFICE_INFRASTRUCTURE');
+    if(/食堂|咖啡|冒菜|养车|汽车维修|便利店|餐厅|餐饮店/u.test(name)||(!corporateType(row.amap_typecode)&&providerTypes(row.amap_typecode).some(t=>/^(05|06|0104|0105|03)/.test(t))))return result('exclude','STORE_OR_SERVICE');
+    if(/物业$/u.test(name))return result('exclude','ONSITE_PROPERTY');
+    if(providerTypes(row.amap_typecode).some(t=>/^120[12]/.test(t))||/先锋站|科创中心|医药科技园|引创空间|盛创中心|Co\.Lab/iu.test(name))return result('exception','BUILDING_NOT_OFFICE');
+    if(context.seed_flags.includes('POSSIBLE_SHARED_OFFICE'))return result('exception','RELATION_UNRESOLVED');
+    if(/(?<!\d)1\s*[-~至]\s*\d+\s*(层|楼)/u.test(address.core))return result('exception','GROUND_OR_BASEMENT');
+  }
+  if(context.same_name_multiple)return result('exception','SAME_NAME_MULTIPLE_POIS');
   if(/项目部|项目办公室|工地|地块项目|中心项目|project office/iu.test(name))return result('exclude','PROJECT_SITE');
   if(/物业.*(管理处|服务中心|办公室)|小区物业|豪庭物业|苑物业|四季物业|^(汤臣豪庭物业|安培物业)$/u.test(name))return result('exclude','ONSITE_PROPERTY');
   if(/足道|养生|餐厅|饭店|健身|专卖店|便利店|汽车修理|车主服务中心|图文广告|书法|美术|生日派对|餐饮.*(分店|路店)|装饰.*店\)|装潢.*店\)/u.test(name)||(!corporateType(row.amap_typecode)&&providerTypes(row.amap_typecode).some(t=>/^(05|06|07)/.test(t))))return result('exclude','STORE_OR_SERVICE');

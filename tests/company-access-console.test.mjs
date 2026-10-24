@@ -41,7 +41,7 @@ test('both interfaces search SAP/NVIDIA through reviewed stable identities witho
   assert.equal(search('B0FFG951GY').length,2);
   assert.equal(searchOffices([offices[0],{...offices[0]}],'SAP').length,2,'Search must not collapse records');
   const ui=readFileSync('web/src/company-access/review-console.js','utf8');
-  assert.match(ui,/searchCandidates=createReviewSearchIndex\(items\)/);assert.match(ui,/visible=searchCandidates\(/);
+  assert.match(ui,/searchCandidates=createReviewSearchIndex\(items\)/);assert.match(ui,/visible=scopeItems\(searchCandidates\(\$\('search'\).value\),batchScope\)/);
 });
 test('search supports only reviewed English names, brands, acronyms and aliases with punctuation normalization',()=>{
   const office={id:'synthetic-only',company_name:'测试（合成）公司',address:'测试路 1 号'};
