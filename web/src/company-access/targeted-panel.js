@@ -2,6 +2,7 @@ const add=(root,tag,value)=>{const e=document.createElement(tag);e.textContent=v
 const statuses={unsampled:'尚未查询',failed_incomplete:'失败／未完成',sampled_partial:'已取样，非完整清单',saturated_incomplete:'满页到上限，仍有遗漏',pagination_incomplete:'满页，等待续页'};
 export function renderTargetedPanel(root,report,onCell){
   root.replaceChildren();add(root,'h3','截图缺口优先 · 30 分钟定向发现');
+  if(report.review_import)add(root,'p',`审核已导入：新增 ${report.review_import.human_accepts} 家，总计 ${report.review_import.canonical_offices} 家办公室。下方原始采集统计保留作审计；已接受记录在历史中锁定，其余候选保持待审。`);
   add(root,'p',`16 个细格 / 四个红框 + 中芯国际、华虹、环旭名称搜索。${report.api_requests_total||0} 次新请求，${report.candidate_review_count||0} 条本轮新待审。原有 145 家办公室、442 条决定及 291 条恢复线索不变。`);
   add(root,'p','当前重点是发现覆盖率，无需现在审核 291 条恢复线索。每次最多 24 次、累计最多 48 次请求（含重试），独立检查点，不重跑 Pilot 3。');
   if(report.continuation){
