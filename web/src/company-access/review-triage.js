@@ -33,6 +33,12 @@ export function secondPass(row,context={}){
     provider_fields:{name,address:row.address,type,typecode:row.amap_typecode},seed_flags:context.seed_flags||[],public_evidence:evidence,
     confidence_notice:'接受后仍为 reviewed mapped office；公开资料不自动升级为 verified physical office。'});
   if(context.locked)return result('history','HISTORICAL_LOCK');
+  // Final continuation review only: do not reinterpret earlier batches.
+  if(context.seed_flags?.includes('CONTINUATION_FINAL_REVIEW_V1')){
+    if(/停车场|充电站|民防工程|人防工程|快递柜|迷你仓/u.test(name))return result('exclude','NON_OFFICE_INFRASTRUCTURE');
+    if(/暂停营业|停业|歇业|已搬迁|建设中/u.test(name))return result('exception','STALE_OR_UNCERTAIN','public_exception');
+  }
+
   if(row.possible_duplicate===true||row.possible_duplicate==='true'||row.duplicate_group||row.provider_conflict)return result('exception','DUPLICATE_OR_CONFLICT');
   if(['PRIOR_SOURCE_CHANGED','PRIOR_INVENTORY_MATCH'].includes(context.prior_reason))return result('exception',context.prior_reason);
   if(context.same_name_multiple&&!context.seed_flags?.includes('TARGETED_PRECISION_V1'))return result('exception','SAME_NAME_MULTIPLE_POIS');

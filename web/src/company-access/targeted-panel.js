@@ -5,7 +5,12 @@ export function renderTargetedPanel(root,report,onCell){
   if(report.review_import)add(root,'p',`审核已导入：新增 ${report.review_import.human_accepts} 家，总计 ${report.review_import.canonical_offices} 家办公室。下方原始采集统计保留作审计；已接受记录在历史中锁定，其余候选保持待审。`);
   if(!report.continuation?.execution_enabled)add(root,'p',`16 个细格 / 四个红框 + 中芯国际、华虹、环旭名称搜索。${report.api_requests_total||0} 次新请求，${report.candidate_review_count||0} 条本轮新待审。原有 145 家办公室、442 条决定及 291 条恢复线索不变。`);
   if(!report.continuation?.execution_enabled)add(root,'p','当前重点是发现覆盖率，无需现在审核 291 条恢复线索。每次最多 24 次、累计最多 48 次请求（含重试），独立检查点，不重跑 Pilot 3。');
-  if(report.continuation?.execution_enabled){
+  if(report.acquisition_complete){
+    const r=report.review_ready;
+    add(root,'p',`采集完成：${report.stop_reason}，${report.api_requests_total}/48 次。不要重新运行。183 家已批准办公室、480 条历史决定、553 条早期待审全部保留。`);
+    add(root,'p',`241 条新增候选已载入：可信 ${r.groups.trusted}、重点核实 ${r.groups.exception}（关键例外 ${r.priority_exceptions}）、建议排除 ${r.groups.exclude}。全部仍为待审；可信不等于已批准或已核实实体办公室。`);
+    add(root,'p','只需：填写审核人 →「可信候选」→「抽查本组」→ 确认后「批量确认本组」。再点「重点核实」→「只看关键例外」。其余不确定记录可保留待审，无需逐条处理241条。完成后「导出决定与历史」，用于独立校验导入。');
+  }else if(report.continuation?.execution_enabled){
     const c=report.continuation;
     add(root,'p',`安全续采已就绪：保留 ${report.approved_preserved} 家已批准办公室、${report.historical_preserved} 条历史决定和 ${c.preserved_pending} 条既有待审。原始与续采合计 ${c.attempts_spent}/48 次，剩余 ${c.attempts_remaining} 次；每次手动执行最多 12 次。`);
     add(root,'p',`本次新增待审 ${c.new_pending} 条（含原缓存溢出）；可信 ${c.groups.trusted}、例外 ${c.groups.exception}、建议排除 ${c.groups.exclude}。300 个活跃审核名额已占 ${c.active_review_used}，其他线索完整保留待审，不自动排除或批准。`);

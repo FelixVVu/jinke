@@ -7,7 +7,7 @@ import {writeReviewBundle} from './amap/console.mjs';
 import {coverageReport} from './amap/pilot3-workflow.mjs';
 import {attachReviewHistory} from '../../web/src/company-access/review-history.js';
 import {validateSecondPass} from '../../web/src/company-access/review-triage.js';
-import {appendPending} from '../../web/src/company-access/review-append.js';
+import {appendPending,appendDiscovery} from '../../web/src/company-access/review-append.js';
 import {createSession} from '../../web/src/company-access/review-state.js';
 const input=process.argv[2];if(!input)throw Error('Approved import directory required');
 const root=resolve(input),artifacts={};
@@ -45,6 +45,16 @@ if(process.argv[5]){
   const old=attachReviewHistory(JSON.parse(await readFile(join(target,'pending-review-bundle.json'),'utf8')),history);
   appendPending(old,incoming,history,createSession(old));
   for(const name of ['targeted-review-bundle.json','targeted-second-pass.json','targeted-readiness.json'])await cp(join(addedRoot,name),join(target,name));
+}
+
+if(process.argv[6]){
+  const folder=resolve(process.argv[6]),incoming=JSON.parse(await readFile(join(folder,'continuation-review-bundle.json'),'utf8'));
+  const old=attachReviewHistory(JSON.parse(await readFile(join(target,'pending-review-bundle.json'),'utf8')),history);
+  const targeted=JSON.parse(await readFile(join(target,'targeted-review-bundle.json'),'utf8'));
+  const current=appendPending(old,targeted,history,createSession(old));
+  appendDiscovery(current.bundle,incoming,history,current.session);
+  await cp(join(folder,'continuation-review-bundle.json'),join(target,'continuation-review-bundle.json'));
+  await cp(join(folder,'targeted-readiness.json'),join(target,'targeted-readiness.json'));
 }
 await cp('scripts/company-access/review-console.html','dist-review/company-review.html');
 let html=await readFile('dist-review/index.html','utf8');html=html.replace('<head>','<head>\n<meta name="jinke-company-review" content="approved-pilots">');await writeFile('dist-review/index.html',html);

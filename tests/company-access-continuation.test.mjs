@@ -108,3 +108,25 @@ test('Actions packages pending key-free source + triage; no new key or network d
     const bundle=JSON.parse(await fs.readFile(path.join(r.artifact,'review/review-bundle.json')));assert(bundle.second_pass);assert(bundle.batches[0].rows.every(i=>i.row.review_status==='pending'));
   }finally{await fs.rm(root,{recursive:true,force:true});}
 });
+
+test('final review precision is scoped: closed office held, facilities excluded without erasing duplicate flags',async()=>{
+  const {secondPass}=await import('../web/src/company-access/review-triage.js');
+  const row={company_name:'合成科技有限公司(暂停营业)',address:'合成路100号办公大厦12楼',amap_typecode:'170200',longitude_wgs84:121.6,latitude_wgs84:31.2};
+  const old={seed_flags:['TARGETED_PRECISION_V1']},next={seed_flags:['TARGETED_PRECISION_V1','CONTINUATION_FINAL_REVIEW_V1']};
+  assert.equal(secondPass(row,old).group,'trusted');assert.equal(secondPass(row,next).reason,'STALE_OR_UNCERTAIN');
+  for(const name of ['合成公司停车场(入口)','合成快递柜','合成迷你仓']){
+    const r={...row,company_name:name,possible_duplicate:true};const before=stable(r);
+    assert.equal(secondPass(r,next).group,'exclude');assert.equal(stable(r),before);
+  }
+  assert.equal(secondPass({...row,company_name:'合成制造有限公司',amap_typecode:'170100'},next).group,'exception');
+  assert.equal(secondPass(row,{...next,locked:true}).group,'history');
+});
+test('deployed continuation append preserves prior pending and locked decisions byte-for-byte',()=>{
+  const f=setup(),p=prepareContinuation(startContinuation(f.parent,areas,f.guard),areas,f.guard);
+  const history={schema_version:1,bundle_id:'empty',batches:[]},first=p.bundle,session=createSession(first);session.reviewer='Synthetic reviewer';
+  const noted=decide(first,session,[first.batches[0].rows[0].key],'needs_review','Keep original note',date);
+  const incoming=structuredClone(first);incoming.batches[0].id='final-new';incoming.batches[0].rows=incoming.batches[0].rows.slice(0,1);const i=incoming.batches[0].rows[0];i.key='final-new:SYNTHETIC-NEW';i.row.amap_poi_id='SYNTHETIC-NEW';incoming.bundle_id='new';
+  const before=stable(first),after=appendDiscovery(first,incoming,history,noted,p.pack);
+  assert.equal(stable(first),before);assert.deepEqual(after.session.decisions[first.batches[0].rows[0].key],noted.decisions[first.batches[0].rows[0].key]);
+  assert.equal(after.session.decisions[i.key].status,'pending');assert.equal(after.session.decisions[i.key].history.length,0);
+});
