@@ -3,9 +3,16 @@ const statuses={unsampled:'尚未查询',failed_incomplete:'失败／未完成',
 export function renderTargetedPanel(root,report,onCell){
   root.replaceChildren();add(root,'h3','截图缺口优先 · 30 分钟定向发现');
   if(report.review_import)add(root,'p',`审核已导入：新增 ${report.review_import.human_accepts} 家，总计 ${report.review_import.canonical_offices} 家办公室。下方原始采集统计保留作审计；已接受记录在历史中锁定，其余候选保持待审。`);
-  add(root,'p',`16 个细格 / 四个红框 + 中芯国际、华虹、环旭名称搜索。${report.api_requests_total||0} 次新请求，${report.candidate_review_count||0} 条本轮新待审。原有 145 家办公室、442 条决定及 291 条恢复线索不变。`);
-  add(root,'p','当前重点是发现覆盖率，无需现在审核 291 条恢复线索。每次最多 24 次、累计最多 48 次请求（含重试），独立检查点，不重跑 Pilot 3。');
-  if(report.continuation){
+  if(!report.continuation?.execution_enabled)add(root,'p',`16 个细格 / 四个红框 + 中芯国际、华虹、环旭名称搜索。${report.api_requests_total||0} 次新请求，${report.candidate_review_count||0} 条本轮新待审。原有 145 家办公室、442 条决定及 291 条恢复线索不变。`);
+  if(!report.continuation?.execution_enabled)add(root,'p','当前重点是发现覆盖率，无需现在审核 291 条恢复线索。每次最多 24 次、累计最多 48 次请求（含重试），独立检查点，不重跑 Pilot 3。');
+  if(report.continuation?.execution_enabled){
+    const c=report.continuation;
+    add(root,'p',`安全续采已就绪：保留 ${report.approved_preserved} 家已批准办公室、${report.historical_preserved} 条历史决定和 ${c.preserved_pending} 条既有待审。原始与续采合计 ${c.attempts_spent}/48 次，剩余 ${c.attempts_remaining} 次；每次手动执行最多 12 次。`);
+    add(root,'p',`本次新增待审 ${c.new_pending} 条（含原缓存溢出）；可信 ${c.groups.trusted}、例外 ${c.groups.exception}、建议排除 ${c.groups.exclude}。300 个活跃审核名额已占 ${c.active_review_used}，其他线索完整保留待审，不自动排除或批准。`);
+    const launch=add(root,'a','启动安全续采 → Run workflow → review/company-access-scaffold');launch.href='https://github.com/FelixVVu/jinke/actions/workflows/company-access-amap-pilot.yml';launch.target='_blank';launch.rel='noopener noreferrer';
+    add(root,'p','下载续采产物，点「追加待审候选」打开 review/review-bundle.json，即可加载证据与建议分组。优先「可信候选 → 抽查」，再看「重点核实 → 只看关键例外」。无需逐条处理全部线索；未知仍待审，最终决定须人工确认。不要用 Re-run jobs。');
+    for(const l of report.source_leads||[]){const d=add(root,'details','');add(d,'summary',`${l.company_name} · ${l.use} · 新命中 ${l.matched_pending.length}`);add(d,'p',l.addresses.join(' / ')||'园区历史名单，仅供发现；不证明当前在驻');for(const source of l.sources){const a=add(d,'a',source.title+' ↗');a.href=source.url;a.target='_blank';a.rel='noopener noreferrer';}}
+  }else if(report.continuation){
     const c=report.continuation;add(root,'p',`已分析 ${report.triage.analyzed} 条：可信候选 ${report.triage.groups.trusted||0}，重点核实 ${report.triage.groups.exception||0}，建议排除 ${report.triage.groups.exclude||0}。全部仍待人工决定。`);
     add(root,'p',`采集暂停：${report.stop_reason}。已用 ${c.attempts_spent}/48 次，剩余 ${c.attempts_remaining} 次；${c.next_pages.filter(q=>q.kind==='geographic').length} 个地理细格等待续页，另 ${c.cached_overflow_ids.length} 条保留在离线上限审计中。不要重跑当前工作流；建议分组不释放候选上限。续页计划保留全部缓存与请求历史，尚未启用。`);
     add(root,'p','本轮 300 条已在下方独立批次中；批量操作只作用于所选批次。原 291 条恢复线索无需现在处理。');

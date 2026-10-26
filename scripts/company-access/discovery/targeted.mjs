@@ -7,8 +7,13 @@ import {targetedPlan,baseline,TARGETED_POLICY,CAMPAIGN} from './targeted-plan.mj
 import {TARGETED_LEADS} from './targeted-leads.mjs';
 import {providerDigest,assertionDigest,officeDigest} from './targeted-baseline.mjs';
 export function validateTargeted(snapshot,areas,guard=baseline()){
-  const plan=targetedPlan(areas,guard),queries=new Map(plan.queries.map(q=>[q.id,q]));
+  const plan=targetedPlan(areas,guard);
   if(snapshot?.version!==TARGETED_POLICY.version||stable(snapshot.plan)!==stable(plan)||!Array.isArray(snapshot.responses)||!Array.isArray(snapshot.attempts)||!/^\d{4}-\d{2}-\d{2}T.*Z$/.test(snapshot.collected_at)||!Number.isFinite(Date.parse(snapshot.collected_at)))fail('INVALID_TARGETED_SNAPSHOT');
+  validateRequestLedger(snapshot);
+  return snapshot;
+}
+export function validateRequestLedger(snapshot){
+  const plan=snapshot.plan,queries=new Map(plan.queries.map(q=>[q.id,q]));
   if(snapshot.attempts.length>48)fail('INVALID_ATTEMPT_LEDGER');
   const responses=new Map();
   for(const r of snapshot.responses){
@@ -29,11 +34,11 @@ export function validateTargeted(snapshot,areas,guard=baseline()){
 }
 const normalize=s=>String(s||'').normalize('NFKC').toLowerCase().replace(/[\s\p{P}\p{S}]/gu,'');
 export const leadNameHits=(name,lead)=>lead.terms.some(t=>normalize(t)&&normalize(name).includes(normalize(t)));
-export function prepareTargeted(snapshot,areas,guard=baseline()){
+export function prepareTargeted(snapshot,areas,guard=baseline(),{maxCandidates=TARGETED_POLICY.max_candidates,leads=TARGETED_LEADS}={}){
   // Classification is a discovery filter, never an office or identity approval.
   const queries=new Map(snapshot.plan.queries.map(q=>[q.id,q]));
   const prepared=prepareCachedCandidates(snapshot,areas,{policy:{max_candidates:100000},limit:30,providerScope:(code,poi,occurrences)=>corporateType(code)||occurrences.some(o=>{
-    const stream=queries.get(o.query_id)?.cell_id,lead=TARGETED_LEADS.find(l=>stream===`name:${l.id}`);return lead&&leadNameHits(poi.name,lead);
+    const stream=queries.get(o.query_id)?.cell_id,lead=leads.find(l=>stream===`name:${l.id}`);return lead&&leadNameHits(poi.name,lead);
   })});
   const candidates=[],exclusions=[...prepared.exclusions];
   for(const c of prepared.candidates){const prior=guard.entries[providerDigest(c.amap_poi_id)];
@@ -42,7 +47,7 @@ export function prepareTargeted(snapshot,areas,guard=baseline()){
     c.discovery={campaign:CAMPAIGN,name_leads:TARGETED_LEADS.filter(l=>leadNameHits(c.raw.company_name,l)).map(l=>l.id),identity_binding:'unconfirmed_name_hit_only'};
     candidates.push(c);
   }
-  for(const c of candidates.splice(TARGETED_POLICY.max_candidates))exclusions.push({amap_poi_id:c.amap_poi_id,reason:'PILOT_CANDIDATE_CAP',candidate:c});
+  for(const c of candidates.splice(maxCandidates))exclusions.push({amap_poi_id:c.amap_poi_id,reason:'PILOT_CANDIDATE_CAP',candidate:c});
   return {candidates,exclusions,counts:{...prepared.counts,candidate_review_count:candidates.length,known_ids_preserved:exclusions.filter(e=>e.reason==='KNOWN_ID_PRESERVED').length,known_id_conflicts:exclusions.filter(e=>e.reason==='KNOWN_ID_CHANGED_REQUIRES_SEPARATE_REVIEW').length}};
 }
 export function targetedBundle(snapshot,prepared){

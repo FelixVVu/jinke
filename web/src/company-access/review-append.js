@@ -30,3 +30,16 @@ export function appendPending(current,incoming,history,session,pack=null){
   }
   return {bundle,session:nextSession,pack:nextPack};
 }
+// A single downloadable bundle can carry its validated suggestion pack. This
+// changes neither provider assertions nor human decisions and needs no CSV.
+export function appendDiscovery(current,incoming,history,session,pack=null){
+  if(incoming.second_pass)validateSecondPass(incoming,incoming.second_pass);
+  const next=appendPending(current,incoming,history,session,pack);
+  if(incoming.second_pass){
+    if(!next.pack)next.pack={schema_version:1,version:incoming.second_pass.version,bundle_id:next.bundle.bundle_id,evidence:[],seeds:next.bundle.batches.flatMap(b=>b.rows).filter(i=>!i.locked).map(i=>({poi_id:i.row.amap_poi_id,company_name:i.row.company_name,address:i.row.address,decision:'pending',flags:[]}))};
+    const p=incoming.second_pass,ids=new Set(p.seeds.map(s=>s.poi_id));
+    next.pack={...next.pack,evidence:[...next.pack.evidence.filter(e=>!ids.has(e.poi_id)),...p.evidence],seeds:[...next.pack.seeds.filter(s=>!ids.has(s.poi_id)),...p.seeds]};
+    validateSecondPass(next.bundle,next.pack);
+  }
+  return next;
+}

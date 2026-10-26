@@ -6,21 +6,21 @@ import {requireManualReviewRun} from '../amap/actions-pilot.mjs';
 import {CAMPAIGN,WORKFLOW_NAME} from './targeted-plan.mjs';
 import {validateTargeted} from './targeted.mjs';
 const root='https://api.github.com/repos/FelixVVu/jinke';
-export async function previousTargetedArtifact(context,getJSON){
+export async function previousTargetedArtifact(context,getJSON,{workflowName=WORKFLOW_NAME,campaign=CAMPAIGN,stepName='Acquire targeted 30m and prepare pending review bundle'}={}){
   requireManualReviewRun(context);
   if(!/^\d+$/.test(context.GITHUB_RUN_ID||'')||!/^\d+$/.test(context.GITHUB_RUN_NUMBER||''))throw Error('Missing run identity');
   for(let page=1;page<=10;page++){
     const data=await getJSON(`${root}/actions/workflows/company-access-amap-pilot.yml/runs?branch=review%2Fcompany-access-scaffold&event=workflow_dispatch&per_page=100&page=${page}`);
-    const runs=data.workflow_runs.filter(r=>r.name===WORKFLOW_NAME&&String(r.id)!==context.GITHUB_RUN_ID&&r.run_number<Number(context.GITHUB_RUN_NUMBER)).sort((a,b)=>b.run_number-a.run_number);
+    const runs=data.workflow_runs.filter(r=>r.name===workflowName&&String(r.id)!==context.GITHUB_RUN_ID&&r.run_number<Number(context.GITHUB_RUN_NUMBER)).sort((a,b)=>b.run_number-a.run_number);
     for(const run of runs){
       if(run.status!=='completed')throw Error('Previous targeted run not complete');
       const {artifacts}=await getJSON(`${root}/actions/runs/${run.id}/artifacts?per_page=100`);
-      const names=[`company-access-${CAMPAIGN}-${run.id}`,`company-access-${CAMPAIGN}-checkpoint-${run.id}`];
+      const names=[`company-access-${campaign}-${run.id}`,`company-access-${campaign}-checkpoint-${run.id}`];
       for(const name of names){const artifact=artifacts.find(a=>a.name===name&&!a.expired);if(artifact)return artifact;}
       // Only an authoritative skipped/not-started acquisition step may be ignored.
       // A failed/cancelled started step with no checkpoint must fail closed.
       const {jobs}=await getJSON(`${root}/actions/runs/${run.id}/jobs?per_page=100`);
-      const step=jobs.flatMap(j=>j.steps||[]).find(s=>s.name==='Acquire targeted 30m and prepare pending review bundle');
+      const step=jobs.flatMap(j=>j.steps||[]).find(s=>s.name===stepName);
       if(!step||step.conclusion!=='skipped')throw Error('Prior targeted checkpoint missing: refuse a fresh quota');
     }
     if(data.workflow_runs.length<100)return null;

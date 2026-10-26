@@ -1,7 +1,7 @@
 import {createSession,validateBundle,validateSession,decide,exportRows,rowsToCSV} from './review-state.js';
 import {createReviewSearchIndex} from './search.js';
 import {attachReviewHistory} from './review-history.js';
-import {appendPending} from './review-append.js';
+import {appendPending,appendDiscovery} from './review-append.js';
 import {scopeItems,resumeAppended} from './review-scope.js';
 import {renderTargetedPanel} from './targeted-panel.js';
 import {renderCoveragePanel,insideCoverageCell} from './coverage-panel.js';
@@ -119,7 +119,7 @@ $('saveNote').onclick=()=>{if(checked.size){status('保存备注请只选择一�
 $('exportSession').onclick=()=>{if(!bundle)return;validateSession(bundle,session);download(`company-review-session-${bundle.bundle_id.slice(0,12)}.json`,session);status('已导出审核决定与完整历史。请交回 JSON 进行验证导入；当前公司地图仍保留已批准数据。');};
 $('exportCSV').onclick=()=>{if(bundle)for(const b of bundle.batches)download(`amap-office-review-${b.id.slice(0,12)}.csv`,rowsToCSV(exportRows(bundle,session,b.id),b.columns),'text/csv;charset=utf-8');};
 async function readFile(event){const file=event.target.files[0];if(!file)return null;if(file.size>20*1024*1024)throw Error('文件超过 20 MB');return JSON.parse(await file.text());}
-$('openBundle').onchange=async e=>{try{const value=await readFile(e);if(value){if(!historyBundle)throw Error('历史决定尚未加载');const next=appendPending(bundle,value,historyBundle,session,currentPack);download(`company-review-session-${bundle.bundle_id.slice(0,12)}.json`,session);load(next.bundle,next.pack,next.session,value.batches[0].id);save();render();if(value.discovery_report)showTargeted(value.discovery_report);}}catch(error){status(error.message);}};
+$('openBundle').onchange=async e=>{try{const value=await readFile(e);if(value){if(!historyBundle)throw Error('历史决定尚未加载');const next=appendDiscovery(bundle,value,historyBundle,session,currentPack);download(`company-review-session-${bundle.bundle_id.slice(0,12)}.json`,session);load(next.bundle,next.pack,next.session,value.batches[0].id);save();render();if(value.discovery_report)showTargeted(value.discovery_report);}}catch(error){status(error.message);}};
 $('restoreSession').onchange=async e=>{try{const value=await readFile(e);if(value){session=validateSession(bundle,value);$('reviewer').value=session.reviewer;if(active)$('notes').value=session.decisions[active].notes;save();render();}}catch(error){status(error.message);}};
 document.addEventListener('keydown',e=>{if($('confirmDialog').open||e.ctrlKey||e.metaKey||e.altKey||/INPUT|TEXTAREA|SELECT|BUTTON/.test(e.target.tagName))return;const key=e.key.toLowerCase(),index=visible.findIndex(i=>i.key===active);if(key==='j'||key==='k'){e.preventDefault();const next=visible[Math.max(0,Math.min(visible.length-1,index+(key==='j'?1:-1)))];if(next)select(next.key);}else if(['a','r','n'].includes(key)){e.preventDefault();decision({a:'accept',r:'reject',n:'needs_review'}[key]);}else if(key===' '&&active&&!items.find(i=>i.key===active).locked){e.preventDefault();checked.has(active)?checked.delete(active):checked.add(active);render();}});
 function showTargeted(report){coverageData=report.coverage;renderTargetedPanel($('targetedContent'),report,feature=>{selectedCell=feature;group='all';$('queue').value='all';sampleKeys=null;priority=false;page=0;render();if(map&&feature){const [w,s,e,n]=feature.properties.bbox_wgs84;map.fitBounds([[w,s],[e,n]],{padding:30});}});$('targetedPanel').hidden=false;mapData();}

@@ -1,4 +1,4 @@
-name: Company Access targeted 30m v1 (manual review only)
+name: Company Access targeted 30m continuation (manual review only)
 
 on:
   workflow_dispatch:
@@ -29,21 +29,21 @@ jobs:
           node-version: '22'
       - name: Mocked tests and economic guards (no provider credential)
         run: npm run test:frontend
-      - name: Restore targeted checkpoint only (never Pilot 3)
+      - name: Restore original plus latest continuation checkpoint (never Pilot 3)
         env:
           GITHUB_TOKEN: ${{ github.token }}
-        run: node scripts/company-access/discovery/resume-targeted.mjs
-      - name: Acquire targeted 30m and prepare pending review bundle
+        run: node scripts/company-access/discovery/resume-continuation.mjs
+      - name: Continue targeted 30m within original lifetime budget
         id: pilot
         env:
           JINKE_AMAP_KEY: ${{ secrets.JINKE_AMAP_KEY }}
-        run: node scripts/company-access/discovery/actions-targeted.mjs
+        run: node scripts/company-access/discovery/actions-continuation.mjs
       - name: Reservation-safe independent checkpoint
         if: ${{ always() && steps.pilot.outputs.checkpoint_ready == 'true' }}
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         with:
-          name: company-access-targeted-30-v1-checkpoint-${{ github.run_id }}
-          path: offline-output/company-access/targeted-30-v1-checkpoint/
+          name: company-access-targeted-30-continuation-v1-checkpoint-${{ github.run_id }}
+          path: offline-output/company-access/targeted-30-continuation-v1-checkpoint/
           if-no-files-found: error
           include-hidden-files: false
           retention-days: 30
@@ -51,8 +51,8 @@ jobs:
         if: ${{ always() && steps.pilot.outputs.artifact_ready == 'true' }}
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         with:
-          name: company-access-targeted-30-v1-${{ github.run_id }}
-          path: offline-output/company-access/targeted-30-v1-artifact/
+          name: company-access-targeted-30-continuation-v1-${{ github.run_id }}
+          path: offline-output/company-access/targeted-30-continuation-v1-artifact/
           if-no-files-found: error
           include-hidden-files: false
           retention-days: 30
