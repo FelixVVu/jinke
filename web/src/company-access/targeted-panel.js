@@ -2,14 +2,20 @@ const add=(root,tag,value)=>{const e=document.createElement(tag);e.textContent=v
 const statuses={unsampled:'尚未查询',failed_incomplete:'失败／未完成',sampled_partial:'已取样，非完整清单',saturated_incomplete:'满页到上限，仍有遗漏',pagination_incomplete:'满页，等待续页'};
 export function renderTargetedPanel(root,report,onCell){
   root.replaceChildren();add(root,'h3','截图缺口优先 · 30 分钟定向发现');
-  if(report.review_import)add(root,'p',`审核已导入：新增 ${report.review_import.human_accepts} 家，总计 ${report.review_import.canonical_offices} 家办公室。下方原始采集统计保留作审计；已接受记录在历史中锁定，其余候选保持待审。`);
+  if(report.review_import)add(root,'p',`审核已导入：净新增 ${report.review_import.net_new_offices??report.review_import.human_accepts} 家，总计 ${report.review_import.canonical_offices} 家办公室。下方原始采集统计保留作审计；已导入决定在历史中锁定，排除和待核实记录不进入公司地图。`);
   if(!report.continuation?.execution_enabled)add(root,'p',`16 个细格 / 四个红框 + 中芯国际、华虹、环旭名称搜索。${report.api_requests_total||0} 次新请求，${report.candidate_review_count||0} 条本轮新待审。原有 145 家办公室、442 条决定及 291 条恢复线索不变。`);
   if(!report.continuation?.execution_enabled)add(root,'p','当前重点是发现覆盖率，无需现在审核 291 条恢复线索。每次最多 24 次、累计最多 48 次请求（含重试），独立检查点，不重跑 Pilot 3。');
   if(report.acquisition_complete){
     const r=report.review_ready;
-    add(root,'p',`采集完成：${report.stop_reason}，${report.api_requests_total}/48 次。不要重新运行。183 家已批准办公室、480 条历史决定、553 条早期待审全部保留。`);
-    add(root,'p',`241 条新增候选已载入：可信 ${r.groups.trusted}、重点核实 ${r.groups.exception}（关键例外 ${r.priority_exceptions}）、建议排除 ${r.groups.exclude}。全部仍为待审；可信不等于已批准或已核实实体办公室。`);
-    add(root,'p','只需：填写审核人 →「可信候选」→「抽查本组」→ 确认后「批量确认本组」。再点「重点核实」→「只看关键例外」。其余不确定记录可保留待审，无需逐条处理241条。完成后「导出决定与历史」，用于独立校验导入。');
+    add(root,'p',`采集完成：${report.stop_reason}，${report.api_requests_total}/48 次。不要重新运行。原有183家办公室、480条历史决定、553条早期待审全部保留。`);
+    if(report.review_import?.review_dispositions){
+      const d=report.review_import.review_dispositions;
+      add(root,'p',`本轮人工决定已导入：接受 ${d.accept}、排除 ${d.reject}、待核实 ${d.needs_review}。全部历史决定 ${report.review_import.historical_decisions} 条；只有通过规范校验的接受记录显示在地图。`);
+      add(root,'p','本轮无需重复审核。可在「历史决定」查看决定及备注；早期553条待审仍保留。新增办公室均为人工审核的地图办公室，没有自动升级为已核实实体办公室。');
+    }else{
+      add(root,'p',`241 条新增候选已载入：可信 ${r.groups.trusted}、重点核实 ${r.groups.exception}（关键例外 ${r.priority_exceptions}）、建议排除 ${r.groups.exclude}。全部仍为待审；可信不等于已批准或已核实实体办公室。`);
+      add(root,'p','只需：填写审核人 →「可信候选」→「抽查本组」→ 确认后「批量确认本组」。再点「重点核实」→「只看关键例外」。其余不确定记录可保留待审，无需逐条处理241条。完成后「导出决定与历史」，用于独立校验导入。');
+    }
   }else if(report.continuation?.execution_enabled){
     const c=report.continuation;
     add(root,'p',`安全续采已就绪：保留 ${report.approved_preserved} 家已批准办公室、${report.historical_preserved} 条历史决定和 ${c.preserved_pending} 条既有待审。原始与续采合计 ${c.attempts_spent}/48 次，剩余 ${c.attempts_remaining} 次；每次手动执行最多 12 次。`);
