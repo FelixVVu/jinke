@@ -91,8 +91,8 @@ test('checkpoint receives key-free durable state and preserves successful pages 
   assert.equal(saved.at(-1).responses.length,1);assert.equal(b.snapshot.responses.length,1);assert.ok(!stable(saved).includes(env.JINKE_AMAP_KEY));
 });
 test('offline files separate private evidence from compact artifacts; no tracked output overwrite',async()=>{
-  const b=await fixture(),root=new URL('../offline-output/company-access/',import.meta.url),run=new URL('synthetic-amap-test/',root),approved=new URL('synthetic-amap-approved/',root);
-  const {mkdir,writeFile}=await import('node:fs/promises');await mkdir(root,{recursive:true});const input=new URL('synthetic-snapshot.json',root);await writeFile(input,stable(b.snapshot));
+  const b=await fixture(),root=new URL('../offline-output/company-access/',import.meta.url),run=new URL(`synthetic-amap-test-${process.pid}/`,root),approved=new URL(`synthetic-amap-approved-${process.pid}/`,root);
+  const {mkdir,writeFile}=await import('node:fs/promises');await mkdir(root,{recursive:true});const input=new URL(`synthetic-snapshot-${process.pid}.json`,root);await writeFile(input,stable(b.snapshot));
   try{
     await prepareFiles({snapshotPath:input,output:run.pathname});const csvPath=new URL('review/amap-office-review.csv',run);await writeFile(csvPath,review(b,['accept']));
     await importFiles({snapshotPath:input,csvPath,output:approved.pathname,reviewer:'Synthetic tester',reviewedAt:collectedAt});

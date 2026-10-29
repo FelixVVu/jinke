@@ -1,5 +1,7 @@
 import {createSession,validateBundle,validateSession,decide,exportRows,rowsToCSV} from './review-state.js';
 import {createReviewSearchIndex} from './search.js';
+import {candidateFromLink} from './candidate-search.js';
+import {priorityEvidenceFor} from './priority-evidence.js';
 import {attachReviewHistory} from './review-history.js';
 import {appendPending,appendDiscovery} from './review-append.js';
 import {scopeItems,resumeAppended} from './review-scope.js';
@@ -81,6 +83,8 @@ function details(){
   for(const button of document.querySelectorAll('[data-decision],#saveNote'))button.disabled=!i||(checked.size===0&&i.locked);
   if(!i){root.append(text('h2','选择候选'));return;}
   root.append(text('p',GROUPS[i.triage.group]),text('h2',i.row.company_name),text('p',i.triage.explanation));
+  const priorityEvidence=priorityEvidenceFor(i.row);
+  if(priorityEvidence){const priorityCard=text('section','');priorityCard.className='evidence-card';priorityCard.append(text('h3','重点公司 · 位置核实'),text('p',priorityEvidence.finding),text('p',priorityEvidence.action));for(const s of priorityEvidence.sources)evidenceLink(priorityCard,`${s.title} · 查阅 ${s.checked_at}`,s.url);root.append(priorityCard);}
   const e=i.triage.public_evidence,card=text('section','');card.className='evidence-card';
   card.append(text('h3',e?'公开资料与判断范围':'证据范围：AMap POI'),text('p',e?e.summary:'本条未逐条核实外部公开资料。名称、地址和类别的一致性只能形成审核建议。'));
   if(e){card.append(text('p',e.limitations));for(const s of e.sources)evidenceLink(card,`${s.title} · 查阅 ${s.checked_at}`,s.url);}
@@ -123,6 +127,11 @@ $('openBundle').onchange=async e=>{try{const value=await readFile(e);if(value){i
 $('restoreSession').onchange=async e=>{try{const value=await readFile(e);if(value){session=validateSession(bundle,value);$('reviewer').value=session.reviewer;if(active)$('notes').value=session.decisions[active].notes;save();render();}}catch(error){status(error.message);}};
 document.addEventListener('keydown',e=>{if($('confirmDialog').open||e.ctrlKey||e.metaKey||e.altKey||/INPUT|TEXTAREA|SELECT|BUTTON/.test(e.target.tagName))return;const key=e.key.toLowerCase(),index=visible.findIndex(i=>i.key===active);if(key==='j'||key==='k'){e.preventDefault();const next=visible[Math.max(0,Math.min(visible.length-1,index+(key==='j'?1:-1)))];if(next)select(next.key);}else if(['a','r','n'].includes(key)){e.preventDefault();decision({a:'accept',r:'reject',n:'needs_review'}[key]);}else if(key===' '&&active&&!items.find(i=>i.key===active).locked){e.preventDefault();checked.has(active)?checked.delete(active):checked.add(active);render();}});
 function showTargeted(report){coverageData=report.coverage;renderTargetedPanel($('targetedContent'),report,feature=>{selectedCell=feature;group='all';$('queue').value='all';sampleKeys=null;priority=false;page=0;render();if(map&&feature){const [w,s,e,n]=feature.properties.bbox_wgs84;map.fitBounds([[w,s],[e,n]],{padding:30});}});$('targetedPanel').hidden=false;mapData();}
+function focusLinkedCandidate(){
+  const i=candidateFromLink(items,location.search);if(!i)return;
+  changeGroup('all');$('search').value=i.row.amap_poi_id;render();select(i.key);
+  status(i.locked?'已定位历史记录；原决定锁定，未被修改。':'已定位地图中选择的候选；查看证据后决定，接受仍须导出并验证导入。');
+}
 try{
   const response=await fetch('data/company-access-review/review-bundle.json');if(!response.ok)throw Error('历史审核数据不可用');historyBundle=await response.json();load(historyBundle);
   try{const r=await fetch('data/company-access-review/pilot3-coverage.geojson');if(r.ok)coverageData=await r.json();}catch{}
@@ -136,7 +145,8 @@ try{
   try{const r=await fetch('data/company-access-review/continuation-review-bundle.json');if(r.ok){const incoming=await r.json(),next=appendDiscovery(bundle,incoming,historyBundle,session,currentPack);load(next.bundle,next.pack,next.session,incoming.batches[0].id);}}catch(error){status(`续采批次未加载：${error.message}；原数据保持不变。`);}
   try{const r=await fetch('data/company-access-review/coverage-diagnostics.json');if(r.ok){const report=await r.json();renderCoveragePanel($('coverageContent'),report,feature=>{selectedCell=feature;group='all';$('queue').value='all';sampleKeys=null;priority=false;page=0;render();if(map&&feature){const [w,s,e,n]=feature.properties.bbox_wgs84;map.fitBounds([[w,s],[e,n]],{padding:30});}});$('coveragePanel').hidden=false;}}catch{status('覆盖诊断暂不可用；审核决定保持不变。');}
   try{const r=await fetch('data/company-access-review/targeted-readiness.json');if(r.ok)showTargeted(await r.json());}catch{status('定向采集诊断暂不可用；原有候选与决定保持不变。');}
-  try { if(globalThis.maplibregl){map=new maplibregl.Map({container:'map',style:'https://tiles.openfreemap.org/styles/positron',center:[121.604,31.205],zoom:12});map.on('load',()=>{map.addSource('candidates',{type:'geojson',data:{type:'FeatureCollection',features:[]}});map.addLayer({id:'candidate-points',type:'circle',source:'candidates',paint:{'circle-radius':['case',['get','selected'],10,6],'circle-color':['match',['get','status'],'accept','#285a50','reject','#888','needs_review','#b57c24','#bd3f55'],'circle-stroke-color':'#fff','circle-stroke-width':2}});ready=true;mapData();});map.on('click','candidate-points',e=>{if(e.features?.[0])select(e.features[0].properties.key);});}
+  focusLinkedCandidate();
+  try { if(globalThis.maplibregl){map=new maplibregl.Map({container:'map',style:'https://tiles.openfreemap.org/styles/positron',center:[121.604,31.205],zoom:12});map.on('load',()=>{map.addSource('candidates',{type:'geojson',data:{type:'FeatureCollection',features:[]}});map.addLayer({id:'candidate-points',type:'circle',source:'candidates',paint:{'circle-radius':['case',['get','selected'],10,6],'circle-color':['match',['get','status'],'accept','#285a50','reject','#888','needs_review','#b57c24','#bd3f55'],'circle-stroke-color':'#fff','circle-stroke-width':2}});ready=true;mapData();focusLinkedCandidate();});map.on('click','candidate-points',e=>{if(e.features?.[0])select(e.features[0].properties.key);});}
   else status('地图暂不可用；列表、证据和审核导出仍可使用。');
   }catch{map=null;status('当前浏览器无法显示地图（可能未启用 WebGL）。列表、证据与审核导出仍可使用；没有改变任何决定。');}
 }catch(e){status(e.message);}

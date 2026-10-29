@@ -1,6 +1,8 @@
 import { selectCompanyOffices } from './model.js';
 export const SELECTED_SOURCE='company-access-selected';
 export const SELECTED_LAYER='company-access-selected-ring';
+export const CANDIDATE_SOURCE='company-access-candidate-selection';
+export const CANDIDATE_LAYER='company-access-candidate-ring';
 export const COMPANY_SOURCE = 'company-access-offices';
 export const COMPANY_LAYER = 'company-access-circles';
 export const CLUSTER_LAYER = 'company-access-clusters';
@@ -17,7 +19,7 @@ export class CompanyAccessLayers {
       // Rendered tile IDs need not preserve canonical string GeoJSON IDs.
       const id=event.features?.[0]?.properties?.id??event.features?.[0]?.id;
       const office=selectCompanyOffices(this.output,this.limit).features.find(f=>f.id===id);
-      if(office&&this.visible){this.selectedId=office.id;this.restore();this.onSelect(office.properties);}
+      if(office&&this.visible){this.candidate=null;this.selectedId=office.id;this.restore();this.onSelect(office.properties);}
     }};
     this.clusterHandlers={...this.handlers,click:async event=>{
       const feature=event.features?.[0],source=map.getSource(COMPANY_SOURCE),generation=this.generation;
@@ -27,7 +29,7 @@ export class CompanyAccessLayers {
         if(generation!==this.generation||source!==map.getSource(COMPANY_SOURCE)||!this.visible)return;
         const ids=new Set(leaves.map(f=>f.properties?.id??f.id));
         const offices=selectCompanyOffices(this.output,this.limit).features.filter(f=>ids.has(f.id)).map(f=>f.properties);
-        this.onSelect({kind:'cluster',office_count:offices.length,offices});
+        this.candidate=null;this.selectedId=null;this.restore();this.onSelect({kind:'cluster',office_count:offices.length,offices});
       }catch{/* Style replacement invalidates pending cluster queries. */}
     }};
   }
@@ -37,9 +39,14 @@ export class CompanyAccessLayers {
     Object.assign(this,{output,limit,visible:Boolean(visible&&output?.metadata.status==='ready')});this.restore();
   }
   highlight(id){
+    this.candidate=null;
     const office=selectCompanyOffices(this.output,this.limit).features.find(f=>f.id===id);
     this.selectedId=office?.id||null;this.restore();
     if(office)this.map.easeTo({center:office.geometry.coordinates,zoom:Math.max(this.map.getZoom(),15),padding:{right:globalThis.innerWidth>760?Math.min(440,globalThis.innerWidth/3):0,bottom:globalThis.innerWidth<=760?globalThis.innerHeight*0.4:0},duration:500,retainPadding:false});
+  }
+  highlightCandidate(candidate){
+    this.selectedId=null;this.candidate=candidate?.kind==='candidate'?candidate:null;this.restore();
+    if(this.candidate)this.map.easeTo({center:[candidate.longitude,candidate.latitude],zoom:Math.max(this.map.getZoom(),15),padding:{right:globalThis.innerWidth>760?Math.min(440,globalThis.innerWidth/3):0,bottom:globalThis.innerWidth<=760?globalThis.innerHeight*0.4:0},duration:500,retainPadding:false});
   }
   restore(){
     const map=this.map;if(!map.getStyle()||!map.getLayer('station-circle'))return false;
@@ -51,7 +58,11 @@ export class CompanyAccessLayers {
     if(!map.getSource(HUB_SOURCE))map.addSource(HUB_SOURCE,{type:'geojson',data:hubs});else map.getSource(HUB_SOURCE).setData(hubs);
     const selected={type:'FeatureCollection',features:data.features.filter(f=>f.id===this.selectedId)};
     if(!map.getSource(SELECTED_SOURCE))map.addSource(SELECTED_SOURCE,{type:'geojson',data:selected});else map.getSource(SELECTED_SOURCE).setData(selected);
+    const candidate={type:'FeatureCollection',features:this.candidate?[{type:'Feature',geometry:{type:'Point',coordinates:[this.candidate.longitude,this.candidate.latitude]},properties:{label:this.candidate.review_status==='reject'?'已排除 · 审计定位':'候选定位 · 未批准'}}]:[]};
+    if(!map.getSource(CANDIDATE_SOURCE))map.addSource(CANDIDATE_SOURCE,{type:'geojson',data:candidate});else map.getSource(CANDIDATE_SOURCE).setData(candidate);
     const layers=[
+      {id:CANDIDATE_LAYER,type:'circle',source:CANDIDATE_SOURCE,paint:{'circle-radius':12,'circle-color':'#fff','circle-opacity':0.15,'circle-stroke-color':'#b67b17','circle-stroke-width':3}},
+      {id:CANDIDATE_LAYER+'-label',type:'symbol',source:CANDIDATE_SOURCE,layout:{'text-field':['get','label'],'text-font':['Noto Sans Regular'],'text-size':12,'text-offset':[0,1.8],'text-allow-overlap':true},paint:{'text-color':'#86590d','text-halo-color':'#fff','text-halo-width':2}},
       {id:SELECTED_LAYER,type:'circle',source:SELECTED_SOURCE,paint:{'circle-radius':13,'circle-color':'#fff','circle-opacity':0.25,'circle-stroke-color':'#70283a','circle-stroke-width':3}},
       {id:CLUSTER_LAYER,type:'circle',source:COMPANY_SOURCE,filter:['has','point_count'],paint:{'circle-color':'#bd3f55','circle-radius':['step',['get','point_count'],19,10,24,25,29],'circle-stroke-color':'#fff','circle-stroke-width':3,'circle-opacity':0.96}},
       {id:COUNT_LAYER,type:'symbol',source:COMPANY_SOURCE,filter:['has','point_count'],layout:{'text-field':['to-string',['get','point_count']],'text-font':['Noto Sans Regular'],'text-size':15,'text-allow-overlap':true},paint:{'text-color':'#fff'}},
@@ -66,7 +77,7 @@ export class CompanyAccessLayers {
     this.generation++;
     if(this.bound)for(const [layer,handlers] of [[COMPANY_LAYER,this.handlers],[CLUSTER_LAYER,this.clusterHandlers]])for(const [event,handler] of Object.entries(handlers))this.map.off(event,layer,handler);
     this.bound=false;this.map.getCanvas().style.cursor='';
-    for(const id of [SELECTED_LAYER,HUB_LAYER,COMPANY_LAYER,COUNT_LAYER,CLUSTER_LAYER])if(this.map.getLayer(id))this.map.removeLayer(id);
-    for(const id of [SELECTED_SOURCE,HUB_SOURCE,COMPANY_SOURCE])if(this.map.getSource(id))this.map.removeSource(id);
+    for(const id of [CANDIDATE_LAYER+'-label',CANDIDATE_LAYER,SELECTED_LAYER,HUB_LAYER,COMPANY_LAYER,COUNT_LAYER,CLUSTER_LAYER])if(this.map.getLayer(id))this.map.removeLayer(id);
+    for(const id of [CANDIDATE_SOURCE,SELECTED_SOURCE,HUB_SOURCE,COMPANY_SOURCE])if(this.map.getSource(id))this.map.removeSource(id);
   }
 }

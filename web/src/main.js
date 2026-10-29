@@ -1,4 +1,5 @@
 import { CompanyDrawer } from './company-access/drawer.js';
+import {validateCandidateSearch} from './company-access/candidate-search.js';
 import { selectCompanyOffices } from './company-access/model.js';
 import { loadCompanyReview } from './company-access/review-loader.js';
 import { CompanyAccessLayers, withCompanyGlyphs } from './company-access/layers.js';
@@ -501,6 +502,7 @@ let officeDensityLoadState = 'loading';
 let companyAccessOutput = null;
 let companyAccessLayers;
 let companyDrawer;
+let companyCandidates=[];
 let showCompanyOffices = false;
 let reachBandData;
 let reachContourData;
@@ -806,6 +808,7 @@ function applyMapState() {
   renderState();
   renderCompanyPanel(document, companyAccessOutput, state.limit);
   companyDrawer?.sync(state.limit, showCompanyOffices);
+  companyDrawer?.setInventory(selectCompanyOffices(companyAccessOutput,state.limit).features.map(f=>f.properties),companyCandidates);
   companyAccessLayers?.setState({ output: companyAccessOutput, limit: state.limit, visible: showCompanyOffices });
   updateAppearanceOutputs();
   byId('officeDensityLegend').hidden = !(
@@ -1469,7 +1472,7 @@ function restoreCustomLayers() {
     paint: { 'text-halo-color': '#ffffff', 'text-halo-width': 1 },
   });
 
-  if (!companyDrawer) companyDrawer = new CompanyDrawer({root:document.querySelector('.map-shell'),onHighlight:id=>companyAccessLayers.highlight(id),onClose:()=>companyAccessLayers?.highlight(null)});
+  if (!companyDrawer) companyDrawer = new CompanyDrawer({root:document.querySelector('.map-shell'),onHighlight:id=>companyAccessLayers.highlight(id),onCandidate:c=>companyAccessLayers.highlightCandidate(c),onClose:()=>companyAccessLayers?.highlight(null)});
   if (!companyAccessLayers) {
     companyAccessLayers = new CompanyAccessLayers(map, office => {
       companyDrawer.open(office);
@@ -1886,10 +1889,17 @@ Promise.all([
           byId('companyReviewConsole').href = assetUrl('company-review.html');
           byId('companyReviewConsole').hidden = false;
           byId('companyInventorySearch').hidden = false;
+          try{
+            const response=await fetch(assetUrl('data/company-access-review/candidate-search.json'));
+            if(!response.ok)throw Error('Candidate search unavailable');
+            companyCandidates=validateCandidateSearch(await response.json());
+          }catch{byId('companyInventorySearch').textContent='Search approved offices · candidate index unavailable';}
           byId('companyInventorySearch').onclick = () => {
+            showCompanyOffices=true;byId('showCompanyOffices').checked=true;applyMapState();
             const offices = selectCompanyOffices(companyAccessOutput, state.limit).features.map(f=>f.properties);
-            companyDrawer?.open({kind:'cluster',offices});
-            if (companyDrawer) companyDrawer.heading.textContent = 'Identified offices in this reach';
+            companyDrawer?.setInventory(offices,companyCandidates);
+            companyDrawer?.open({kind:'inventory',offices});
+            if (companyDrawer) companyDrawer.heading.textContent = '公司与待审候选';
           };
         } catch {
           byId('companyAccessStatus').textContent = 'Review inventory failed validation.';

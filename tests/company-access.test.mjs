@@ -132,6 +132,20 @@ function fakeMap() {
   };
 }
 
+test('candidate selection is hollow, separate from approved clustering/counts and survives style restoration',async()=>{
+  const {CANDIDATE_SOURCE,CANDIDATE_LAYER}=await import('../web/src/company-access/layers.js');
+  const map=fakeMap();map.easeTo=()=>{};const controller=new CompanyAccessLayers(map),approved=output();
+  controller.setState({output:approved,limit:10,visible:true});
+  const original=JSON.stringify(map.getSource(COMPANY_SOURCE).data);
+  controller.highlightCandidate({kind:'candidate',id:'candidate:SYNTHETIC',longitude:4,latitude:0,review_status:'needs_review'});
+  assert.equal(JSON.stringify(map.getSource(COMPANY_SOURCE).data),original);assert.equal(map.getSource(CANDIDATE_SOURCE).data.features.length,1);
+  assert.equal(map.getLayer(CANDIDATE_LAYER).paint['circle-opacity'],0.15);assert.notEqual(map.getSource(CANDIDATE_SOURCE).cluster,true);
+  map.sources.clear();map.layers.clear();map.layers.set('station-circle',{});controller.restore();controller.restore();
+  assert.equal(map.getSource(CANDIDATE_SOURCE).data.features.length,1);assert.equal(map.getSource(COMPANY_SOURCE).data.features.length,1);
+  controller.highlight(null);assert.equal(map.getSource(CANDIDATE_SOURCE).data.features.length,0);
+  controller.destroy();assert.equal(map.getSource(CANDIDATE_SOURCE),undefined);
+});
+
 test('MapLibre restore preserves state, layer ordering and handlers over repeated and rapid switches', () => {
   const map=fakeMap(); const selected=[];
   const controller=new CompanyAccessLayers(map,office=>selected.push(office.id));

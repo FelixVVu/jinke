@@ -9,6 +9,7 @@ import {attachReviewHistory} from '../../web/src/company-access/review-history.j
 import {validateSecondPass} from '../../web/src/company-access/review-triage.js';
 import {appendPending,appendDiscovery} from '../../web/src/company-access/review-append.js';
 import {createSession} from '../../web/src/company-access/review-state.js';
+import {candidateSearchRecords} from '../../web/src/company-access/candidate-search.js';
 const input=process.argv[2];if(!input)throw Error('Approved import directory required');
 const root=resolve(input),artifacts={};
 for(const [key,name] of Object.entries(artifactNames))artifacts[key]=JSON.parse(await readFile(join(root,['audit','rejected','review'].includes(key)?'audit':'frontend',name),'utf8'));
@@ -57,5 +58,10 @@ if(process.argv[6]){
   await cp(join(folder,'targeted-readiness.json'),join(target,'targeted-readiness.json'));
 }
 await cp('scripts/company-access/review-console.html','dist-review/company-review.html');
+let searchBundle=history;
+if(process.argv[3])searchBundle=attachReviewHistory(JSON.parse(await readFile(join(target,'pending-review-bundle.json'),'utf8')),history);
+if(process.argv[5])searchBundle=appendPending(searchBundle,JSON.parse(await readFile(join(target,'targeted-review-bundle.json'),'utf8')),history,createSession(searchBundle)).bundle;
+if(process.argv[6])searchBundle=appendDiscovery(searchBundle,JSON.parse(await readFile(join(target,'continuation-review-bundle.json'),'utf8')),history,createSession(searchBundle)).bundle;
+await writeFile(join(target,'candidate-search.json'),JSON.stringify(candidateSearchRecords(searchBundle,areas)));
 let html=await readFile('dist-review/index.html','utf8');html=html.replace('<head>','<head>\n<meta name="jinke-company-review" content="approved-pilots">');await writeFile('dist-review/index.html',html);
 console.log(`Review build ready: ${artifacts.offices.features.length} canonical offices; no raw evidence copied.`);

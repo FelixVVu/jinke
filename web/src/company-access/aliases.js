@@ -1,8 +1,10 @@
+import {priorityEvidence} from './priority-evidence.js';
 // Search metadata only. Exact office/name binding; never an identity merge rule.
 // Reviewed mappings supplied explicitly by the user, 2026-10-02.
 export const reviewedAliases = Object.freeze([
   {office_id:'office-a687151c1b1fc0bded20bdd0',source_identity:{provider:'amap',poi_id:'B0FFG951GY'},canonical_name:'思爱普有限公司',brand_name:'SAP',acronym:'SAP',aliases:['思爱普'],reviewed_by:'User request 2026-10-02'},
   {office_id:'office-6416a1738f6ca3e36b50c291',source_identity:{provider:'amap',poi_id:'B0FFG8GPRH'},canonical_name:'英伟达半导体科技(上海)有限公司',brand_name:'NVIDIA',aliases:['英伟达'],reviewed_by:'User request 2026-10-02'},
+  ...priorityEvidence.filter(e=>e.aliases.length).map(e=>({source_identity:{provider:'amap',poi_id:e.poi_id},canonical_name:e.company_name,aliases:e.aliases,reviewed_by:'Source-assisted search metadata review 2026-10-29; not office approval',sources:e.sources})),
 ]);
 // Search-only normalization; never used for canonical naming or deduplication.
 export const normalizeSearch=value=>String(value??'').normalize('NFKC').toLowerCase().replace(/[\p{P}\p{Z}\s]+/gu,'');
