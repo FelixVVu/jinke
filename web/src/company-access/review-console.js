@@ -1,3 +1,4 @@
+import {identityAudit} from './identity-audit.js';
 import {createSession,validateBundle,validateSession,decide,exportRows,rowsToCSV} from './review-state.js';
 import {createReviewSearchIndex} from './search.js';
 import {candidateFromLink} from './candidate-search.js';
@@ -13,7 +14,7 @@ const LABEL={pending:'尚未决定',accept:'接受',reject:'排除',needs_review
 let bundle,session,items=[],visible=[],active=null,checked=new Set(),map,ready=false,page=0;
 let searchCandidates=()=>[],historyBundle,defaultPack,currentPack,coverageData={type:'FeatureCollection',features:[]};
 let group='trusted',sampleKeys=null,priority=false,openedSamples=new Set(),confirmationGroup=null;
-let selectedCell=null;
+let selectedCell=null,identityAudits={};
 let batchScope='all',confirmationItems=[];
 const scoped=()=>scopeItems(items,batchScope);
 const draftKey=()=>`jinke-company-review:${bundle.bundle_id}`;
@@ -27,6 +28,7 @@ function load(value,pack=null,migrated=null,preferredBatch='all'){
   // Suggestions are separate from immutable rows and never initialize decisions.
   bundle=value;session=createSession(bundle);items=nextItems;checked.clear();active=null;sampleKeys=null;priority=false;openedSamples.clear();selectedCell=null;
   if(value.coverage)coverageData=value.coverage;
+  identityAudits=identityAudit(items.map(i=>i.row));
   searchCandidates=createReviewSearchIndex(items);
   try{session=resumeAppended(bundle,migrated||session,localStorage.getItem(draftKey()));}catch{status('旧草稿未通过验证；原始决定已保留，未覆盖。');if(migrated)session=validateSession(bundle,migrated);}
   batchScope=preferredBatch;
@@ -83,6 +85,11 @@ function details(){
   for(const button of document.querySelectorAll('[data-decision],#saveNote'))button.disabled=!i||(checked.size===0&&i.locked);
   if(!i){root.append(text('h2','选择候选'));return;}
   root.append(text('p',GROUPS[i.triage.group]),text('h2',i.row.company_name),text('p',i.triage.explanation));
+  const audit=identityAudits[i.row.amap_poi_id];
+  if(audit){const box=text('section','');box.className='evidence-card';box.append(text('h3',audit.entity),text('p',audit.kind),text('p',audit.official_address?`官方地址：${audit.official_address}`:'尚无精确办公室定位证据'),text('p',audit.flags.join(' / ')),text('p',audit.note));
+    const c=audit.coordinate;box.append(text('p',`坐标检查：${c.status}`));if(c.raw_gcj02)box.append(text('p',`原始 GCJ-02：${c.raw_gcj02.join(', ')}；WGS84：${c.stored_wgs84.join(', ')}；重算残差 ${c.residual_m.toFixed(4)} 米；坐标系偏移 ${c.datum_shift_m.toFixed(1)} 米`));
+    if(audit.source_url)evidenceLink(box,'官方实体与地址来源 · 查阅2026-11-01',audit.source_url);
+    for(const r of audit.related){const link=text('a',`${r.reason==='POSSIBLE_DUPLICATE'?'疑似重复':'邻近独立POI'}：${r.name} · ${r.address} · ${r.distance_m}米 ↗`);link.href=`company-review.html?poi=${encodeURIComponent(r.poi_id)}`;box.append(link);}root.append(box);}
   const priorityEvidence=priorityEvidenceFor(i.row);
   if(priorityEvidence){const priorityCard=text('section','');priorityCard.className='evidence-card';priorityCard.append(text('h3','重点公司 · 位置核实'),text('p',priorityEvidence.finding),text('p',priorityEvidence.action));for(const s of priorityEvidence.sources)evidenceLink(priorityCard,`${s.title} · 查阅 ${s.checked_at}`,s.url);root.append(priorityCard);}
   const e=i.triage.public_evidence,card=text('section','');card.className='evidence-card';

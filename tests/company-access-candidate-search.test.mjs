@@ -31,3 +31,23 @@ test('map review link selects exact stable provider identity including locked re
   assert.equal(candidateFromLink(items,'?poi=synthetic-B'),items[1]);assert.equal(candidateFromLink(items,'?poi=unknown'),null);
   assert.equal(reviewCandidateHref('A&B'),'company-review.html?poi=A%26B');assert.deepEqual(items,before);
 });
+
+import {identityAudit,coordinateCheck,relationshipSearchTerms} from '../web/src/company-access/identity-audit.js';
+import {gcj02ToWgs84} from '../web/src/location-search.js';
+test('identity/location audit checks conversion without moving, merging or changing decisions',()=>{
+ const raw=[121.585,31.207],wgs=gcj02ToWgs84(...raw);
+ const row={amap_poi_id:'synthetic-a',company_name:'SYNTHETIC 华虹公司',address:'Test',longitude_gcj02:raw[0],latitude_gcj02:raw[1],longitude_wgs84:wgs[0],latitude_wgs84:wgs[1],review_status:'needs_review'};
+ const second={...row,amap_poi_id:'synthetic-b'},before=structuredClone([row,second]);
+ const audits=identityAudit([row,second]);assert.equal(audits[row.amap_poi_id].coordinate.status,'CONVERSION_MATCH');assert(audits[row.amap_poi_id].flags.includes('POSSIBLE_DUPLICATE'));
+ assert.deepEqual([row,second],before);assert.equal(coordinateCheck({...row,longitude_wgs84:raw[0],latitude_wgs84:raw[1]}).status,'CONVERSION_MISMATCH');
+ assert.equal(coordinateCheck({...row,longitude_gcj02:''}).status,'RAW_COORDINATES_UNAVAILABLE');
+ assert.deepEqual(relationshipSearchTerms(row),[]);
+});
+test('Huahong related searches preserve separate corporate entities and reject identity binding drift',()=>{
+ const group={amap_poi_id:'B0LA7UOCSL',company_name:'华虹(集团)有限公司',address:'碧波路与松涛路交叉口西南120米'};
+ const factory={amap_poi_id:'B0FFLEW84S',company_name:'上海华虹宏力半导体制造有限公司(二厂)',address:'张江高科技园区哈雷路288号'};
+ const rows=[group,factory],before=structuredClone(rows);
+ assert.equal(createCompanySearchIndex(rows)('Hua Hong').length,2);assert.equal(createReviewSearchIndex(rows.map(row=>({row})))('Huahong').length,2);
+ const a=identityAudit(rows);assert.notEqual(a[group.amap_poi_id].entity,a[factory.amap_poi_id].entity);assert.deepEqual(rows,before);
+ assert.deepEqual(relationshipSearchTerms({...factory,address:'Changed'}),[]);
+});

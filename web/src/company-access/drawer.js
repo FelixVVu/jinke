@@ -1,3 +1,4 @@
+import {auditGroup} from './identity-audit.js';
 import {createCompanySearchIndex} from './search.js';
 import {reviewStatusLabel,reviewCandidateHref} from './candidate-search.js';
 const confidence={verified:'Verified physical office',building:'Reviewed mapped office',approximate:'Approximate location'};
@@ -37,7 +38,10 @@ export class CompanyDrawer {
     this.count.textContent=`${approved} 已批准（当前范围） · ${visible.length-approved} 候选（全部范围）${visible.length>60?' · 显示前60条，请搜索缩小范围':''}`;this.list.replaceChildren();
     const text=(parent,tag,value,className)=>{const e=doc.createElement(tag);e.textContent=value;if(className)e.className=className;parent.append(e);return e;};
     if(!visible.length)text(this.list,'p','No matching offices. Try a different name or address.','company-drawer-empty');
-    for(const office of visible.slice(0,60)){
+    let previousGroup=null;
+    const ordered=[...visible].sort((a,b)=>auditGroup(a).localeCompare(auditGroup(b)));
+    for(const office of ordered.slice(0,60)){
+      const group=auditGroup(office);if(searching&&group!==previousGroup){text(this.list,'h3',group,'company-entity-heading');previousGroup=group;}
       const card=doc.createElement('button');card.type='button';card.className='company-office-card';card.setAttribute('aria-pressed',String(this.selected===office.id));
       text(card,'strong',office.company_name,'company-office-name');text(card,'span',office.address||'Address not supplied','company-office-address');
       const candidate=office.kind==='candidate';
@@ -47,6 +51,7 @@ export class CompanyDrawer {
         card.classList.add('company-candidate-card');
         const minutes=this.limit==='all'?50:this.limit;
         text(card,'span',office.reach_minutes.includes(minutes)?`在当前${minutes}分钟范围内 · 不计入办公室数量`:`当前范围外 · 最早${office.reach_minutes[0]||'未进入50'}分钟 · 不计入办公室数量`,'company-office-meta');
+        if(office.identity_audit){const a=office.identity_audit;text(card,'span',a.kind,'company-office-meta');if(a.official_address)text(card,'span',`官方地址（非坐标修正）：${a.official_address}`,'company-office-meta');text(card,'span',`定位未确认 · ${a.flags.join(' / ')}${a.related.some(r=>r.reason==='POSSIBLE_DUPLICATE')?' · 存在疑似重复POI':''}`,'company-office-meta');}
         if(office.priority_evidence){text(card,'span',office.priority_evidence.finding,'company-office-meta');text(card,'span',office.priority_evidence.action,'company-office-meta');}
       }
       // Canonical pipeline only supplies these fields with supporting evidence.

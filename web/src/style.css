@@ -1046,3 +1046,5 @@ output {
 
 .company-search-shortcuts { display:flex; flex-wrap:wrap; gap:6px; margin-top:8px; }
 .company-search-shortcuts button { border:0; border-radius:15px; padding:6px 10px; background:#f0e9dc; color:#765a29; font-size:12px; cursor:pointer; }
+
+.company-entity-heading { font-size:13px; font-weight:650; color:#495653; margin:20px 12px 8px; line-height:1.5; }
