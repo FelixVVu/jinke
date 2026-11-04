@@ -1,6 +1,6 @@
 import {auditGroup} from './identity-audit.js';
 import {createCompanySearchIndex} from './search.js';
-import {reviewStatusLabel,reviewCandidateHref} from './candidate-search.js';
+import {candidateStatusLabel,reviewCandidateHref} from './candidate-search.js';
 const confidence={verified:'Verified physical office',building:'Reviewed mapped office',approximate:'Approximate location'};
 export function searchOffices(offices,query){
   return createCompanySearchIndex(offices)(query);
@@ -45,12 +45,13 @@ export class CompanyDrawer {
       const card=doc.createElement('button');card.type='button';card.className='company-office-card';card.setAttribute('aria-pressed',String(this.selected===office.id));
       text(card,'strong',office.company_name,'company-office-name');text(card,'span',office.address||'Address not supplied','company-office-address');
       const candidate=office.kind==='candidate';
-      text(card,'span',candidate?reviewStatusLabel[office.review_status]:'已批准办公室','company-review-badge');
+      text(card,'span',candidate?candidateStatusLabel(office):'已批准办公室','company-review-badge');
       text(card,'span',`${office.district||'Unknown district'} · ${candidate?'AMap地点，尚未批准为办公室':confidence[office.location_confidence]||office.location_confidence}`,'company-office-meta');
       if(candidate){
         card.classList.add('company-candidate-card');
         const minutes=this.limit==='all'?50:this.limit;
         text(card,'span',office.reach_minutes.includes(minutes)?`在当前${minutes}分钟范围内 · 不计入办公室数量`:`当前范围外 · 最早${office.reach_minutes[0]||'未进入50'}分钟 · 不计入办公室数量`,'company-office-meta');
+        if(office.validation_status==='quarantined')text(card,'span',`隔离原因：${office.validation_reasons.join(' / ')}`,'company-office-meta');
         if(office.identity_audit){const a=office.identity_audit;text(card,'span',a.kind,'company-office-meta');if(a.official_address)text(card,'span',`官方地址（非坐标修正）：${a.official_address}`,'company-office-meta');text(card,'span',`定位未确认 · ${a.flags.join(' / ')}${a.related.some(r=>r.reason==='POSSIBLE_DUPLICATE')?' · 存在疑似重复POI':''}`,'company-office-meta');}
         if(office.priority_evidence){text(card,'span',office.priority_evidence.finding,'company-office-meta');text(card,'span',office.priority_evidence.action,'company-office-meta');}
       }

@@ -10,11 +10,12 @@ import {renderTargetedPanel} from './targeted-panel.js';
 import {renderCoveragePanel,insideCoverageCell} from './coverage-panel.js';
 import {GROUPS,REASONS,triageItems,validateSecondPass,sampleGroup,groupTargets,confirmGroup,isPriority} from './review-triage.js';
 const $=id=>document.getElementById(id),text=(tag,value)=>{const e=document.createElement(tag);e.textContent=value;return e;};
+const labelFor=(i,d)=>i.validation_status==='quarantined'?'人工接受 · 校验隔离 · 未上图':LABEL[d.status];
 const LABEL={pending:'尚未决定',accept:'接受',reject:'排除',needs_review:'待核实'};
 let bundle,session,items=[],visible=[],active=null,checked=new Set(),map,ready=false,page=0;
 let searchCandidates=()=>[],historyBundle,defaultPack,currentPack,coverageData={type:'FeatureCollection',features:[]};
 let group='trusted',sampleKeys=null,priority=false,openedSamples=new Set(),confirmationGroup=null;
-let selectedCell=null,identityAudits={};
+let selectedCell=null,identityAudits={},validationOnly=false;
 let batchScope='all',confirmationItems=[];
 const scoped=()=>scopeItems(items,batchScope);
 const draftKey=()=>`jinke-company-review:${bundle.bundle_id}`;
@@ -42,7 +43,7 @@ function load(value,pack=null,migrated=null,preferredBatch='all'){
   render();
 }
 function clearCoverageSelection(){selectedCell=null;for(const id of ['coverageContent','targetedContent']){const select=$(id).querySelector('select');if(select)select.value='';}}
-function changeGroup(next){clearCoverageSelection();if(['history','all'].includes(next)){batchScope='all';$('batchScope').value='all';}group=next;sampleKeys=null;priority=false;page=0;checked.clear();$('search').value='';$('reason').value='';$('suggestion').value='';$('queue').value=['history','all'].includes(next)?'all':'new';render();}
+function changeGroup(next){validationOnly=false;clearCoverageSelection();if(['history','all'].includes(next)){batchScope='all';$('batchScope').value='all';}group=next;sampleKeys=null;priority=false;page=0;checked.clear();$('search').value='';$('reason').value='';$('suggestion').value='';$('queue').value=['history','all'].includes(next)?'all':'new';render();}
 function renderGroups(){
   $('groups').replaceChildren();
   for(const g of ['trusted','exception','exclude','history','all']){
@@ -50,6 +51,7 @@ function renderGroups(){
     const b=document.createElement('button');b.className=`group-card ${g}${group===g?' selected':''}`;b.setAttribute('aria-pressed',String(group===g));
     b.append(text('span',GROUPS[g]),text('strong',String(all.length)),text('small',g==='history'?'历史决定始终锁定':g==='all'?'跨分组与历史搜索':`${pending} 条尚未决定`));b.onclick=()=>changeGroup(g);$('groups').append(b);
   }
+  const held=items.filter(i=>i.validation_status==='quarantined');if(held.length){const b=text('button',`校验隔离 · ${held.length}`);b.className='group-card exception';b.onclick=()=>{changeGroup('all');validationOnly=true;render();};$('groups').append(b);}
   const targets=groupTargets(scoped(),session,group),isHistory=group==='history';
   $('sampleGroup').disabled=isHistory||!targets.length;$('confirmGroup').disabled=isHistory||!targets.length;
   $('priorityOnly').disabled=group!=='exception';$('priorityOnly').textContent=priority?'显示全部例外':`只看关键例外（${scoped().filter(isPriority).length}）`;
@@ -58,7 +60,7 @@ function renderGroups(){
 }
 function render(){
   if(!bundle)return;const queue=$('queue').value;
-  visible=scopeItems(searchCandidates($('search').value),batchScope).filter(i=>insideCoverageCell(i,selectedCell)&&(group==='all'||i.triage.group===group)&&(queue==='all'||(queue==='new'?!i.locked:session.decisions[i.key].status===queue))&&(!$('suggestion').value||i.triage.disposition===$('suggestion').value)&&(!$('reason').value||i.triage.reason===$('reason').value)&&(!sampleKeys||sampleKeys.has(i.key))&&(!priority||isPriority(i)));
+  visible=scopeItems(searchCandidates($('search').value),batchScope).filter(i=>(!validationOnly||i.validation_status==='quarantined')&&insideCoverageCell(i,selectedCell)&&(group==='all'||i.triage.group===group)&&(queue==='all'||(queue==='new'?!i.locked:session.decisions[i.key].status===queue))&&(!$('suggestion').value||i.triage.disposition===$('suggestion').value)&&(!$('reason').value||i.triage.reason===$('reason').value)&&(!sampleKeys||sampleKeys.has(i.key))&&(!priority||isPriority(i)));
   visible.sort((a,b)=>Number(isPriority(b))-Number(isPriority(a))||a.key.localeCompare(b.key));
   const visibleKeys=new Set(visible.map(i=>i.key));checked=new Set([...checked].filter(k=>visibleKeys.has(k)));
   if(!visible.some(i=>i.key===active)){active=visible[0]?.key||null;$('notes').value=active?session.decisions[active].notes:'';}
@@ -73,7 +75,7 @@ function render(){
   for(const i of visible.slice(page*100,(page+1)*100)){
     const row=text('div','');row.className=`candidate${active===i.key?' active':''}`;
     const check=document.createElement('input');check.type='checkbox';check.disabled=i.locked;check.checked=checked.has(i.key);check.setAttribute('aria-label',`勾选 ${i.row.company_name}`);check.onchange=()=>{check.checked?checked.add(i.key):checked.delete(i.key);render();};
-    const button=document.createElement('button');button.append(text('strong',i.row.company_name),text('small',`${i.locked?'🔒 ':''}${LABEL[session.decisions[i.key].status]} · ${i.row.district}`),text('small',i.triage.explanation));
+    const button=document.createElement('button');button.append(text('strong',i.row.company_name),text('small',`${i.locked?'🔒 ':''}${labelFor(i,session.decisions[i.key])} · ${i.row.district}`),text('small',i.triage.explanation));
     if(i.triage.public_evidence)button.append(text('span',i.triage.tier==='public_address'?'公开地址佐证':'附公开资料'));button.onclick=()=>select(i.key);row.append(check,button);list.append(row);
   }
   details();mapData();
@@ -85,6 +87,7 @@ function details(){
   for(const button of document.querySelectorAll('[data-decision],#saveNote'))button.disabled=!i||(checked.size===0&&i.locked);
   if(!i){root.append(text('h2','选择候选'));return;}
   root.append(text('p',GROUPS[i.triage.group]),text('h2',i.row.company_name),text('p',i.triage.explanation));
+  if(i.validation_status==='quarantined')root.append(text('h3','人工接受已保留；校验隔离，未进入办公室地图'),text('p',(i.validation_reasons||[]).join(' / ')));
   const audit=identityAudits[i.row.amap_poi_id];
   if(audit){const box=text('section','');box.className='evidence-card';box.append(text('h3',audit.entity),text('p',audit.kind),text('p',audit.official_address?`官方地址：${audit.official_address}`:'尚无精确办公室定位证据'),text('p',audit.flags.join(' / ')),text('p',audit.note));
     const c=audit.coordinate;box.append(text('p',`坐标检查：${c.status}`));if(c.raw_gcj02)box.append(text('p',`原始 GCJ-02：${c.raw_gcj02.join(', ')}；WGS84：${c.stored_wgs84.join(', ')}；重算残差 ${c.residual_m.toFixed(4)} 米；坐标系偏移 ${c.datum_shift_m.toFixed(1)} 米`));
@@ -99,17 +102,17 @@ function details(){
   if(i.evidence?.recovery)root.append(text('p',`发现链：原缓存恢复 · ${i.evidence.recovery.original_exclusions.join(' / ')}。原查询和快照指纹保留在离线审计中。`));
   if(i.evidence?.discovery){root.append(text('p','定向发现：公开资料仅提供名称／地址线索，尚未绑定实体身份或验证在驻。'));for(const s of i.evidence.sources||[])evidenceLink(root,s.title,s.url);}
   const dl=document.createElement('dl');
-  for(const [label,value]of Object.entries({'地址':i.row.address,'地区':i.row.district,'POI 类别':`${i.row.amap_type} (${i.row.amap_typecode})`,'WGS84 坐标':`${i.row.longitude_wgs84}, ${i.row.latitude_wgs84}`,'来源 ID':i.row.amap_poi_id,'二次筛选原因':i.triage.reason,'重复／冲突标记':`${i.row.possible_duplicate||false} ${i.row.duplicate_group||''}`,'原始自动建议（未采纳为决定）':`${i.suggestion?.disposition||'—'} · ${i.suggestion?.reason||'—'}`,'历史审核人':i.prior_review?`${i.prior_review.reviewer} · ${i.prior_review.reviewed_at}`:'无','当前决定':LABEL[session.decisions[i.key].status],'置信级别':'接受仍为 reviewed mapped office；不会自动升级为 verified physical office。'}))dl.append(text('dt',label),text('dd',value));root.append(dl);
+  for(const [label,value]of Object.entries({'地址':i.row.address,'地区':i.row.district,'POI 类别':`${i.row.amap_type} (${i.row.amap_typecode})`,'WGS84 坐标':`${i.row.longitude_wgs84}, ${i.row.latitude_wgs84}`,'来源 ID':i.row.amap_poi_id,'二次筛选原因':i.triage.reason,'重复／冲突标记':`${i.row.possible_duplicate||false} ${i.row.duplicate_group||''}`,'原始自动建议（未采纳为决定）':`${i.suggestion?.disposition||'—'} · ${i.suggestion?.reason||'—'}`,'历史审核人':i.prior_review?`${i.prior_review.reviewer} · ${i.prior_review.reviewed_at}`:'无','当前决定':labelFor(i,session.decisions[i.key]),'置信级别':'接受仍为 reviewed mapped office；不会自动升级为 verified physical office。'}))dl.append(text('dt',label),text('dd',value));root.append(dl);
   if(i.locked)root.append(text('p','历史决定已锁定，新建议不能覆盖。'));
   evidenceLink(root,'查看 AMap 原始来源',i.row.source_reference);
 }
 function validLocation(i){return i&&Number.isFinite(+i.row.longitude_wgs84)&&Number.isFinite(+i.row.latitude_wgs84)&&Math.abs(+i.row.longitude_wgs84)<=180&&Math.abs(+i.row.latitude_wgs84)<=90;}
 function mapData(){if(!ready)return;
   if(!map.getSource('pilot3-coverage')){map.addSource('pilot3-coverage',{type:'geojson',data:coverageData});map.addLayer({id:'pilot3-cells',type:'fill',source:'pilot3-coverage',paint:{'fill-color':['match',['get','status'],'failed_incomplete','#bb5362','saturated_incomplete','#d49b35','sampled_partial','#23856f','#849097'],'fill-opacity':.16}},'candidate-points');map.addLayer({id:'pilot3-cell-outlines',type:'line',source:'pilot3-coverage',paint:{'line-color':'#9a8067','line-width':.7}},'candidate-points');}
-  map.getSource('pilot3-coverage').setData(coverageData);map.getSource('candidates').setData({type:'FeatureCollection',features:visible.filter(validLocation).map(i=>({type:'Feature',geometry:{type:'Point',coordinates:[+i.row.longitude_wgs84,+i.row.latitude_wgs84]},properties:{key:i.key,status:session.decisions[i.key].status,selected:i.key===active}}))});
+  map.getSource('pilot3-coverage').setData(coverageData);map.getSource('candidates').setData({type:'FeatureCollection',features:visible.filter(validLocation).map(i=>({type:'Feature',geometry:{type:'Point',coordinates:[+i.row.longitude_wgs84,+i.row.latitude_wgs84]},properties:{key:i.key,status:i.validation_status==='quarantined'?'needs_review':session.decisions[i.key].status,selected:i.key===active}}))});
 }
 function decision(value){try{session.reviewer=$('reviewer').value.trim();session=decide(bundle,session,checked.size?[...checked]:[active],value,$('notes').value);save();render();}catch(e){status(e.message);}}
-for(const id of ['search','queue','suggestion','reason'])$(id).addEventListener('input',()=>{page=0;sampleKeys=null;if(id==='search'&&$('search').value.trim()){clearCoverageSelection();batchScope='all';$('batchScope').value='all';group='all';priority=false;$('queue').value='all';$('reason').value='';$('suggestion').value='';}render();});
+for(const id of ['search','queue','suggestion','reason'])$(id).addEventListener('input',()=>{page=0;sampleKeys=null;if(id==='search'&&$('search').value.trim()){validationOnly=false;clearCoverageSelection();batchScope='all';$('batchScope').value='all';group='all';priority=false;$('queue').value='all';$('reason').value='';$('suggestion').value='';}render();});
 $('batchScope').onchange=()=>{batchScope=$('batchScope').value;changeGroup('trusted');};
 $('reviewer').onchange=()=>{if(session){session.reviewer=$('reviewer').value.trim();save();}};
 $('selectVisible').onclick=()=>{checked=new Set(visible.filter(i=>!i.locked).map(i=>i.key));render();};$('clearSelection').onclick=()=>{checked.clear();render();};
@@ -152,6 +155,7 @@ try{
   try{const r=await fetch('data/company-access-review/continuation-review-bundle.json');if(r.ok){const incoming=await r.json(),next=appendDiscovery(bundle,incoming,historyBundle,session,currentPack);load(next.bundle,next.pack,next.session,incoming.batches[0].id);}}catch(error){status(`续采批次未加载：${error.message}；原数据保持不变。`);}
   try{const r=await fetch('data/company-access-review/coverage-diagnostics.json');if(r.ok){const report=await r.json();renderCoveragePanel($('coverageContent'),report,feature=>{selectedCell=feature;group='all';$('queue').value='all';sampleKeys=null;priority=false;page=0;render();if(map&&feature){const [w,s,e,n]=feature.properties.bbox_wgs84;map.fitBounds([[w,s],[e,n]],{padding:30});}});$('coveragePanel').hidden=false;}}catch{status('覆盖诊断暂不可用；审核决定保持不变。');}
   try{const r=await fetch('data/company-access-review/targeted-readiness.json');if(r.ok)showTargeted(await r.json());}catch{status('定向采集诊断暂不可用；原有候选与决定保持不变。');}
+  try{const r=await fetch('data/company-access-review/inventory-validation-report.json');if(r.ok){const report=await r.json();const notice=text('p',`导入校验：${report.final_offices} 家办公室；${report.human_accepts} 条新人工接受中 ${report.incorporated_accepts} 条已导入、${report.quarantined_accepts} 条隔离。人工决定完整保留，隔离记录未上图。`);notice.className='evidence-card';document.body.prepend(notice);}}catch{}
   focusLinkedCandidate();
   try { if(globalThis.maplibregl){map=new maplibregl.Map({container:'map',style:'https://tiles.openfreemap.org/styles/positron',center:[121.604,31.205],zoom:12});map.on('load',()=>{map.addSource('candidates',{type:'geojson',data:{type:'FeatureCollection',features:[]}});map.addLayer({id:'candidate-points',type:'circle',source:'candidates',paint:{'circle-radius':['case',['get','selected'],10,6],'circle-color':['match',['get','status'],'accept','#285a50','reject','#888','needs_review','#b57c24','#bd3f55'],'circle-stroke-color':'#fff','circle-stroke-width':2}});ready=true;mapData();focusLinkedCandidate();});map.on('click','candidate-points',e=>{if(e.features?.[0])select(e.features[0].properties.key);});}
   else status('地图暂不可用；列表、证据和审核导出仍可使用。');

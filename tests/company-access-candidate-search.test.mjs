@@ -51,3 +51,20 @@ test('Huahong related searches preserve separate corporate entities and reject i
  const a=identityAudit(rows);assert.notEqual(a[group.amap_poi_id].entity,a[factory.amap_poi_id].entity);assert.deepEqual(rows,before);
  assert.deepEqual(relationshipSearchTerms({...factory,address:'Changed'}),[]);
 });
+
+import {acceptanceIssues} from '../scripts/company-access/discovery/import-reviewed-inventory.mjs';
+import {candidateStatusLabel} from '../web/src/company-access/candidate-search.js';
+test('bulk human accept is independently screened; missing notes do not imply rejection or verification',()=>{
+ const p=gcj02ToWgs84(121.6,31.2),row={amap_poi_id:'SYNTHETIC',company_name:'SYNTHETIC 制造技术有限公司',address:'张江路505号8层803室',amap_type:'公司企业;公司;公司',amap_typecode:'170200',longitude_gcj02:121.6,latitude_gcj02:31.2,longitude_wgs84:p[0],latitude_wgs84:p[1],review_notes:''};
+ const item={row,triage:{group:'exception',reason:'INDUSTRIAL_LOCATION'}};
+ assert.deepEqual(acceptanceIssues(item),[]);assert(acceptanceIssues({...item,row:{...row,company_name:'SYNTHETIC 停车场'}}).includes('NON_OFFICE_PLACE'));
+ assert(acceptanceIssues({...item,row:{...row,address:'路口附近'}}).includes('VAGUE_ADDRESS'));
+ assert(acceptanceIssues({...item,triage:{public_evidence:{assessment:'address_conflict'}}}).includes('EVIDENCE_ADDRESS_CONFLICT'));
+ assert(acceptanceIssues(item,{flags:['ENTITY_ADDRESS_CONFLICT'],kind:'公司候选'}).includes('ENTITY_ADDRESS_CONFLICT'));
+});
+test('quarantined human accept stays searchable with explicit label and unchanged decision',()=>{
+ const i=item('held','accept');i.validation_status='quarantined';i.validation_reasons=['VAGUE_ADDRESS'];
+ const bundle={schema_version:1,bundle_id:'test',batches:[{id:'test',columns:[],rows:[i]}]},before=structuredClone(bundle);
+ const candidates=candidateSearchRecords(bundle,areas);assert.equal(candidates.length,1);validateCandidateSearch(candidates);
+ assert.match(candidateStatusLabel(candidates[0]),/人工接受.*隔离/);assert.deepEqual(bundle,before);
+});

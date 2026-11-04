@@ -6,15 +6,17 @@ export const reviewStatusLabel={pending:'尚未审核 · 未批准',needs_review
 // Build-time only join. Neither these records nor their coordinates enter approved sources.
 export function candidateSearchRecords(bundle,areas){
   validateBundle(bundle);const audits=identityAudit(bundle.batches.flatMap(b=>b.rows.map(i=>i.row)));const index=prepareReachAreas(areas),seen=new Set();
-  return bundle.batches.flatMap(b=>b.rows).filter(i=>i.row.review_status!=='accept').map(i=>{
+  return bundle.batches.flatMap(b=>b.rows).filter(i=>i.row.review_status!=='accept'||i.validation_status==='quarantined').map(i=>{
     const r=i.row;if(seen.has(r.amap_poi_id))throw Error('Duplicate candidate identity');seen.add(r.amap_poi_id);
     const longitude=Number(r.longitude_wgs84),latitude=Number(r.latitude_wgs84);
     if(!String(r.longitude_wgs84).trim()||!String(r.latitude_wgs84).trim()||!Number.isFinite(longitude)||!Number.isFinite(latitude)||Math.abs(longitude)>180||Math.abs(latitude)>90)throw Error('Invalid candidate coordinate');
-    return {id:`candidate:${r.amap_poi_id}`,kind:'candidate',identity_audit:audits[r.amap_poi_id]||null,amap_poi_id:r.amap_poi_id,company_name:r.company_name,address:r.address,district:r.district,longitude,latitude,review_status:r.review_status,locked:i.locked,provider_type:r.amap_type,source_url:r.source_reference,reach_minutes:reachMemberships({longitude,latitude},index),priority_evidence:priorityEvidenceFor(r)};
+    return {id:`candidate:${r.amap_poi_id}`,kind:'candidate',validation_status:i.validation_status||null,validation_reasons:i.validation_reasons||[],identity_audit:audits[r.amap_poi_id]||null,amap_poi_id:r.amap_poi_id,company_name:r.company_name,address:r.address,district:r.district,longitude,latitude,review_status:r.review_status,locked:i.locked,provider_type:r.amap_type,source_url:r.source_reference,reach_minutes:reachMemberships({longitude,latitude},index),priority_evidence:priorityEvidenceFor(r)};
   }).sort((a,b)=>Number(Boolean(b.priority_evidence))-Number(Boolean(a.priority_evidence))||a.id.localeCompare(b.id));
 }
 export const reviewCandidateHref=poi=>`company-review.html?poi=${encodeURIComponent(poi)}`;
 export function candidateFromLink(items,search){const poi=new URLSearchParams(search).get('poi');return poi?items.find(i=>i.row.amap_poi_id===poi)||null:null;}
 export function validateCandidateSearch(value){
-  if(!Array.isArray(value)||new Set(value.map(c=>c.id)).size!==value.length||value.some(c=>c.kind!=='candidate'||!['pending','needs_review','reject'].includes(c.review_status)||c.id!==`candidate:${c.amap_poi_id}`||!Number.isFinite(c.longitude)||!Number.isFinite(c.latitude)||Math.abs(c.longitude)>180||Math.abs(c.latitude)>90||!Array.isArray(c.reach_minutes)||c.reach_minutes.some(n=>![10,20,30,40,50].includes(n))))throw Error('Invalid candidate search artifact');return value;
+  if(!Array.isArray(value)||new Set(value.map(c=>c.id)).size!==value.length||value.some(c=>c.kind!=='candidate'||(!['pending','needs_review','reject'].includes(c.review_status)&&!(c.review_status==='accept'&&c.validation_status==='quarantined'))||c.id!==`candidate:${c.amap_poi_id}`||!Number.isFinite(c.longitude)||!Number.isFinite(c.latitude)||Math.abs(c.longitude)>180||Math.abs(c.latitude)>90||!Array.isArray(c.reach_minutes)||c.reach_minutes.some(n=>![10,20,30,40,50].includes(n))))throw Error('Invalid candidate search artifact');return value;
 }
+
+export const candidateStatusLabel=c=>c.validation_status==='quarantined'?'人工接受 · 校验隔离 · 未上图':reviewStatusLabel[c.review_status];

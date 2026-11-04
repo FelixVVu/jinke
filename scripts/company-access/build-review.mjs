@@ -23,6 +23,7 @@ await rm('dist-review',{recursive:true,force:true});await cp('dist','dist-review
 const target='dist-review/data/company-access-review';await mkdir(target,{recursive:true});
 for(const key of ['offices','hubs','summary','metadata'])await cp(join(root,'frontend',artifactNames[key]),join(target,artifactNames[key]));
 await cp('docs/company-access-sampling-coverage.svg',join(target,'sampling-coverage.svg'));
+try{await cp(join(root,'audit/inventory-validation-report.json'),join(target,'inventory-validation-report.json'));}catch(e){if(e.code!=='ENOENT')throw e;}
 const history=await writeReviewBundle(root,join(target,'review-bundle.json'));
 let pilot3Snapshot=null;
 try{pilot3Snapshot=JSON.parse(await readFile(join(root,'source-imports/pilot-3/provider-cache/snapshot.json'),'utf8'));}catch(e){if(e.code!=='ENOENT')throw e;}

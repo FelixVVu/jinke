@@ -53,7 +53,7 @@ export async function writeReviewBundle(approvedRoot,target){
   const ledger=new Map(prior.map(d=>[d.amap_poi_id,d]));
   for(const folder of extras){const saved=await read(path.join(approvedRoot,'source-imports',folder,'recovery-bundle.json'));
     for(const batch of saved.batches){for(const item of batch.rows){const d=ledger.get(item.row.amap_poi_id);if(!d)throw Error('Recovery history missing ledger decision');
-      item.row.review_status=d.decision;item.row.review_notes=d.notes;item.locked=true;item.prior_review={reviewer:d.reviewer,reviewed_at:d.reviewed_at,decision:d.decision,notes:d.notes};}
+      item.row.review_status=d.decision;item.row.review_notes=d.notes;item.locked=true;if(d.validation_status){item.validation_status=d.validation_status;item.validation_reasons=d.validation_reasons||[];}item.prior_review={reviewer:d.reviewer,reviewed_at:d.reviewed_at,decision:d.decision,notes:d.notes};}
       bundle.batches.push(batch);}
   }
   if(extras.length)bundle.bundle_id=sha256(stable(bundle.batches));
